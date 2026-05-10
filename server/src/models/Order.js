@@ -47,7 +47,7 @@ const Order = sequelize.define('Order', {
   },
   cardNo: {
     type: DataTypes.STRING(255),
-    allowNull: false,
+    allowNull: true,
     field: 'card_no',
     comment: '卡号(加密)'
   },

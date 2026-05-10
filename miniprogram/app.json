@@ -36,7 +36,8 @@
     "pages/buy/list/list",
     "pages/buy/detail/detail",
     "pages/buy/order/list/list",
-    "pages/buy/order/detail/detail"
+    "pages/buy/order/detail/detail",
+    "pages/promotion/promotion"
   ],
   "window": {
     "backgroundTextStyle": "light",

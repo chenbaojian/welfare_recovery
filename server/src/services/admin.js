@@ -11,6 +11,7 @@ const { generateToken } = require('../utils/jwt');
 const logger = require('../utils/logger');
 const sequelize = require('../config/database');
 const { Sequelize, Op } = require('sequelize');
+const promotionService = require('./promotion');
 
 /**
  * 将snake_case字段名转换为camelCase
@@ -235,6 +236,11 @@ exports.completeOrder = async (orderId, adminId) => {
     await transaction.commit();
 
     logger.info(`管理员 ${adminId} 完结订单 ${orderId}, 用户 ${order.userId} 入账 ${recycleAmount}元`);
+
+    // 触发推广交易奖励（异步，不影响主流程）
+    promotionService.grantTradeReward(order.userId, order.id).catch(err => {
+      logger.error(`推广交易奖励发放失败: userId=${order.userId}, orderId=${order.id}`, err);
+    });
 
     return {
       orderId: order.id,

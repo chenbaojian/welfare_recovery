@@ -8,6 +8,19 @@ const { auth, verified } = require('../middleware/auth');
 const validate = require('../middleware/validate');
 
 /**
+ * 手机号快捷登录（微信 getPhoneNumber 组件）
+ * POST /api/user/phoneQuickLogin
+ */
+router.post('/phoneQuickLogin',
+  [
+    body('code').notEmpty().withMessage('code不能为空'),
+    body('phoneCode').notEmpty().withMessage('phoneCode不能为空')
+  ],
+  validate,
+  userController.phoneQuickLogin
+);
+
+/**
  * 检查手机号是否已注册
  * GET /api/user/checkPhone
  */

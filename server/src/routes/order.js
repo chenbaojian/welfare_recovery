@@ -17,7 +17,7 @@ router.post('/create',
   [
     body('cardTypeId').notEmpty().withMessage('卡券类型不能为空'),
     body('faceValue').isFloat({ min: 1 }).withMessage('面值必须大于0'),
-    body('cardNo').notEmpty().withMessage('卡号不能为空'),
+    body('cardNo').optional().notEmpty().withMessage('卡号不能为空'),
     body('cardPwd').notEmpty().withMessage('卡密不能为空')
   ],
   validate,

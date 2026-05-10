@@ -127,7 +127,7 @@ function validateCardNo(cardNo, minLength = 10, maxLength = 30) {
  * @param {number} maxLength 最大长度
  * @returns {boolean}
  */
-function validateCardPwd(cardPwd, minLength = 6, maxLength = 20) {
+function validateCardPwd(cardPwd, minLength = 6, maxLength = 30) {
   if (!cardPwd) return false;
   const length = cardPwd.length;
   return length >= minLength && length <= maxLength;

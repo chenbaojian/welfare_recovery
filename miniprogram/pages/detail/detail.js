@@ -1,6 +1,6 @@
 // pages/detail/detail.js
 import request from '../../utils/request';
-import { requireVerified } from '../../utils/auth';
+import { requireVerified, checkLogin, getUserInfo } from '../../utils/auth';
 import { validateCardNo, validateCardPwd } from '../../utils/validate';
 import { formatMoney, formatDiscount } from '../../utils/util';
 import API, { LOCAL_DEV } from '../../config/api';
@@ -206,6 +206,37 @@ Page({
    * 提交订单
    */
   async onSubmit() {
+    // 检查登录状态
+    if (!checkLogin()) {
+      wx.showModal({
+        title: '提示',
+        content: '请先登录后再进行操作',
+        confirmText: '去登录',
+        success: (res) => {
+          if (res.confirm) {
+            wx.navigateTo({ url: '/pages/login/login' });
+          }
+        }
+      });
+      return;
+    }
+
+    // 检查实名认证
+    const userInfo = getUserInfo();
+    if (userInfo && !userInfo.isVerified) {
+      wx.showModal({
+        title: '提示',
+        content: '请先完成实名认证后再进行操作',
+        confirmText: '去认证',
+        success: (res) => {
+          if (res.confirm) {
+            wx.navigateTo({ url: '/pages/verify/verify' });
+          }
+        }
+      });
+      return;
+    }
+
     // 校验表单
     if (!this.validateForm()) {
       return;

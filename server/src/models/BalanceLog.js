@@ -23,7 +23,7 @@ const BalanceLog = sequelize.define('BalanceLog', {
   type: {
     type: DataTypes.STRING(20),
     allowNull: false,
-    comment: '类型: RECYCLE_INCOME-回收收入, WITHDRAW-提现支出, ADMIN_ADJUST-管理员调整'
+    comment: '类型: RECYCLE_INCOME-回收收入, WITHDRAW-提现支出, ADMIN_ADJUST-管理员调整, PROMOTION_REGISTER-推广注册奖励, PROMOTION_TRADE-推广交易奖励, PROMOTION_RECALL-推广奖励收回'
   },
   amount: {
     type: DataTypes.DECIMAL(10, 2),

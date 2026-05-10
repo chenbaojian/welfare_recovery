@@ -1,0 +1,111 @@
+<!-- pages/promotion/promotion.wxml -->
+<view class="promotion-container">
+  <!-- 头部品牌区 -->
+  <view class="header-section">
+    <view class="header-icon">🎁</view>
+    <view class="header-title">邀请好友，赚取奖励</view>
+    <view class="header-subtitle">邀请新用户注册得2元，完成交易再得8元</view>
+  </view>
+
+  <!-- 奖励规则卡片 -->
+  <view class="rule-card">
+    <view class="rule-title">📋 分阶段奖励规则</view>
+    <view class="rule-item">
+      <view class="rule-step">1</view>
+      <view class="rule-content">
+        <view class="rule-label">注册奖励</view>
+        <view class="rule-desc">好友通过你的邀请完成注册登录</view>
+      </view>
+      <view class="rule-amount">+{{rewardConfig.registerAmount}}元</view>
+    </view>
+    <view class="rule-item">
+      <view class="rule-step step-2">2</view>
+      <view class="rule-content">
+        <view class="rule-label">交易奖励</view>
+        <view class="rule-desc">好友完成买卡/卖卡有效交易</view>
+      </view>
+      <view class="rule-amount">+{{rewardConfig.tradeAmount}}元</view>
+    </view>
+    <view class="rule-item" style="margin-top:8px;padding-top:12px;border-top:1px solid #f5f5f5;">
+      <view class="rule-content" style="margin-left:0;">
+        <view class="rule-label" style="color:#F5222D;">单用户合计奖励</view>
+      </view>
+      <view class="rule-amount" style="font-size:18px;">+{{totalPerUser}}元</view>
+    </view>
+  </view>
+
+  <!-- 数据统计 -->
+  <view class="stats-section">
+    <view class="stats-title">📊 推广数据</view>
+    <view class="stats-grid">
+      <view class="stats-item">
+        <view class="stats-value">{{totalPeople}}</view>
+        <view class="stats-label">累计推广人数</view>
+      </view>
+      <view class="stats-item">
+        <view class="stats-value green">{{totalReward}}</view>
+        <view class="stats-label">累计总奖励(元)</view>
+      </view>
+      <view class="stats-item">
+        <view class="stats-value orange">{{pendingReward}}</view>
+        <view class="stats-label">待入账奖励(元)</view>
+      </view>
+      <view class="stats-item">
+        <view class="stats-value purple">{{paidReward}}</view>
+        <view class="stats-label">已入账奖励(元)</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 分享区域 -->
+  <view class="share-section">
+    <view class="share-title">🔗 邀请方式</view>
+    <view class="share-btn-group">
+      <button class="share-btn primary" open-type="share">📤 分享给好友</button>
+      <button class="share-btn success" bindtap="onViewRules">📖 活动规则</button>
+    </view>
+  </view>
+
+  <!-- 推广记录 -->
+  <view class="records-section">
+    <view class="records-title">📝 推广记录</view>
+    <view wx:if="{{loading}}" class="loading-state">加载中...</view>
+    <view wx:elif="{{records.length === 0}}" class="empty-state">
+      <view class="empty-icon">📭</view>
+      <view class="empty-text">暂无推广记录，快去邀请好友吧</view>
+    </view>
+    <view wx:else>
+      <view class="record-item" wx:for="{{records}}" wx:key="id">
+        <view class="record-header">
+          <text class="record-nickname">{{item.newUser.nickname || '用户'}}</text>
+          <text class="record-time">{{item.createTime}}</text>
+        </view>
+        <view class="record-body">
+          <view class="record-tag {{item.registerRewardStatus === 'PAID' ? 'paid' : (item.registerRewardStatus === 'PENDING' ? 'pending' : (item.registerRewardStatus === 'FAILED' ? 'failed' : 'recalled'))}}">
+            注册{{item.registerRewardStatus === 'PAID' ? '✓' : (item.registerRewardStatus === 'PENDING' ? '待发放' : (item.registerRewardStatus === 'FAILED' ? '失败' : '已收回'))}}
+          </view>
+          <view class="record-tag {{item.tradeRewardStatus === 'PAID' ? 'paid' : (item.tradeRewardStatus === 'PENDING' ? 'pending' : (item.tradeRewardStatus === 'FAILED' ? 'failed' : 'recalled'))}}">
+            交易{{item.tradeRewardStatus === 'PAID' ? '✓' : (item.tradeRewardStatus === 'PENDING' ? '待发放' : (item.tradeRewardStatus === 'FAILED' ? '失败' : '已收回'))}}
+          </view>
+          <view class="record-amount">+{{item.totalReward}}元</view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 活动规则弹窗 -->
+<view class="rules-modal-mask" wx:if="{{showRulesModal}}" bindtap="onCloseRules"></view>
+<view class="rules-modal" wx:if="{{showRulesModal}}">
+  <view class="rules-modal-title">📋 一级推广奖励活动规则</view>
+  <view class="rules-modal-content">
+    <view style="margin-bottom:8px;">1. 本活动为平台一级推广活动，仅存在一级推广关系，无多级裂变收益；</view>
+    <view style="margin-bottom:8px;">2. 新用户定义：从未在本小程序注册、登录、产生交易的全新用户；</view>
+    <view style="margin-bottom:8px;">3. 奖励规则：成功邀请新用户完成注册登录，可获得{{rewardConfig.registerAmount}}元推广奖励；被邀请新用户完成平台卡券买/卖有效交易订单且订单完结无退款，可额外获得{{rewardConfig.tradeAmount}}元推广奖励；</view>
+    <view style="margin-bottom:8px;">4. 单名有效新用户最多可为推广人带来合计{{totalPerUser}}元推广收益，同一用户仅首次注册、首次成交可分别触发一次奖励；</view>
+    <view style="margin-bottom:8px;">5. 所有推广奖励自动发放至用户小程序个人账户余额，可参与平台提现；</view>
+    <view style="margin-bottom:8px;">6. 严禁批量注册、刷单、作弊刷奖等违规行为，平台有权冻结、收回违规奖励并封禁账号；</view>
+    <view>7. 平台保留活动规则最终解释权，规则调整将在小程序内公示告知。</view>
+  </view>
+  <view class="rules-modal-close" bindtap="onCloseRules">我知道了</view>
+</view>

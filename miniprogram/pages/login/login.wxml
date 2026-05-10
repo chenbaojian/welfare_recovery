@@ -1,166 +1,69 @@
 <!-- pages/login/login.wxml -->
-<view class="login-container">
-  <!-- Logo区域 -->
-  <view class="logo-section">
-    <view class="logo-emoji">🎁</view>
-    <text class="app-name">福利回收</text>
-    <text class="app-slogan">闲置卡券 一键变现</text>
+<view class="login-page">
+
+  <!-- 顶部品牌区域 -->
+  <view class="brand-area">
+    <view class="brand-content">
+      <view class="logo-wrap">
+        <view class="logo-icon">🎁</view>
+      </view>
+      <text class="brand-name">福利回收</text>
+      <text class="brand-slogan">闲置卡券 一键变现</text>
+    </view>
+    <view class="deco-circle deco-1"></view>
+    <view class="deco-circle deco-2"></view>
   </view>
 
-  <!-- 登录方式切换 -->
-  <view class="login-tabs">
-    <view
-      class="tab-item {{ loginMode === 'wx' ? 'active' : '' }}"
-      data-mode="wx"
-      bindtap="onSwitchMode"
-    >
-      微信登录
-    </view>
-    <view
-      class="tab-item {{ loginMode === 'phone' ? 'active' : '' }}"
-      data-mode="phone"
-      bindtap="onSwitchMode"
-    >
-      手机号登录
-    </view>
-  </view>
+  <!-- 登录卡片 -->
+  <view class="login-card">
 
-  <!-- 微信登录 -->
-  <view class="login-section" wx:if="{{ loginMode === 'wx' }}">
-    <view class="login-btn wx-login" bindtap="onWxLogin">
-      <van-icon name="wechat" size="20" color="#fff" />
+    <view class="welcome-section">
+      <text class="welcome-title">欢迎登录</text>
+      <text class="welcome-desc">登录后即可享受回收与购买服务</text>
+    </view>
+
+    <!-- 微信一键登录 -->
+    <button
+      class="login-btn wx-btn"
+      bindtap="onWxLogin"
+    >
+      <van-icon name="wechat" size="20" color="#fff" custom-style="margin-right:8px" />
       <text wx:if="{{ !loading }}">微信一键登录</text>
       <van-loading wx:if="{{ loading }}" size="20px" color="#fff" />
-    </view>
-    <text class="login-tip">使用微信账号快速登录</text>
-  </view>
+    </button>
 
-  <!-- 手机号登录 -->
-  <view class="login-section phone-section" wx:if="{{ loginMode === 'phone' }}">
-    <!-- 手机号输入 -->
-    <view class="form-item">
-      <view class="form-label">手机号</view>
-      <input
-        class="form-input"
-        type="number"
-        maxlength="11"
-        placeholder="请输入手机号"
-        value="{{ phone }}"
-        bindinput="onPhoneInput"
-      />
-    </view>
-    <view class="form-error" wx:if="{{ phoneError }}">{{ phoneError }}</view>
-
-    <!-- 登录方式切换 -->
-    <view class="phone-login-tabs">
-      <view
-        class="phone-tab {{ phoneLoginType === 'password' ? 'active' : '' }}"
-        data-type="password"
-        bindtap="onSwitchPhoneLoginType"
-      >
-        密码登录
-      </view>
-      <view
-        class="phone-tab {{ phoneLoginType === 'sms' ? 'active' : '' }}"
-        data-type="sms"
-        bindtap="onSwitchPhoneLoginType"
-      >
-        验证码登录
-      </view>
-    </view>
-
-    <!-- 密码登录 -->
-    <block wx:if="{{ phoneLoginType === 'password' }}">
-      <view class="form-item">
-        <view class="form-label">密码</view>
-        <input
-          class="form-input"
-          type="text"
-          password
-          maxlength="20"
-          placeholder="请输入密码"
-          value="{{ password }}"
-          bindinput="onPasswordInput"
-        />
-      </view>
-      <view class="form-error" wx:if="{{ passwordError }}">{{ passwordError }}</view>
-    </block>
-
-    <!-- 验证码登录 -->
-    <block wx:if="{{ phoneLoginType === 'sms' }}">
-      <view class="form-item">
-        <view class="form-label">验证码</view>
-        <view class="form-input-wrap">
-          <input
-            class="form-input code-input"
-            type="number"
-            maxlength="6"
-            placeholder="请输入验证码"
-            value="{{ code }}"
-            bindinput="onCodeInput"
-          />
-          <view
-            class="code-btn {{ countdown > 0 || sendingCode ? 'disabled' : '' }}"
-            bindtap="onSendCode"
-          >
-            <text wx:if="{{ sendingCode && countdown === 0 }}">发送中...</text>
-            <text wx:elif="{{ countdown > 0 }}">{{ countdown }}s</text>
-            <text wx:else>获取验证码</text>
-          </view>
-        </view>
-      </view>
-      <view class="form-error" wx:if="{{ codeError }}">{{ codeError }}</view>
-      <!-- 开发调试：显示验证码 -->
-      <view class="debug-code-tip" wx:if="{{ debugCode }}">
-        <text class="debug-label">测试验证码：</text>
-        <text class="debug-code">{{ debugCode }}</text>
-      </view>
-
-      <!-- 新用户设置密码 -->
-      <block wx:if="{{ isNewUser }}">
-        <view class="form-item">
-          <view class="form-label">设置登录密码</view>
-          <input
-            class="form-input"
-            type="text"
-            password
-            maxlength="16"
-            placeholder="8-16位，含字母和数字"
-            value="{{ setPassword }}"
-            bindinput="onSetPasswordInput"
-          />
-        </view>
-        <view class="form-error" wx:if="{{ setPasswordError }}">{{ setPasswordError }}</view>
-      </block>
-
-      <text class="register-tip">{{ isNewUser ? '新用户将自动注册' : '新用户通过验证码登录将自动注册' }}</text>
-    </block>
-
-    <!-- 登录按钮 -->
-    <view class="login-btn phone-login-btn" bindtap="onSubmitPhoneLogin">
-      <text wx:if="{{ !loading }}">登录</text>
-      <van-loading wx:if="{{ loading }}" size="20px" color="#fff" />
-    </view>
-  </view>
-
-  <!-- 协议区域 -->
-  <view class="agreement-section">
-    <van-checkbox
-      value="{{ agreed }}"
-      bind:change="onAgreeChange"
-      checked-color="#1890FF"
+    <!-- 手机号登录 -->
+    <button
+      class="login-btn phone-btn"
+      open-type="getPhoneNumber"
+      bindgetphonenumber="onGetPhoneNumber"
+      bindtap="onPhoneBtnTap"
     >
-      <view class="agreement-text">
-        登录即表示同意
-        <text class="link" bindtap="onViewUserProtocol" catchtap="onViewUserProtocol">《用户协议》</text>
-        和
-        <text class="link" bindtap="onViewPrivacyPolicy" catchtap="onViewPrivacyPolicy">《隐私政策》</text>
+      <van-icon name="phone" size="20" color="#fff" custom-style="margin-right:8px" />
+      <text wx:if="{{ !loading }}">手机号登录</text>
+      <van-loading wx:if="{{ loading }}" size="20px" color="#fff" />
+    </button>
+
+    <!-- 协议 -->
+    <view class="agreement">
+      <view class="agreement-check" bindtap="onToggleAgree">
+        <view class="check-box {{ agreed ? 'checked' : '' }}">
+          <view wx:if="{{ agreed }}" class="check-mark">✓</view>
+        </view>
       </view>
-    </van-checkbox>
+      <view class="agreement-text-wrap" bindtap="onToggleAgree">
+        <text class="agreement-text">我已阅读并同意</text>
+        <text class="agreement-link" catchtap="onViewUserProtocol">《用户协议》</text>
+        <text class="agreement-text">和</text>
+        <text class="agreement-link" catchtap="onViewPrivacyPolicy">《隐私政策》</text>
+      </view>
+    </view>
+
   </view>
 
-  <!-- 游客模式 -->
-  <view class="guest-section">
-    <text class="guest-text" bindtap="onBackToHome">暂不登录，先逛逛</text>
+  <!-- 游客入口 -->
+  <view class="guest-entry" bindtap="onBackToHome">
+    <text class="guest-text">暂不登录，先逛逛</text>
   </view>
+
 </view>

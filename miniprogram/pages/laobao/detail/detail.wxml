@@ -15,12 +15,13 @@
         <text class="label-text">售卖平台</text>
         <text class="label-required">*</text>
       </view>
-      <view class="form-input picker" bindtap="onShowPlatformPicker">
-        <text class="{{ platform ? 'input-value' : 'input-placeholder' }}">
-          {{ platform || '请选择售卖平台' }}
-        </text>
-        <van-icon name="arrow-down" color="#999" />
-      </view>
+      <input
+        class="form-input"
+        type="text"
+        placeholder="请输入售卖平台，如京东、苏宁"
+        value="{{ platform }}"
+        bindinput="onInputPlatform"
+      />
     </view>
 
     <!-- 手机号 -->
@@ -31,7 +32,7 @@
       </view>
       <input
         class="form-input"
-        type="text"
+        type="number"
         maxlength="11"
         placeholder="请输入手机号"
         value="{{ phone }}"
@@ -108,32 +109,4 @@
       <view class="notice-item">• 如有问题请联系客服</view>
     </view>
   </view>
-
-  <!-- 平台选择弹窗 -->
-  <van-popup
-    show="{{ showPlatformPicker }}"
-    position="bottom"
-    custom-style="height: 40%;"
-    bind:close="onClosePlatformPicker"
-  >
-    <view class="platform-picker">
-      <view class="picker-header">
-        <text class="picker-title">选择售卖平台</text>
-        <text class="picker-close" bindtap="onClosePlatformPicker">关闭</text>
-      </view>
-      <view class="picker-list">
-        <view
-          class="picker-item {{ platform === item.name ? 'active' : '' }}"
-          wx:for="{{ platforms }}"
-          wx:key="id"
-          data-id="{{ item.id }}"
-          data-name="{{ item.name }}"
-          bindtap="onSelectPlatform"
-        >
-          <text>{{ item.name }}</text>
-          <van-icon wx:if="{{ platform === item.name }}" name="success" color="#1890FF" />
-        </view>
-      </view>
-    </view>
-  </van-popup>
 </view>

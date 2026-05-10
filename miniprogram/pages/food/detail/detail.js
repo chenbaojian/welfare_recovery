@@ -1,4 +1,5 @@
 // pages/food/detail/detail.js
+import { checkLogin, getUserInfo } from '../../../utils/auth';
 import request from '../../../utils/request';
 import API, { LOCAL_DEV } from '../../../config/api';
 const { addOrder } = require('../../../utils/userData');
@@ -13,14 +14,16 @@ Page({
     cardPwd: '',
     discount: 0.88,
     recycleAmount: 0,
-    submitting: false
+    submitting: false,
+    isLoggedIn: false
   },
 
   onLoad(options) {
+    const isLoggedIn = checkLogin();
     const type = options.type || '';
     const typeName = decodeURIComponent(options.name || '美食券');
-    
-    this.setData({ type, typeName });
+
+    this.setData({ type, typeName, isLoggedIn });
     
     wx.setNavigationBarTitle({
       title: typeName + '回收'
@@ -67,8 +70,18 @@ Page({
       return false;
     }
 
+    if (cardNo.length < 10 || cardNo.length > 30) {
+      wx.showToast({ title: '卡号应为10-30位', icon: 'none' });
+      return false;
+    }
+
     if (!cardPwd.trim()) {
       wx.showToast({ title: '请输入卡密', icon: 'none' });
+      return false;
+    }
+
+    if (cardPwd.length < 6 || cardPwd.length > 30) {
+      wx.showToast({ title: '卡密应为6-30位', icon: 'none' });
       return false;
     }
 
@@ -84,6 +97,35 @@ Page({
    * 提交订单
    */
   onSubmitOrder() {
+    if (!this.data.isLoggedIn) {
+      wx.showModal({
+        title: '提示',
+        content: '请先登录后再进行操作',
+        confirmText: '去登录',
+        success: (res) => {
+          if (res.confirm) {
+            wx.navigateTo({ url: '/pages/login/login' });
+          }
+        }
+      });
+      return;
+    }
+
+    const userInfo = getUserInfo();
+    if (userInfo && !userInfo.isVerified) {
+      wx.showModal({
+        title: '提示',
+        content: '请先完成实名认证后再进行操作',
+        confirmText: '去认证',
+        success: (res) => {
+          if (res.confirm) {
+            wx.navigateTo({ url: '/pages/verify/verify' });
+          }
+        }
+      });
+      return;
+    }
+
     if (!this.validateForm()) {
       return;
     }

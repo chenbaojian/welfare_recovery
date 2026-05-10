@@ -194,6 +194,19 @@ Page({
   },
 
   /**
+   * 跳转推广中心
+   */
+  goToPromotion() {
+    if (!this.data.isLoggedIn) {
+      wx.showToast({ title: '请先登录', icon: 'none' });
+      return;
+    }
+    wx.navigateTo({
+      url: '/pages/promotion/promotion'
+    });
+  },
+
+  /**
    * 跳转订单列表
    */
   goToOrders() {

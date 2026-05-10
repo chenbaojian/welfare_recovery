@@ -1,5 +1,5 @@
 // pages/laobao/detail/detail.js
-import { checkLogin } from '../../../utils/auth';
+import { checkLogin, getUserInfo } from '../../../utils/auth';
 import request from '../../../utils/request';
 import API, { LOCAL_DEV } from '../../../config/api';
 const { addOrder } = require('../../../utils/userData');
@@ -14,16 +14,7 @@ Page({
     discount: 0.70,
     recycleAmount: 0,
     submitting: false,
-    isLoggedIn: false,
-
-    // 售卖平台选项
-    platforms: [
-      { id: 'jd', name: '京东' },
-      { id: 'suning', name: '苏宁' },
-      { id: 'vip', name: '唯品会' },
-      { id: 'other', name: '其他' }
-    ],
-    showPlatformPicker: false
+    isLoggedIn: false
   },
 
   onLoad(options) {
@@ -36,36 +27,17 @@ Page({
   },
 
   /**
-   * 显示平台选择器
+   * 输入售卖平台
    */
-  onShowPlatformPicker() {
-    this.setData({ showPlatformPicker: true });
-  },
-
-  /**
-   * 选择平台
-   */
-  onSelectPlatform(e) {
-    const { id, name } = e.currentTarget.dataset;
-    this.setData({
-      platform: name,
-      platformId: id,
-      showPlatformPicker: false
-    });
-  },
-
-  /**
-   * 关闭平台选择器
-   */
-  onClosePlatformPicker() {
-    this.setData({ showPlatformPicker: false });
+  onInputPlatform(e) {
+    this.setData({ platform: e.detail.value });
   },
 
   /**
    * 输入手机号
    */
   onInputPhone(e) {
-    let value = e.detail;
+    let value = e.detail.value || '';
     // 只允许输入数字
     value = value.replace(/\D/g, '');
 
@@ -87,14 +59,14 @@ Page({
    * 输入登录密码
    */
   onInputPassword(e) {
-    this.setData({ password: e.detail });
+    this.setData({ password: e.detail.value });
   },
 
   /**
    * 输入积分额度
    */
   onInputPoints(e) {
-    let value = e.detail;
+    let value = e.detail.value || '';
     // 只允许输入数字和小数点
     value = value.replace(/[^\d.]/g, '');
     // 处理多个小数点的情况
@@ -118,8 +90,8 @@ Page({
   validateForm() {
     const { platform, phone, phoneError, password, points } = this.data;
 
-    if (!platform) {
-      wx.showToast({ title: '请选择售卖平台', icon: 'none' });
+    if (!platform || !platform.trim()) {
+      wx.showToast({ title: '请输入售卖平台', icon: 'none' });
       return false;
     }
 
@@ -133,7 +105,7 @@ Page({
       return false;
     }
 
-    if (!password) {
+    if (!password || !password.trim()) {
       wx.showToast({ title: '请输入登录密码', icon: 'none' });
       return false;
     }
@@ -164,6 +136,21 @@ Page({
       return;
     }
 
+    const userInfo = getUserInfo();
+    if (userInfo && !userInfo.isVerified) {
+      wx.showModal({
+        title: '提示',
+        content: '请先完成实名认证后再进行操作',
+        confirmText: '去认证',
+        success: (res) => {
+          if (res.confirm) {
+            wx.navigateTo({ url: '/pages/verify/verify' });
+          }
+        }
+      });
+      return;
+    }
+
     if (!this.validateForm()) {
       return;
     }
@@ -188,7 +175,7 @@ Page({
   async doSubmitOrder() {
     this.setData({ submitting: true });
 
-    const { platform, platformId, phone, password, points, recycleAmount } = this.data;
+    const { platform, phone, password, points, recycleAmount } = this.data;
 
     // 本地开发模式
     if (LOCAL_DEV) {
@@ -197,7 +184,7 @@ Page({
         const orderId = 'ORD' + Date.now();
         const order = {
           id: orderId, type: 'laobao', typeName: '劳保积分',
-          platform, platformId,
+          platform,
           phone: phone.substring(0, 3) + '****' + phone.substring(7),
           points: parseFloat(points), recycleAmount: parseFloat(recycleAmount),
           status: 'processing', statusText: '处理中', createTime: new Date().toLocaleString()

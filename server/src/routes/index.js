@@ -10,6 +10,7 @@ const bankRoutes = require('./bank');
 const commonRoutes = require('./common');
 const adminRoutes = require('./admin');
 const buyRoutes = require('./buy');
+const promotionRoutes = require('./promotion');
 
 // 用户相关路由
 router.use('/user', userRoutes);
@@ -34,5 +35,8 @@ router.use('/admin', adminRoutes);
 
 // 买家模式路由
 router.use('/buy', buyRoutes);
+
+// 推广相关路由
+router.use('/promotion', promotionRoutes);
 
 module.exports = router;

@@ -10,11 +10,7 @@ const API = {
   user: {
     devLogin: `${API_BASE}/user/devLogin`,              // 开发环境登录（仅开发环境可用）
     wxLogin: `${API_BASE}/user/wxLogin`,               // 微信一键登录
-    phonePasswordLogin: `${API_BASE}/user/phonePasswordLogin`, // 手机号密码登录
-    phoneSmsLogin: `${API_BASE}/user/phoneSmsLogin`,   // 手机号验证码登录
-    sendSmsCode: `${API_BASE}/user/sendSmsCode`,       // 发送验证码
-    checkPhone: `${API_BASE}/user/checkPhone`,         // 检查手机号是否已注册
-    register: `${API_BASE}/user/register`,             // 注册（手机号+验证码）
+    phoneQuickLogin: `${API_BASE}/user/phoneQuickLogin`, // 手机号快捷登录（微信getPhoneNumber）
     verify: `${API_BASE}/user/verify`,                 // 实名认证
     getInfo: `${API_BASE}/user/info`,                  // 获取用户信息
     updateInfo: `${API_BASE}/user/update`,             // 更新用户信息
@@ -70,6 +66,13 @@ const API = {
     config: `${API_BASE}/common/config`,           // 获取配置
     feedback: `${API_BASE}/common/feedback`,        // 意见反馈
     feedbackList: `${API_BASE}/common/feedback/list` // 反馈记录列表
+  },
+
+  // 推广模块
+  promotion: {
+    stats: `${API_BASE}/promotion/stats`,           // 推广中心数据
+    shareInfo: `${API_BASE}/promotion/shareInfo`,    // 推广分享信息
+    config: `${API_BASE}/promotion/config`           // 奖励配置
   }
 };
 

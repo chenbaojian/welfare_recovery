@@ -1,5 +1,5 @@
 // pages/phone/detail/detail.js
-import { checkLogin } from '../../../utils/auth';
+import { checkLogin, getUserInfo } from '../../../utils/auth';
 import request from '../../../utils/request';
 import API, { LOCAL_DEV } from '../../../config/api';
 const { addOrder } = require('../../../utils/userData');
@@ -9,22 +9,28 @@ const PROVIDER_CONFIG = {
   mobile: {
     name: '中国移动',
     color: '#0066CC',
-    cardNoLength: 15,
-    cardPwdLength: 19,
+    cardNoMinLength: 10,
+    cardNoMaxLength: 30,
+    cardPwdMinLength: 6,
+    cardPwdMaxLength: 30,
     faceValues: [20, 30, 50, 100]
   },
   unicom: {
     name: '中国联通',
     color: '#E60012',
-    cardNoLength: 15,
-    cardPwdLength: 19,
+    cardNoMinLength: 10,
+    cardNoMaxLength: 30,
+    cardPwdMinLength: 6,
+    cardPwdMaxLength: 30,
     faceValues: [20, 30, 50, 100]
   },
   telecom: {
     name: '中国电信',
     color: '#00A0E9',
-    cardNoLength: 15,
-    cardPwdLength: 19,
+    cardNoMinLength: 10,
+    cardNoMaxLength: 30,
+    cardPwdMinLength: 6,
+    cardPwdMaxLength: 30,
     faceValues: [20, 30, 50, 100]
   }
 };
@@ -39,8 +45,10 @@ Page({
     selectedFaceValue: null,
     cardNo: '',
     cardPwd: '',
-    cardNoLength: 15,
-    cardPwdLength: 19,
+    cardNoMinLength: 10,
+    cardNoMaxLength: 30,
+    cardPwdMinLength: 6,
+    cardPwdMaxLength: 30,
     recycleAmount: 0,
     submitting: false,
     isLoggedIn: false
@@ -59,8 +67,10 @@ Page({
       providerColor: config.color,
       discount: parseFloat(discount) || 0.98,
       faceValues: config.faceValues,
-      cardNoLength: config.cardNoLength,
-      cardPwdLength: config.cardPwdLength,
+      cardNoMinLength: config.cardNoMinLength || 10,
+      cardNoMaxLength: config.cardNoMaxLength || 30,
+      cardPwdMinLength: config.cardPwdMinLength || 6,
+      cardPwdMaxLength: config.cardPwdMaxLength || 30,
       isLoggedIn
     });
 
@@ -87,7 +97,7 @@ Page({
    * 输入卡号
    */
   onInputCardNo(e) {
-    const value = e.detail.replace(/\D/g, ''); // 只允许数字
+    const value = (e.detail.value || '').replace(/\D/g, ''); // 只允许数字
     this.setData({ cardNo: value });
   },
 
@@ -95,7 +105,7 @@ Page({
    * 输入卡密
    */
   onInputCardPwd(e) {
-    const value = e.detail.replace(/\D/g, ''); // 只允许数字
+    const value = (e.detail.value || '').replace(/\D/g, ''); // 只允许数字
     this.setData({ cardPwd: value });
   },
 
@@ -103,20 +113,30 @@ Page({
    * 验证表单
    */
   validateForm() {
-    const { selectedFaceValue, cardNo, cardPwd, cardNoLength, cardPwdLength } = this.data;
+    const { selectedFaceValue, cardNo, cardPwd, cardNoMinLength, cardNoMaxLength, cardPwdMinLength, cardPwdMaxLength } = this.data;
 
     if (!selectedFaceValue) {
       wx.showToast({ title: '请选择面值', icon: 'none' });
       return false;
     }
 
-    if (cardNo.length !== cardNoLength) {
-      wx.showToast({ title: `卡号应为${cardNoLength}位`, icon: 'none' });
+    if (!cardNo || !cardNo.trim()) {
+      wx.showToast({ title: '请输入卡号', icon: 'none' });
       return false;
     }
 
-    if (cardPwd.length !== cardPwdLength) {
-      wx.showToast({ title: `卡密应为${cardPwdLength}位`, icon: 'none' });
+    if (cardNo.length < cardNoMinLength || cardNo.length > cardNoMaxLength) {
+      wx.showToast({ title: `卡号应为${cardNoMinLength}-${cardNoMaxLength}位`, icon: 'none' });
+      return false;
+    }
+
+    if (!cardPwd || !cardPwd.trim()) {
+      wx.showToast({ title: '请输入卡密', icon: 'none' });
+      return false;
+    }
+
+    if (cardPwd.length < cardPwdMinLength || cardPwd.length > cardPwdMaxLength) {
+      wx.showToast({ title: `卡密应为${cardPwdMinLength}-${cardPwdMaxLength}位`, icon: 'none' });
       return false;
     }
 
@@ -135,6 +155,21 @@ Page({
         success: (res) => {
           if (res.confirm) {
             wx.navigateTo({ url: '/pages/login/login' });
+          }
+        }
+      });
+      return;
+    }
+
+    const userInfo = getUserInfo();
+    if (userInfo && !userInfo.isVerified) {
+      wx.showModal({
+        title: '提示',
+        content: '请先完成实名认证后再进行操作',
+        confirmText: '去认证',
+        success: (res) => {
+          if (res.confirm) {
+            wx.navigateTo({ url: '/pages/verify/verify' });
           }
         }
       });

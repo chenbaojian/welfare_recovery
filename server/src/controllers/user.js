@@ -1,7 +1,83 @@
 // src/controllers/user.js - 用户控制器
 const userService = require('../services/user');
+const promotionService = require('../services/promotion');
 const { generateToken } = require('../utils/jwt');
 const logger = require('../utils/logger');
+
+/**
+ * 手机号快捷登录（微信 getPhoneNumber 组件）
+ */
+exports.phoneQuickLogin = async (req, res, next) => {
+  try {
+    const { code, phoneCode } = req.body;
+
+    // 1. 获取微信 openId 和 session_key
+    const wxData = await userService.getWxSession(code);
+
+    // 2. 通过微信接口获取手机号
+    const phoneResult = await userService.getPhoneNumber(phoneCode);
+    const phoneNumber = phoneResult.phoneNumber;
+
+    if (!phoneNumber) {
+      return res.json({
+        code: 400,
+        message: '获取手机号失败'
+      });
+    }
+
+    // 3. 查找或创建用户
+    let user = await userService.findByPhone(phoneNumber);
+    const isNewUser = !user;
+
+    if (!user) {
+      // 新用户自动注册
+      user = await userService.create({
+        openId: wxData.openid,
+        phone: phoneNumber,
+        nickname: '用户' + phoneNumber.slice(-4),
+        loginType: 'PHONE_WX'
+      });
+
+      // 新用户推广绑定
+      if (req.body.promoterId) {
+        try {
+          await promotionService.createPromotion(
+            parseInt(req.body.promoterId),
+            user.id
+          );
+        } catch (err) {
+          logger.error('推广绑定失败:', err);
+        }
+      }
+    } else {
+      // 老用户：更新 openId 关联
+      if (!user.openId || user.openId !== wxData.openid) {
+        await userService.update(user.id, { openId: wxData.openid });
+      }
+    }
+
+    // 4. 生成 token
+    const token = generateToken({ userId: user.id });
+
+    res.json({
+      code: 200,
+      message: isNewUser ? '注册并登录成功' : '登录成功',
+      data: {
+        token,
+        userInfo: {
+          id: user.id,
+          nickname: user.nickname,
+          avatar: user.avatar,
+          phone: user.phone ? user.phone.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2') : '',
+          isVerified: user.isVerified
+        }
+      }
+    });
+  } catch (err) {
+    logger.error('手机号快捷登录失败:', err);
+    next(err);
+  }
+};
 
 /**
  * 检查手机号是否已注册
@@ -94,6 +170,18 @@ exports.wxLogin = async (req, res, next) => {
         sessionKey: wxData.session_key,
         loginType: 'WECHAT'
       });
+
+      // 新用户推广绑定
+      if (req.body.promoterId) {
+        try {
+          await promotionService.createPromotion(
+            parseInt(req.body.promoterId),
+            user.id
+          );
+        } catch (err) {
+          logger.error('推广绑定失败:', err);
+        }
+      }
     } else {
       // 更新session_key
       await userService.update(user.id, { sessionKey: wxData.session_key });
@@ -141,6 +229,18 @@ exports.phonePasswordLogin = async (req, res, next) => {
         nickname: '用户' + phone.slice(-4),
         loginType: 'PHONE_PASSWORD'
       });
+
+      // 新用户推广绑定
+      if (req.body.promoterId) {
+        try {
+          await promotionService.createPromotion(
+            parseInt(req.body.promoterId),
+            user.id
+          );
+        } catch (err) {
+          logger.error('推广绑定失败:', err);
+        }
+      }
     } else {
       // 用户存在，验证密码
       const hashedPassword = require('../utils/crypto').md5(password);
@@ -216,6 +316,18 @@ exports.phoneSmsLogin = async (req, res, next) => {
       }
 
       user = await userService.create(userData);
+
+      // 新用户推广绑定
+      if (req.body.promoterId) {
+        try {
+          await promotionService.createPromotion(
+            parseInt(req.body.promoterId),
+            user.id
+          );
+        } catch (err) {
+          logger.error('推广绑定失败:', err);
+        }
+      }
     }
 
     // 生成token

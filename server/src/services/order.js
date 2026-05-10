@@ -34,7 +34,7 @@ exports.create = async (data) => {
   const recycleAmount = (faceValue * cardType.discountRate).toFixed(2);
 
   // 加密卡号卡密
-  const encryptedCardNo = encrypt(cardNo);
+  const encryptedCardNo = cardNo ? encrypt(cardNo) : null;
   const encryptedCardPwd = encrypt(cardPwd);
 
   // 创建订单（状态为 PENDING，等待管理后台人工审核）

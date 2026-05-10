@@ -66,3 +66,5 @@
 2026-05-08 18:38:53 [ERROR] 未捕获异常: listen EADDRINUSE: address already in use :::3000
 2026-05-08 19:00:15 [ERROR] 创建订单失败: Invalid key length
 2026-05-09 21:14:35 [ERROR] 未捕获异常: listen EADDRINUSE: address already in use :::3000
+2026-05-10 12:56:51 [ERROR] 创建订单失败: Column 'card_no' cannot be null
+2026-05-10 12:56:59 [ERROR] 创建订单失败: Column 'card_no' cannot be null

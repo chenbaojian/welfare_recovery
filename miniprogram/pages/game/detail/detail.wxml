@@ -31,33 +31,33 @@
     <view class="input-section">
       <view class="input-label">
         <text>卡号</text>
-        <text class="input-tip">{{ cardNoLength }}位数字</text>
+        <text class="input-tip">{{ cardNoMinLength }}-{{ cardNoMaxLength }}位</text>
       </view>
       <input
         class="input-field"
         type="text"
-        maxlength="{{ cardNoLength }}"
-        placeholder="请输入{{ cardNoLength }}位卡号"
+        maxlength="{{ cardNoMaxLength }}"
+        placeholder="请输入卡号"
         value="{{ cardNo }}"
         bindinput="onInputCardNo"
       />
-      <view class="input-count">{{ cardNo.length }}/{{ cardNoLength }}</view>
+      <view class="input-count">{{ cardNo.length }}/{{ cardNoMaxLength }}</view>
     </view>
 
     <view class="input-section">
       <view class="input-label">
         <text>卡密</text>
-        <text class="input-tip">{{ cardPwdLength }}位数字</text>
+        <text class="input-tip">{{ cardPwdMinLength }}-{{ cardPwdMaxLength }}位</text>
       </view>
       <input
         class="input-field"
         type="text"
-        maxlength="{{ cardPwdLength }}"
-        placeholder="请输入{{ cardPwdLength }}位卡密"
+        maxlength="{{ cardPwdMaxLength }}"
+        placeholder="请输入卡密"
         value="{{ cardPwd }}"
         bindinput="onInputCardPwd"
       />
-      <view class="input-count">{{ cardPwd.length }}/{{ cardPwdLength }}</view>
+      <view class="input-count">{{ cardPwd.length }}/{{ cardPwdMaxLength }}</view>
     </view>
   </view>
 

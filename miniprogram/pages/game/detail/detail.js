@@ -1,4 +1,5 @@
 // pages/game/detail/detail.js
+import { checkLogin, getUserInfo } from '../../../utils/auth';
 import request from '../../../utils/request';
 import API, { LOCAL_DEV } from '../../../config/api';
 const { addOrder } = require('../../../utils/userData');
@@ -9,14 +10,19 @@ Page({
     selectedFaceValue: null,
     cardNo: '',
     cardPwd: '',
-    cardNoLength: 13,
-    cardPwdLength: 9,
+    cardNoMinLength: 10,
+    cardNoMaxLength: 30,
+    cardPwdMinLength: 6,
+    cardPwdMaxLength: 30,
     discount: 0.90,
     recycleAmount: 0,
-    submitting: false
+    submitting: false,
+    isLoggedIn: false
   },
 
   onLoad(options) {
+    const isLoggedIn = checkLogin();
+    this.setData({ isLoggedIn });
     wx.setNavigationBarTitle({
       title: '网易一卡通回收'
     });
@@ -40,8 +46,8 @@ Page({
    */
   onInputCardNo(e) {
     let value = e.detail.value || '';
-    // 只允许输入数字，最多13位
-    value = value.replace(/\D/g, '').substring(0, 13);
+    // 只允许输入数字
+    value = value.replace(/\D/g, '').substring(0, this.data.cardNoMaxLength);
     this.setData({ cardNo: value });
   },
 
@@ -50,8 +56,8 @@ Page({
    */
   onInputCardPwd(e) {
     let value = e.detail.value || '';
-    // 只允许输入数字，最多9位
-    value = value.replace(/\D/g, '').substring(0, 9);
+    // 只允许输入数字
+    value = value.replace(/\D/g, '').substring(0, this.data.cardPwdMaxLength);
     this.setData({ cardPwd: value });
   },
 
@@ -59,20 +65,30 @@ Page({
    * 验证表单
    */
   validateForm() {
-    const { selectedFaceValue, cardNo, cardPwd, cardNoLength, cardPwdLength } = this.data;
+    const { selectedFaceValue, cardNo, cardPwd, cardNoMinLength, cardNoMaxLength, cardPwdMinLength, cardPwdMaxLength } = this.data;
 
     if (!selectedFaceValue) {
       wx.showToast({ title: '请选择面值', icon: 'none' });
       return false;
     }
 
-    if (cardNo.length !== cardNoLength) {
-      wx.showToast({ title: `卡号应为${cardNoLength}位`, icon: 'none' });
+    if (!cardNo || !cardNo.trim()) {
+      wx.showToast({ title: '请输入卡号', icon: 'none' });
       return false;
     }
 
-    if (cardPwd.length !== cardPwdLength) {
-      wx.showToast({ title: `卡密应为${cardPwdLength}位`, icon: 'none' });
+    if (cardNo.length < cardNoMinLength || cardNo.length > cardNoMaxLength) {
+      wx.showToast({ title: `卡号应为${cardNoMinLength}-${cardNoMaxLength}位`, icon: 'none' });
+      return false;
+    }
+
+    if (!cardPwd || !cardPwd.trim()) {
+      wx.showToast({ title: '请输入卡密', icon: 'none' });
+      return false;
+    }
+
+    if (cardPwd.length < cardPwdMinLength || cardPwd.length > cardPwdMaxLength) {
+      wx.showToast({ title: `卡密应为${cardPwdMinLength}-${cardPwdMaxLength}位`, icon: 'none' });
       return false;
     }
 
@@ -83,6 +99,35 @@ Page({
    * 提交订单
    */
   onSubmitOrder() {
+    if (!this.data.isLoggedIn) {
+      wx.showModal({
+        title: '提示',
+        content: '请先登录后再进行操作',
+        confirmText: '去登录',
+        success: (res) => {
+          if (res.confirm) {
+            wx.navigateTo({ url: '/pages/login/login' });
+          }
+        }
+      });
+      return;
+    }
+
+    const userInfo = getUserInfo();
+    if (userInfo && !userInfo.isVerified) {
+      wx.showModal({
+        title: '提示',
+        content: '请先完成实名认证后再进行操作',
+        confirmText: '去认证',
+        success: (res) => {
+          if (res.confirm) {
+            wx.navigateTo({ url: '/pages/verify/verify' });
+          }
+        }
+      });
+      return;
+    }
+
     if (!this.validateForm()) {
       return;
     }

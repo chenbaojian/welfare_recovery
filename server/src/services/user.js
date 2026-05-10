@@ -2,6 +2,7 @@
 const axios = require('axios');
 const User = require('../models/User');
 const { encrypt, decrypt } = require('../utils/crypto');
+const { getAccessToken } = require('../utils/wxToken');
 const logger = require('../utils/logger');
 
 /**
@@ -33,6 +34,24 @@ exports.decryptPhone = async (encryptedData, iv, sessionKey) => {
   // 实际应使用专门的解密库
   const decrypted = decrypt(encryptedData, sessionKey, iv);
   return JSON.parse(decrypted);
+};
+
+/**
+ * 通过微信 getPhoneNumber 接口获取用户手机号
+ * 微信基础库 2.21.2+ 使用 code 方式
+ */
+exports.getPhoneNumber = async (phoneCode) => {
+  const accessToken = await getAccessToken();
+
+  const url = `https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token=${accessToken}`;
+  const response = await axios.post(url, { code: phoneCode });
+
+  if (response.data.errcode !== 0) {
+    logger.error('微信获取手机号失败:', response.data);
+    throw new Error(response.data.errmsg || '获取手机号失败');
+  }
+
+  return response.data.phone_info;
 };
 
 /**

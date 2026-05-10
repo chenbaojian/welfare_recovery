@@ -67,28 +67,34 @@
   <view class="menu-section">
     <van-cell-group inset>
       <van-cell
+        title="我的推广"
+        icon="share-o"
+        is-link
+        bind:click="goToPromotion"
+      />
+      <van-cell
         title="我的订单"
         icon="orders-o"
         is-link
-        bindtap="goToOrders"
+        bind:click="goToOrders"
       />
       <van-cell
         title="购买订单"
         icon="shopping-cart-o"
         is-link
-        bindtap="goToBuyOrders"
+        bind:click="goToBuyOrders"
       />
       <van-cell
         title="提现"
         icon="balance-pay"
         is-link
-        bindtap="goToWithdraw"
+        bind:click="goToWithdraw"
       />
       <van-cell
         title="结算账户"
         icon="card"
         is-link
-        bindtap="goToBank"
+        bind:click="goToBank"
       />
     </van-cell-group>
   </view>
@@ -100,19 +106,19 @@
         title="联系客服"
         icon="service"
         is-link
-        bindtap="onContactService"
+        bind:click="onContactService"
       />
       <van-cell
         title="意见反馈"
         icon="comment-o"
         is-link
-        bindtap="onFeedback"
+        bind:click="onFeedback"
       />
       <van-cell
         title="关于我们"
         icon="info-o"
         is-link
-        bindtap="onAbout"
+        bind:click="onAbout"
       />
     </van-cell-group>
   </view>

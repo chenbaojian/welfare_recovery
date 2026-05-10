@@ -91,7 +91,12 @@ Page({
     skeletonLoading: true
   },
 
-  onLoad() {
+  onLoad(options) {
+    // 保存推广人ID到全局（用于新用户注册时绑定推广关系）
+    if (options && options.promoterId) {
+      wx.setStorageSync('promoterId', options.promoterId);
+    }
+
     // 从本地存储恢复模式
     const savedMode = wx.getStorageSync(config.storageKeys.currentMode) || USER_MODE.SELLER;
 
