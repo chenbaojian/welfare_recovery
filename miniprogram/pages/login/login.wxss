@@ -1,0 +1,274 @@
+/* pages/login/login.wxss */
+
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px 30px;
+  background: linear-gradient(180deg, #1890FF 0%, #40a9ff 50%, #f5f5f5 50%);
+}
+
+/* Logo区域 */
+.logo-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.logo-emoji {
+  font-size: 80px;
+  margin-bottom: 20px;
+}
+
+.app-name {
+  font-size: 24px;
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.app-slogan {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* 登录方式切换 */
+.login-tabs {
+  display: flex;
+  width: 100%;
+  background-color: #fff;
+  border-radius: 24px 24px 0 0;
+  padding: 15px 20px;
+  margin-bottom: 0;
+}
+
+.tab-item {
+  flex: 1;
+  text-align: center;
+  font-size: 16px;
+  color: #999;
+  padding: 10px 0;
+  position: relative;
+}
+
+.tab-item.active {
+  color: #1890FF;
+  font-weight: bold;
+}
+
+.tab-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 3px;
+  background-color: #1890FF;
+  border-radius: 2px;
+}
+
+/* 登录按钮区域 */
+.login-section {
+  width: 100%;
+  padding: 30px 20px;
+  background-color: #fff;
+  border-radius: 0 0 24px 24px;
+}
+
+.login-tip {
+  display: block;
+  text-align: center;
+  font-size: 12px;
+  color: #999;
+  margin-top: 15px;
+}
+
+.login-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 48px;
+  border-radius: 24px;
+  font-size: 16px;
+  margin-bottom: 15px;
+  border: none;
+}
+
+.login-btn::after {
+  border: none;
+}
+
+.wx-login {
+  background-color: #07C160;
+  color: #fff;
+}
+
+.wx-login:active {
+  opacity: 0.8;
+}
+
+.phone-login-btn {
+  background-color: #1890FF;
+  color: #fff;
+}
+
+.phone-login-btn:active {
+  opacity: 0.8;
+}
+
+.login-btn text {
+  margin-left: 8px;
+}
+
+/* 手机号登录表单 */
+.phone-section {
+  padding: 20px;
+}
+
+.form-item {
+  margin-bottom: 15px;
+}
+
+.form-label {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.form-input {
+  width: 100%;
+  height: 44px;
+  padding: 0 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: #f5f5f5;
+}
+
+.form-input-wrap {
+  display: flex;
+  align-items: center;
+}
+
+.code-input {
+  flex: 1;
+}
+
+.code-btn {
+  width: 100px;
+  height: 44px;
+  line-height: 44px;
+  text-align: center;
+  font-size: 14px;
+  color: #1890FF;
+  background-color: #f5f5f5;
+  border: 1px solid #1890FF;
+  border-radius: 8px;
+  margin-left: 10px;
+}
+
+.code-btn.disabled {
+  color: #999;
+  border-color: #ddd;
+}
+
+.form-error {
+  font-size: 12px;
+  color: #F5222D;
+  margin-bottom: 10px;
+}
+
+/* 手机号登录方式切换 */
+.phone-login-tabs {
+  display: flex;
+  margin-bottom: 15px;
+}
+
+.phone-tab {
+  flex: 1;
+  text-align: center;
+  font-size: 14px;
+  color: #999;
+  padding: 8px 0;
+  border-bottom: 2px solid transparent;
+}
+
+.phone-tab.active {
+  color: #1890FF;
+  border-bottom-color: #1890FF;
+}
+
+.register-tip {
+  display: block;
+  text-align: center;
+  font-size: 12px;
+  color: #999;
+  margin-bottom: 15px;
+}
+
+/* 新用户设置密码提示 */
+.set-password-tip {
+  display: block;
+  font-size: 12px;
+  color: #FAAD14;
+  margin-top: -8px;
+  margin-bottom: 10px;
+}
+
+/* 开发调试：验证码提示 */
+.debug-code-tip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 15px;
+  background-color: #FFF7E6;
+  border: 1px solid #FFD591;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.debug-label {
+  font-size: 13px;
+  color: #FA8C16;
+}
+
+.debug-code {
+  font-size: 16px;
+  font-weight: bold;
+  color: #FA8C16;
+  margin-left: 5px;
+  letter-spacing: 2px;
+}
+
+/* 协议区域 */
+.agreement-section {
+  width: 100%;
+  padding: 20px 0;
+  margin-top: 20px;
+}
+
+.agreement-text {
+  font-size: 12px;
+  color: #999;
+  line-height: 1.5;
+}
+
+.agreement-text .link {
+  color: #1890FF;
+}
+
+/* 游客模式 */
+.guest-section {
+  position: fixed;
+  bottom: 60px;
+}
+
+.guest-text {
+  font-size: 14px;
+  color: #999;
+  text-decoration: underline;
+}

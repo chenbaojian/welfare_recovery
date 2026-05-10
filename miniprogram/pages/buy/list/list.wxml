@@ -1,0 +1,69 @@
+<!-- pages/buy/list/list.wxml - 买家卡券列表页 -->
+<view class="buy-list-container">
+  <!-- 页面标题 -->
+  <view class="page-header">
+    <view class="header-icon">{{ cardTypeIcon }}</view>
+    <text class="header-title">{{ cardTypeName }}</text>
+  </view>
+
+  <!-- 排序栏 -->
+  <view class="sort-bar" wx:if="{{ cardTypeId }}">
+    <view
+      class="sort-item {{ activeSort === item.value ? 'active' : '' }}"
+      wx:for="{{ sortOptions }}"
+      wx:key="value"
+      data-value="{{ item.value }}"
+      bindtap="onSortChange"
+    >
+      <text>{{ item.name }}</text>
+    </view>
+  </view>
+
+  <!-- 加载中 -->
+  <view class="loading-section" wx:if="{{ loading && page === 1 }}">
+    <van-loading size="24px" vertical>加载中...</van-loading>
+  </view>
+
+  <!-- 卡券列表 -->
+  <view class="card-list" wx:elif="{{ cards.length > 0 }}">
+    <view
+      class="card-card"
+      wx:for="{{ cards }}"
+      wx:key="recycleOrderId"
+      data-id="{{ item.recycleOrderId }}"
+      bindtap="onCardClick"
+    >
+      <view class="card-top">
+        <view class="card-type-info">
+          <text class="card-type-name">{{ item.cardTypeName }}</text>
+          <text class="card-face-value">面值 ¥{{ item.faceValue }}</text>
+        </view>
+        <view class="card-price-box">
+          <text class="card-price">¥{{ item.buyPrice }}</text>
+          <text class="card-original">¥{{ item.faceValue }}</text>
+        </view>
+      </view>
+      <view class="card-bottom">
+        <text class="card-seller">{{ item.cardTypeName }}</text>
+      </view>
+      <view class="card-discount-tag" wx:if="{{ item.discountText }}">
+        {{ item.discountText }}折
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-section" wx:if="{{ !loading && cards.length === 0 }}">
+    <view class="empty-icon">🛒</view>
+    <text class="empty-text">暂无可购卡券</text>
+    <text class="empty-sub">请稍后再来看看</text>
+  </view>
+
+  <!-- 加载更多 -->
+  <view class="load-more" wx:if="{{ loading && page > 1 }}">
+    <van-loading size="20px">加载更多...</van-loading>
+  </view>
+  <view class="no-more" wx:if="{{ !hasMore && cards.length > 0 }}">
+    <text>没有更多了</text>
+  </view>
+</view>

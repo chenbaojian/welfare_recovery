@@ -1,0 +1,35 @@
+/* components/empty/empty.wxss */
+
+.empty-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+}
+
+.empty-emoji {
+  font-size: 80px;
+  margin-bottom: 20px;
+}
+
+.empty-image {
+  width: 160px;
+  height: 120px;
+  margin-bottom: 20px;
+}
+
+.empty-description {
+  font-size: 14px;
+  color: #999;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.empty-button {
+  padding: 8px 24px;
+  background-color: #1890FF;
+  color: #fff;
+  font-size: 14px;
+  border-radius: 20px;
+}

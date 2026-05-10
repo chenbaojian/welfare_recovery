@@ -1,0 +1,19 @@
+<!-- components/loading/loading.wxml -->
+<view class="loading-container {{ fullscreen ? 'fullscreen' : '' }}" wx:if="{{ show }}">
+  <!-- 圆形加载 -->
+  <view class="loading-circular" wx:if="{{ type === 'circular' }}">
+    <view class="circular-spinner" style="width: {{ size }}; height: {{ size }}; border-color: {{ color }} transparent transparent transparent;"></view>
+  </view>
+  
+  <!-- 点状加载 -->
+  <view class="loading-dots" wx:if="{{ type === 'dots' }}">
+    <view class="dot" style="background-color: {{ color }};"></view>
+    <view class="dot" style="background-color: {{ color }};"></view>
+    <view class="dot" style="background-color: {{ color }};"></view>
+  </view>
+  
+  <!-- 加载文字 -->
+  <view class="loading-text" wx:if="{{ text }}">
+    {{ text }}
+  </view>
+</view>

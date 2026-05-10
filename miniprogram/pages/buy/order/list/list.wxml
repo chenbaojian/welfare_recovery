@@ -1,0 +1,73 @@
+<!-- pages/buy/order/list/list.wxml - 买家订单列表页 -->
+<view class="buy-order-list-container">
+  <!-- Tab栏 -->
+  <van-tabs
+    active="{{ activeTab }}"
+    bind:change="onTabChange"
+    sticky
+  >
+    <van-tab
+      wx:for="{{ tabs }}"
+      wx:key="value"
+      title="{{ item.name }}"
+    >
+      <!-- 订单列表 -->
+      <view class="order-content">
+        <!-- 加载中 -->
+        <view class="loading-section" wx:if="{{ loading && page === 1 }}">
+          <van-loading size="24px" vertical>加载中...</van-loading>
+        </view>
+
+        <!-- 订单列表 -->
+        <view class="order-list" wx:elif="{{ orders.length > 0 }}">
+          <view
+            class="order-card"
+            wx:for="{{ orders }}"
+            wx:key="buyOrderId"
+            data-id="{{ item.buyOrderId }}"
+            bindtap="onOrderClick"
+          >
+            <view class="order-header">
+              <text class="order-type">{{ item.cardTypeName }}</text>
+              <text class="order-status" style="color: {{ item.statusColor }}">{{ item.statusText }}</text>
+            </view>
+            <view class="order-body">
+              <view class="order-info">
+                <text class="info-label">订单编号</text>
+                <text class="info-value">{{ item.orderNo || item.buyOrderId }}</text>
+              </view>
+              <view class="order-info">
+                <text class="info-label">卡券面值</text>
+                <text class="info-value">{{ item.faceValue }}元</text>
+              </view>
+              <view class="order-info">
+                <text class="info-label">购买价格</text>
+                <text class="info-value highlight">¥{{ item.buyPrice }}</text>
+              </view>
+            </view>
+            <view class="order-footer">
+              <text class="order-time">{{ item.createTime }}</text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 空状态 -->
+        <view class="empty-section" wx:if="{{ !loading && orders.length === 0 }}">
+          <view class="empty-icon">📋</view>
+          <text class="empty-text">暂无购买订单</text>
+          <van-button type="primary" size="small" bind:click="onGoToBuy">
+            去购买
+          </van-button>
+        </view>
+      </view>
+    </van-tab>
+  </van-tabs>
+
+  <!-- 加载更多 -->
+  <view class="load-more" wx:if="{{ loading && page > 1 }}">
+    <van-loading size="20px">加载更多...</van-loading>
+  </view>
+  <view class="no-more" wx:if="{{ !hasMore && orders.length > 0 }}">
+    <text>没有更多了</text>
+  </view>
+</view>

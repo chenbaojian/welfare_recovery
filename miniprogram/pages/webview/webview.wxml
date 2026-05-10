@@ -1,0 +1,16 @@
+<!-- pages/webview/webview.wxml -->
+<view class="webview-container">
+  <!-- 加载中 -->
+  <view class="loading-section" wx:if="{{ loading }}">
+    <van-loading size="24px" vertical>加载中...</van-loading>
+  </view>
+  
+  <!-- 网页 -->
+  <web-view 
+    wx:if="{{ url }}"
+    src="{{ url }}"
+    bindload="onWebviewLoad"
+    binderror="onWebviewError"
+    bindmessage="onWebviewMessage"
+  ></web-view>
+</view>

@@ -1,0 +1,13 @@
+{
+  "navigationBarTitleText": "福利回收",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark",
+  "usingComponents": {
+    "van-search": "@vant/weapp/dist/search/index",
+    "van-icon": "@vant/weapp/dist/icon/index",
+    "van-loading": "@vant/weapp/dist/loading/index",
+    "van-skeleton": "@vant/weapp/dist/skeleton/index",
+    "card-item": "../../components/card-item/card-item",
+    "empty": "../../components/empty/empty"
+  }
+}

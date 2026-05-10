@@ -1,0 +1,137 @@
+<!-- pages/contact/contact.wxml -->
+<view class="contact-container">
+
+  <!-- 客服渠道 -->
+  <view class="section-title">客服渠道</view>
+
+  <!-- 在线客服 -->
+  <view class="channel-card">
+    <view class="channel-info">
+      <view class="channel-icon">💬</view>
+      <view class="channel-detail">
+        <text class="channel-name">在线客服</text>
+        <text class="channel-desc">实时在线沟通，快速解决问题</text>
+        <text class="channel-time">工作时间：9:00-21:00</text>
+      </view>
+    </view>
+    <button class="channel-btn online-btn" open-type="contact">立即咨询</button>
+  </view>
+
+  <!-- 电话客服 -->
+  <view class="channel-card">
+    <view class="channel-info">
+      <view class="channel-icon">📞</view>
+      <view class="channel-detail">
+        <text class="channel-name">电话客服</text>
+        <text class="channel-desc">拨打客服热线，语音沟通</text>
+        <text class="channel-time">工作时间：9:00-18:00</text>
+      </view>
+    </view>
+    <view class="channel-btn phone-btn" bindtap="onCallPhone">拨打电话</view>
+  </view>
+
+  <!-- 微信客服 -->
+  <view class="channel-card">
+    <view class="channel-info">
+      <view class="channel-icon">🟢</view>
+      <view class="channel-detail">
+        <text class="channel-name">微信客服</text>
+        <text class="channel-desc">添加客服微信号，随时咨询</text>
+        <text class="channel-time">客服微信号：FLHS_kefu</text>
+      </view>
+    </view>
+    <view class="channel-btn wechat-btn" bindtap="onCopyWechatId">复制微信号</view>
+  </view>
+
+  <!-- 常见问题 -->
+  <view class="section-title">常见问题</view>
+
+  <view class="faq-list">
+    <view class="faq-item" wx:for="{{ faqList }}" wx:key="id" bindtap="onToggleFaq" data-id="{{ item.id }}">
+      <view class="faq-question">
+        <text class="faq-q-icon">❓</text>
+        <text class="faq-q-text">{{ item.question }}</text>
+        <van-icon name="{{ activeFaqId === item.id ? 'arrow-up' : 'arrow-down' }}" size="14" color="#999" />
+      </view>
+      <view class="faq-answer {{ activeFaqId === item.id ? 'active' : '' }}">
+        <text>{{ item.answer }}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 留言反馈 -->
+  <view class="section-title">留言反馈</view>
+
+  <view class="feedback-card">
+    <!-- 问题分类 -->
+    <view class="feedback-field" bindtap="onShowCategoryPicker">
+      <text class="feedback-label">问题分类</text>
+      <view class="feedback-picker-value">
+        <text class="{{ selectedCategory ? '' : 'placeholder' }}">{{ selectedCategory ? selectedCategoryLabel : '请选择问题分类' }}</text>
+        <van-icon name="arrow" size="14" color="#999" />
+      </view>
+    </view>
+
+    <!-- 问题描述 -->
+    <view class="feedback-field textarea-field">
+      <text class="feedback-label">问题描述</text>
+      <textarea
+        class="feedback-textarea"
+        placeholder="请详细描述您的问题（至少10个字）"
+        placeholder-class="textarea-placeholder"
+        value="{{ feedbackContent }}"
+        bindinput="onInputContent"
+        maxlength="500"
+        auto-height
+      />
+      <text class="feedback-count">{{ contentLength }}/500</text>
+    </view>
+
+    <!-- 联系方式 -->
+    <view class="feedback-field">
+      <text class="feedback-label">联系方式</text>
+      <input
+        class="feedback-input"
+        placeholder="请输入手机号或微信号"
+        placeholder-class="input-placeholder"
+        value="{{ feedbackContact }}"
+        bindinput="onInputContact"
+      />
+    </view>
+
+    <!-- 提交按钮 -->
+    <view class="feedback-submit" bindtap="onSubmitFeedback">
+      提交留言
+    </view>
+  </view>
+
+  <!-- 分类选择弹窗 -->
+  <van-popup
+    show="{{ showCategoryPicker }}"
+    position="bottom"
+    round
+    bind:close="onCloseCategoryPicker"
+  >
+    <view class="picker-header">
+      <text class="picker-cancel" bindtap="onCloseCategoryPicker">取消</text>
+      <text class="picker-title">选择问题分类</text>
+      <text class="picker-confirm" bindtap="onConfirmCategory">确定</text>
+    </view>
+    <view class="picker-options">
+      <view
+        class="picker-option {{ tempCategory === item.value ? 'active' : '' }}"
+        wx:for="{{ categoryList }}"
+        wx:key="value"
+        bindtap="onSelectCategory"
+        data-value="{{ item.value }}"
+        data-label="{{ item.label }}"
+      >
+        <text>{{ item.label }}</text>
+        <van-icon wx:if="{{ tempCategory === item.value }}" name="success" size="16" color="#1890FF" />
+      </view>
+    </view>
+  </van-popup>
+
+</view>
+
+<van-toast id="van-toast" />

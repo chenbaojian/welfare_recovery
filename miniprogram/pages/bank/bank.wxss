@@ -1,0 +1,211 @@
+/* pages/bank/bank.wxss */
+
+.bank-container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: 30px;
+}
+
+/* 加载中 */
+.loading-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 100px 0;
+}
+
+/* 账户列表 */
+.bank-list {
+  padding: 15px;
+}
+
+.bank-item {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 10px;
+}
+
+.bank-item.default {
+  border: 1px solid #1890FF;
+}
+
+.bank-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.bank-icon-emoji {
+  font-size: 32px;
+  margin-right: 12px;
+}
+
+.bank-icon {
+  width: 36px;
+  height: 36px;
+  margin-right: 12px;
+}
+
+.bank-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.bank-name {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.bank-no {
+  font-size: 12px;
+  color: #999;
+}
+
+.default-badge {
+  padding: 2px 8px;
+  background-color: rgba(24, 144, 255, 0.1);
+  color: #1890FF;
+  font-size: 10px;
+  border-radius: 4px;
+}
+
+.bank-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.action-btn {
+  padding: 4px 12px;
+  font-size: 12px;
+  color: #1890FF;
+  background-color: rgba(24, 144, 255, 0.1);
+  border-radius: 4px;
+}
+
+.action-btn.delete {
+  color: #F5222D;
+  background-color: rgba(245, 34, 45, 0.1);
+}
+
+/* 空状态 */
+.empty-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px 0;
+}
+
+.empty-text {
+  font-size: 14px;
+  color: #999;
+  margin-top: 15px;
+}
+
+/* 添加按钮 */
+.add-section {
+  padding: 0 15px;
+}
+
+.add-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  background-color: #fff;
+  border-radius: 8px;
+  border: 1px dashed #1890FF;
+}
+
+.add-text {
+  font-size: 14px;
+  color: #1890FF;
+  margin-left: 8px;
+}
+
+/* 说明 */
+.notice-section {
+  background-color: #fff;
+  padding: 15px;
+  margin: 15px;
+  border-radius: 8px;
+}
+
+.notice-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.notice-item {
+  font-size: 12px;
+  color: #999;
+  line-height: 2;
+}
+
+/* 弹窗内容 */
+.popup-content {
+  padding: 20px 15px;
+  padding-bottom: 40px;
+}
+
+.popup-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.form-item {
+  display: flex;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.form-label {
+  width: 70px;
+  font-size: 14px;
+  color: #333;
+}
+
+.form-value {
+  flex: 1;
+  font-size: 14px;
+  color: #333;
+}
+
+.placeholder {
+  color: #999;
+}
+
+.form-input {
+  flex: 1;
+  font-size: 14px;
+  color: #333;
+}
+
+.error-text {
+  font-size: 12px;
+  color: #F5222D;
+  margin-top: 5px;
+  padding-left: 70px;
+}
+
+.popup-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  background-color: #1890FF;
+  color: #fff;
+  font-size: 16px;
+  border-radius: 24px;
+  margin-top: 30px;
+}

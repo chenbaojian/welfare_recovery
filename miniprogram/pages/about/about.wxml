@@ -1,0 +1,91 @@
+<!-- pages/about/about.wxml -->
+<view class="about-container">
+
+  <!-- 产品头部 -->
+  <view class="about-header">
+    <text class="about-logo">🎫</text>
+    <text class="about-name">{{ appName }}</text>
+    <text class="about-desc">{{ appDescription }}</text>
+  </view>
+
+  <!-- 产品介绍 -->
+  <view class="section-title">产品介绍</view>
+  <view class="intro-card">
+    <text class="intro-text">{{ introduction }}</text>
+  </view>
+
+  <!-- 核心优势 -->
+  <view class="section-title">核心优势</view>
+  <view class="advantage-grid">
+    <view class="advantage-item" wx:for="{{ advantages }}" wx:key="title">
+      <text class="advantage-icon">{{ item.icon }}</text>
+      <text class="advantage-title">{{ item.title }}</text>
+      <text class="advantage-desc">{{ item.desc }}</text>
+    </view>
+  </view>
+
+  <!-- 版本信息 -->
+  <view class="section-title">版本信息</view>
+  <view class="version-card">
+    <view class="version-row">
+      <text class="version-label">当前版本</text>
+      <text class="version-value">v{{ appVersion }}</text>
+    </view>
+    <view class="version-row">
+      <text class="version-label">更新时间</text>
+      <text class="version-value">{{ updateDate }}</text>
+    </view>
+  </view>
+
+  <!-- 法律信息 -->
+  <view class="section-title">法律信息</view>
+  <view class="legal-card">
+    <view class="legal-item" bindtap="onViewUserAgreement">
+      <text class="legal-icon">📄</text>
+      <text class="legal-label">用户协议</text>
+      <van-icon name="arrow" size="14" color="#999" />
+    </view>
+    <view class="legal-item" bindtap="onViewPrivacyPolicy">
+      <text class="legal-icon">🔒</text>
+      <text class="legal-label">隐私政策</text>
+      <van-icon name="arrow" size="14" color="#999" />
+    </view>
+  </view>
+
+  <!-- 联系我们 -->
+  <view class="section-title">联系我们</view>
+  <view class="contact-card">
+    <view class="contact-item" bindtap="onCallPhone">
+      <text class="contact-icon">📞</text>
+      <view class="contact-detail">
+        <text class="contact-label">客服热线</text>
+        <text class="contact-value">{{ contactInfo.phone }}</text>
+      </view>
+      <van-icon name="phone" size="16" color="#1890FF" />
+    </view>
+    <view class="contact-item" bindtap="onCopyWechat">
+      <text class="contact-icon">🟢</text>
+      <view class="contact-detail">
+        <text class="contact-label">微信客服</text>
+        <text class="contact-value">{{ contactInfo.wechat }}</text>
+      </view>
+      <van-icon name="link" size="16" color="#52C41A" />
+    </view>
+    <view class="contact-item" bindtap="onCopyEmail">
+      <text class="contact-icon">📧</text>
+      <view class="contact-detail">
+        <text class="contact-label">邮箱</text>
+        <text class="contact-value">{{ contactInfo.email }}</text>
+      </view>
+      <van-icon name="envelop-o" size="16" color="#FAAD14" />
+    </view>
+  </view>
+
+  <!-- 版权信息 -->
+  <view class="copyright">
+    <text>{{ copyright }}</text>
+  </view>
+
+</view>
+
+<van-toast id="van-toast" />

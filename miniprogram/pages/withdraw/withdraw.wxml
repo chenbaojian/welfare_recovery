@@ -1,0 +1,88 @@
+<!-- pages/withdraw/withdraw.wxml -->
+<view class="withdraw-container">
+  <!-- 加载中 -->
+  <view class="loading-section" wx:if="{{ loading }}">
+    <van-loading size="24px" vertical>加载中...</van-loading>
+  </view>
+
+  <!-- 主内容 -->
+  <view class="main-content" wx:else>
+    <!-- 账户余额 -->
+    <view class="balance-section">
+      <view class="balance-card">
+        <text class="balance-label">账户余额</text>
+        <text class="balance-value">¥{{ balance }}</text>
+      </view>
+    </view>
+
+    <!-- 提现金额 -->
+    <view class="amount-section">
+      <view class="section-title">提现金额</view>
+      <van-cell-group inset>
+        <van-field
+          value="{{ withdrawAmount }}"
+          type="digit"
+          placeholder="请输入提现金额"
+          bind:change="onAmountInput"
+          error-message="{{ errors.amount }}"
+        >
+          <view slot="button" class="withdraw-all" bindtap="onWithdrawAll">全部提现</view>
+        </van-field>
+      </van-cell-group>
+
+      <!-- 提现规则 -->
+      <view class="amount-rules">
+        <text class="rule-text">最低提现{{ minAmount }}元，最高{{ maxAmount }}元</text>
+      </view>
+    </view>
+
+    <!-- 结算账户 -->
+    <view class="bank-section">
+      <view class="section-title">结算账户</view>
+
+      <!-- 已绑定账户 -->
+      <view class="bank-card" wx:if="{{ defaultBank }}" bindtap="goToBank">
+        <view class="bank-info">
+          <view class="bank-icon-emoji">🏦</view>
+          <view class="bank-text">
+            <text class="bank-name">{{ defaultBank.bankName }}</text>
+            <text class="bank-no">{{ defaultBank.cardNo }}</text>
+          </view>
+        </view>
+        <van-icon name="arrow" color="#999" />
+      </view>
+
+      <!-- 未绑定账户 -->
+      <view class="no-bank" wx:else bindtap="goToBank">
+        <van-icon name="add-o" size="20" color="#1890FF" />
+        <text class="no-bank-text">添加结算账户</text>
+      </view>
+    </view>
+
+    <!-- 提现说明 -->
+    <view class="notice-section">
+      <view class="notice-title">提现说明</view>
+      <view class="notice-item">• 提现申请提交后，1-3个工作日处理</view>
+      <view class="notice-item">• 提现金额将转入绑定的结算账户</view>
+      <view class="notice-item">• 如有问题请联系客服</view>
+    </view>
+
+    <!-- 提交按钮 -->
+    <view class="submit-section">
+      <view
+        class="submit-btn {{ submitting ? 'disabled' : '' }}"
+        bindtap="onSubmit"
+      >
+        <text wx:if="{{ !submitting }}">提交提现</text>
+        <van-loading wx:if="{{ submitting }}" size="20px" color="#fff" />
+      </view>
+    </view>
+
+    <!-- 提现记录 -->
+    <view class="record-section">
+      <text class="record-link" bindtap="goToWithdrawList">查看提现记录</text>
+    </view>
+  </view>
+</view>
+
+<van-dialog id="van-dialog" />

@@ -1,0 +1,90 @@
+<!-- pages/feedback/feedback.wxml -->
+<view class="feedback-container">
+
+  <!-- 反馈类型 -->
+  <view class="section-title">反馈类型</view>
+  <view class="type-grid">
+    <view
+      class="type-item {{ selectedType === item.value ? 'active' : '' }}"
+      wx:for="{{ typeList }}"
+      wx:key="value"
+      bindtap="onSelectType"
+      data-value="{{ item.value }}"
+    >
+      <text class="type-icon">{{ item.icon }}</text>
+      <text class="type-label">{{ item.label }}</text>
+    </view>
+  </view>
+
+  <!-- 反馈内容 -->
+  <view class="section-title">反馈内容</view>
+  <view class="content-card">
+    <textarea
+      class="content-textarea"
+      placeholder="请详细描述您的意见或建议（至少10个字）"
+      placeholder-class="textarea-placeholder"
+      value="{{ feedbackContent }}"
+      bindinput="onInputContent"
+      maxlength="500"
+      auto-height
+    />
+    <text class="content-count">{{ contentLength }}/500</text>
+  </view>
+
+  <!-- 上传图片 -->
+  <view class="section-title">上传图片（可选，最多3张）</view>
+  <view class="image-card">
+    <view class="image-list">
+      <view class="image-item" wx:for="{{ imageList }}" wx:key="index">
+        <image class="image-preview" src="{{ item }}" mode="aspectFill" bindtap="onPreviewImage" data-url="{{ item }}" />
+        <view class="image-delete" catchtap="onDeleteImage" data-index="{{ index }}">✕</view>
+      </view>
+      <view class="image-add" bindtap="onChooseImage" wx:if="{{ imageList.length < 3 }}">
+        <text class="image-add-icon">+</text>
+        <text class="image-add-text">添加图片</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 联系方式 -->
+  <view class="section-title">联系方式（可选）</view>
+  <view class="contact-card">
+    <input
+      class="contact-input"
+      placeholder="请输入手机号或微信号，方便我们联系您"
+      placeholder-class="input-placeholder"
+      value="{{ feedbackContact }}"
+      bindinput="onInputContact"
+    />
+  </view>
+
+  <!-- 提交按钮 -->
+  <view class="submit-btn" bindtap="onSubmitFeedback">提交反馈</view>
+
+  <!-- 我的反馈记录 -->
+  <view class="section-title">我的反馈记录</view>
+  <view class="record-list" wx:if="{{ feedbackRecords.length > 0 }}">
+    <view class="record-item" wx:for="{{ feedbackRecords }}" wx:key="id">
+      <view class="record-header">
+        <text class="record-type-icon">{{ item.typeIcon }}</text>
+        <text class="record-type-label">{{ item.typeLabel }}</text>
+        <text class="record-status" style="color: {{ item.statusColor }}">{{ item.statusLabel }}</text>
+      </view>
+      <text class="record-content">{{ item.content }}</text>
+      <view class="record-footer">
+        <text class="record-time">{{ item.createTime }}</text>
+      </view>
+      <!-- 客服回复 -->
+      <view class="record-reply" wx:if="{{ item.reply }}">
+        <text class="reply-label">客服回复：</text>
+        <text class="reply-content">{{ item.reply }}</text>
+      </view>
+    </view>
+  </view>
+  <view class="record-empty" wx:else>
+    <text>暂无反馈记录</text>
+  </view>
+
+</view>
+
+<van-toast id="van-toast" />

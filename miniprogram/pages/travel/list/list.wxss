@@ -1,0 +1,107 @@
+/* pages/travel/list/list.wxss */
+
+.travel-list-container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding: 15px;
+}
+
+/* 提示信息 */
+.tip-section {
+  margin-bottom: 15px;
+}
+
+/* 卡券列表 */
+.item-list {
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.item-card {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.item-card:last-child {
+  border-bottom: none;
+}
+
+.item-card:active {
+  background-color: #f5f5f5;
+}
+
+.item-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 15px;
+}
+
+.icon-text {
+  font-size: 28px;
+}
+
+.item-info {
+  flex: 1;
+}
+
+.item-name {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.item-desc {
+  font-size: 12px;
+  color: #999;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.item-meta {
+  display: flex;
+  align-items: center;
+}
+
+.item-discount {
+  font-size: 12px;
+  color: #F5222D;
+  font-weight: 500;
+}
+
+.item-arrow {
+  padding-left: 10px;
+}
+
+/* 回收说明 */
+.notice-section {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 15px;
+}
+
+.section-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 12px;
+}
+
+.notice-list {
+  padding-left: 0;
+}
+
+.notice-item {
+  font-size: 12px;
+  color: #666;
+  line-height: 24px;
+}

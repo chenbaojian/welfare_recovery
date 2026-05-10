@@ -1,0 +1,79 @@
+<!-- pages/rsctrip/detail/detail.wxml -->
+<view class="rsctrip-detail-container">
+  <!-- 头部信息 -->
+  <view class="header-section">
+    <view class="header-icon">🎫</view>
+    <text class="header-title">融晟携程卡包回收</text>
+    <text class="header-discount">回收折扣: {{ discount * 10 }}折</text>
+  </view>
+
+  <!-- 表单区域 -->
+  <view class="form-section">
+    <!-- 卡密 -->
+    <view class="form-item">
+      <view class="form-label">
+        <text class="label-text">卡密</text>
+        <text class="label-required">*</text>
+      </view>
+      <input
+        class="form-input"
+        type="text"
+        placeholder="请输入卡密"
+        value="{{ cardPwd }}"
+        bindinput="onInputCardPwd"
+      />
+    </view>
+
+    <!-- 金额 -->
+    <view class="form-item">
+      <view class="form-label">
+        <text class="label-text">金额</text>
+        <text class="label-required">*</text>
+      </view>
+      <input
+        class="form-input"
+        type="digit"
+        placeholder="请输入金额"
+        value="{{ amount }}"
+        bindinput="onInputAmount"
+      />
+      <text class="form-unit">元</text>
+    </view>
+  </view>
+
+  <!-- 回收金额 -->
+  <view class="amount-section" wx:if="{{ amount > 0 }}">
+    <view class="amount-row">
+      <text class="amount-label">卡包金额</text>
+      <text class="amount-value">{{ amount }} 元</text>
+    </view>
+    <view class="amount-row">
+      <text class="amount-label">回收金额</text>
+      <text class="amount-value highlight">{{ recycleAmount }} 元</text>
+    </view>
+  </view>
+
+  <!-- 提交按钮 - 只有输入金额后才显示 -->
+  <view class="submit-section" wx:if="{{ amount > 0 }}">
+    <van-button
+      type="primary"
+      block
+      loading="{{ submitting }}"
+      disabled="{{ submitting }}"
+      bind:click="onSubmitOrder"
+    >
+      提交订单
+    </van-button>
+  </view>
+
+  <!-- 温馨提示 -->
+  <view class="notice-section">
+    <view class="notice-title">温馨提示</view>
+    <view class="notice-content">
+      <view class="notice-item">• 请确保卡密有效且未使用</view>
+      <view class="notice-item">• 提交后无法撤销，请仔细核对信息</view>
+      <view class="notice-item">• 回收金额将在1-3个工作日内到账</view>
+      <view class="notice-item">• 如有问题请联系客服</view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,286 @@
+/* pages/feedback/feedback.wxss */
+
+.feedback-container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding: 15px;
+  padding-bottom: 30px;
+}
+
+/* 区块标题 */
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin: 20px 0 12px;
+  padding-left: 2px;
+}
+
+.section-title:first-child {
+  margin-top: 10px;
+}
+
+/* 反馈类型 */
+.type-grid {
+  display: flex;
+  gap: 10px;
+}
+
+.type-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 12px 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.type-item.active {
+  border-color: #1890FF;
+  background-color: rgba(24, 144, 255, 0.05);
+}
+
+.type-icon {
+  font-size: 24px;
+  margin-bottom: 6px;
+}
+
+.type-label {
+  font-size: 13px;
+  color: #333;
+  font-weight: 500;
+}
+
+.type-item.active .type-label {
+  color: #1890FF;
+}
+
+/* 反馈内容 */
+.content-card {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.content-textarea {
+  width: 100%;
+  min-height: 100px;
+  font-size: 14px;
+  color: #333;
+  line-height: 1.6;
+  background-color: transparent;
+}
+
+.textarea-placeholder {
+  color: #999;
+  font-size: 14px;
+}
+
+.content-count {
+  font-size: 12px;
+  color: #999;
+  text-align: right;
+  display: block;
+  margin-top: 8px;
+}
+
+/* 上传图片 */
+.image-card {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.image-list {
+  display: flex;
+  gap: 10px;
+}
+
+.image-item {
+  width: 80px;
+  height: 80px;
+  position: relative;
+}
+
+.image-preview {
+  width: 80px;
+  height: 80px;
+  border-radius: 6px;
+}
+
+.image-delete {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 20px;
+  height: 20px;
+  background-color: #F5222D;
+  color: #fff;
+  font-size: 12px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.image-add {
+  width: 80px;
+  height: 80px;
+  border-radius: 6px;
+  border: 1px dashed #d9d9d9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #fafafa;
+}
+
+.image-add-icon {
+  font-size: 24px;
+  color: #999;
+  line-height: 1;
+}
+
+.image-add-text {
+  font-size: 12px;
+  color: #999;
+  margin-top: 4px;
+}
+
+/* 联系方式 */
+.contact-card {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 0 15px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.contact-input {
+  height: 48px;
+  font-size: 14px;
+  color: #333;
+}
+
+.input-placeholder {
+  color: #999;
+  font-size: 14px;
+}
+
+/* 提交按钮 */
+.submit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  background-color: #1890FF;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.submit-btn:active {
+  background-color: #096dd9;
+}
+
+/* 反馈记录 */
+.record-list {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.record-item {
+  padding: 15px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.record-item:last-child {
+  border-bottom: none;
+}
+
+.record-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.record-type-icon {
+  font-size: 16px;
+  margin-right: 6px;
+}
+
+.record-type-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  flex: 1;
+}
+
+.record-status {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.record-content {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.5;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.record-footer {
+  display: flex;
+  align-items: center;
+}
+
+.record-time {
+  font-size: 12px;
+  color: #999;
+}
+
+/* 客服回复 */
+.record-reply {
+  background-color: #f0f7ff;
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-top: 10px;
+}
+
+.reply-label {
+  font-size: 12px;
+  color: #1890FF;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.reply-content {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.5;
+}
+
+/* 空状态 */
+.record-empty {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 40px 0;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.record-empty text {
+  font-size: 14px;
+  color: #999;
+}

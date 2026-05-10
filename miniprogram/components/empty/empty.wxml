@@ -1,0 +1,23 @@
+<!-- components/empty/empty.wxml -->
+<view class="empty-container" bindtap="onTap">
+  <!-- 空状态emoji图标 -->
+  <view class="empty-emoji" wx:if="{{ !image }}">{{ defaultConfig[type].emoji || '📭' }}</view>
+
+  <!-- 空状态图片（如果有） -->
+  <image
+    wx:if="{{ image }}"
+    class="empty-image"
+    src="{{ image }}"
+    mode="aspectFit"
+  />
+
+  <!-- 描述文字 -->
+  <view class="empty-description">
+    {{ description || defaultConfig[type].description }}
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="empty-button" wx:if="{{ showButton }}" bindtap="onButtonClick">
+    {{ buttonText }}
+  </view>
+</view>

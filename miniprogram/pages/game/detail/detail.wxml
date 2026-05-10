@@ -1,0 +1,99 @@
+<!-- pages/game/detail/detail.wxml -->
+<view class="game-detail-container">
+  <!-- 头部信息 -->
+  <view class="header-section">
+    <view class="header-icon">🎮</view>
+    <text class="header-title">网易一卡通回收</text>
+    <text class="header-discount">回收折扣: {{ discount * 10 }}折</text>
+  </view>
+
+  <!-- 选择面值 -->
+  <view class="section">
+    <view class="section-title">选择面值</view>
+    <view class="face-value-list">
+      <view
+        class="face-value-item {{ selectedFaceValue === item ? 'active' : '' }}"
+        wx:for="{{ faceValues }}"
+        wx:key="*this"
+        data-value="{{ item }}"
+        bindtap="onSelectFaceValue"
+      >
+        <text class="face-value-text">{{ item }}元</text>
+        <text class="face-value-amount" wx:if="{{ selectedFaceValue === item }}">回收{{ item * discount }}元</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 输入卡号卡密 -->
+  <view class="section" wx:if="{{ selectedFaceValue }}">
+    <view class="section-title">输入卡券信息</view>
+    
+    <view class="input-section">
+      <view class="input-label">
+        <text>卡号</text>
+        <text class="input-tip">{{ cardNoLength }}位数字</text>
+      </view>
+      <input
+        class="input-field"
+        type="text"
+        maxlength="{{ cardNoLength }}"
+        placeholder="请输入{{ cardNoLength }}位卡号"
+        value="{{ cardNo }}"
+        bindinput="onInputCardNo"
+      />
+      <view class="input-count">{{ cardNo.length }}/{{ cardNoLength }}</view>
+    </view>
+
+    <view class="input-section">
+      <view class="input-label">
+        <text>卡密</text>
+        <text class="input-tip">{{ cardPwdLength }}位数字</text>
+      </view>
+      <input
+        class="input-field"
+        type="text"
+        maxlength="{{ cardPwdLength }}"
+        placeholder="请输入{{ cardPwdLength }}位卡密"
+        value="{{ cardPwd }}"
+        bindinput="onInputCardPwd"
+      />
+      <view class="input-count">{{ cardPwd.length }}/{{ cardPwdLength }}</view>
+    </view>
+  </view>
+
+  <!-- 回收金额 -->
+  <view class="amount-section" wx:if="{{ selectedFaceValue }}">
+    <view class="amount-row">
+      <text class="amount-label">面值</text>
+      <text class="amount-value">{{ selectedFaceValue }}元</text>
+    </view>
+    <view class="amount-row">
+      <text class="amount-label">回收金额</text>
+      <text class="amount-value highlight">{{ recycleAmount }}元</text>
+    </view>
+  </view>
+
+  <!-- 提交按钮 -->
+  <view class="submit-section" wx:if="{{ selectedFaceValue }}">
+    <van-button
+      type="primary"
+      block
+      loading="{{ submitting }}"
+      disabled="{{ submitting }}"
+      bind:click="onSubmitOrder"
+    >
+      提交订单
+    </van-button>
+  </view>
+
+  <!-- 温馨提示 -->
+  <view class="notice-section">
+    <view class="section-title">温馨提示</view>
+    <view class="notice-content">
+      <view class="notice-item">• 请确保网易一卡通有效且未使用</view>
+      <view class="notice-item">• 卡号为13位数字，卡密为9位数字</view>
+      <view class="notice-item">• 提交后无法撤销，请仔细核对卡号卡密</view>
+      <view class="notice-item">• 回收金额将在1-3个工作日内到账</view>
+    </view>
+  </view>
+</view>

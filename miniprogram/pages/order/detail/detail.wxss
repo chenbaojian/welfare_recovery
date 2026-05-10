@@ -1,0 +1,192 @@
+/* pages/order/detail/detail.wxss */
+
+.order-detail-container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: 30px;
+}
+
+/* 加载中 */
+.loading-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 100px 0;
+}
+
+/* 状态卡片 */
+.status-card {
+  padding: 30px 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #fff;
+}
+
+.status-card.PENDING,
+.status-card.pending {
+  background: linear-gradient(135deg, #FAAD14 0%, #FFD666 100%);
+}
+
+.status-card.PROCESSING,
+.status-card.processing {
+  background: linear-gradient(135deg, #1989fa 0%, #69c0ff 100%);
+}
+
+.status-card.SUCCESS,
+.status-card.success {
+  background: linear-gradient(135deg, #07C160 0%, #73D13D 100%);
+}
+
+.status-card.FAILED,
+.status-card.failed {
+  background: linear-gradient(135deg, #F5222D 0%, #FF7875 100%);
+}
+
+.status-card.CANCELLED,
+.status-card.cancelled {
+  background: linear-gradient(135deg, #999 0%, #bfbfbf 100%);
+}
+
+.status-icon {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+.status-text {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.status-tip {
+  font-size: 12px;
+  margin-top: 8px;
+  opacity: 0.9;
+}
+
+/* 信息区域 */
+.info-section {
+  background-color: #fff;
+  padding: 15px;
+  margin-top: 15px;
+}
+
+.section-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.info-list {
+  padding: 0;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  font-size: 14px;
+  color: #666;
+}
+
+.info-value-wrap {
+  display: flex;
+  align-items: center;
+}
+
+.info-value {
+  font-size: 14px;
+  color: #333;
+}
+
+.info-value.highlight {
+  color: #F5222D;
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.copy-btn {
+  font-size: 12px;
+  color: #1989fa;
+  margin-left: 10px;
+  padding: 2px 8px;
+  border: 1px solid #1989fa;
+  border-radius: 4px;
+}
+
+/* 空状态 */
+.result-section {
+  padding: 15px;
+  margin-top: 15px;
+}
+
+.result-card {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 30px 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.result-card.pending {
+  border: 1px solid #FAAD14;
+}
+
+.result-card.success {
+  border: 1px solid #52C41A;
+}
+
+.result-card.failed {
+  border: 1px solid #F5222D;
+}
+
+.result-card.cancelled {
+  border: 1px solid #999;
+}
+
+.result-icon {
+  font-size: 50px;
+  margin-bottom: 15px;
+}
+
+.result-text {
+  font-size: 16px;
+  color: #333;
+  font-weight: 500;
+}
+
+.result-desc {
+  font-size: 13px;
+  color: #999;
+  margin-top: 8px;
+  text-align: center;
+}
+
+/* 空状态 */
+.empty-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 100px 0;
+}
+
+.empty-icon {
+  font-size: 60px;
+  margin-bottom: 15px;
+}
+
+.empty-text {
+  font-size: 14px;
+  color: #999;
+}

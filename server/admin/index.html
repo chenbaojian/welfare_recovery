@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>福利回收 - 管理后台</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- 登录页 -->
+  <div id="loginPage" class="page active">
+    <div class="login-container">
+      <div class="login-card">
+        <div class="login-header">
+          <span class="login-logo">🎫</span>
+          <h1>福利回收</h1>
+          <p>管理后台</p>
+        </div>
+        <div class="login-form">
+          <div class="form-group">
+            <label>用户名</label>
+            <input type="text" id="loginUsername" placeholder="请输入用户名" value="admin">
+          </div>
+          <div class="form-group">
+            <label>密码</label>
+            <input type="password" id="loginPassword" placeholder="请输入密码" value="admin123">
+          </div>
+          <button class="btn-primary" id="loginBtn">登录</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 主页面 -->
+  <div id="mainPage" class="page">
+    <!-- 侧边栏 -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <span class="sidebar-logo">🎫</span>
+        <span class="sidebar-title">福利回收</span>
+      </div>
+      <div class="sidebar-menu">
+        <div class="menu-item active" data-page="dashboard" data-menu="dashboard">
+          <span class="menu-icon">📊</span>
+          <span class="menu-text">数据概览</span>
+        </div>
+        <div class="menu-item" data-page="orders" data-menu="orders">
+          <span class="menu-icon">📋</span>
+          <span class="menu-text">订单管理</span>
+        </div>
+        <div class="menu-item" data-page="users" data-menu="users">
+          <span class="menu-icon">👥</span>
+          <span class="menu-text">用户管理</span>
+        </div>
+        <div class="menu-item" data-page="assets" data-menu="assets">
+          <span class="menu-icon">💰</span>
+          <span class="menu-text">回收资产</span>
+        </div>
+        <div class="menu-item" data-page="soldAssets" data-menu="soldAssets">
+          <span class="menu-icon">🛒</span>
+          <span class="menu-text">已销售资产</span>
+        </div>
+        <div class="menu-item" data-page="availableAssets" data-menu="availableAssets">
+          <span class="menu-icon">📦</span>
+          <span class="menu-text">可销售资产</span>
+        </div>
+      </div>
+      <div class="sidebar-footer">
+        <div class="admin-info">
+          <span class="admin-avatar">👤</span>
+          <span class="admin-name" id="adminName">管理员</span>
+        </div>
+        <button class="btn-logout" id="logoutBtn">退出登录</button>
+      </div>
+    </div>
+
+    <!-- 主内容区 -->
+    <div class="main-content">
+      <!-- 数据概览 -->
+      <div id="dashboardPage" class="content-page active">
+        <div class="page-header">
+          <h2>数据概览</h2>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">📋</div>
+            <div class="stat-info">
+              <div class="stat-value" id="statTodayOrders">0</div>
+              <div class="stat-label">今日订单</div>
+            </div>
+          </div>
+          <div class="stat-card warning">
+            <div class="stat-icon">⏳</div>
+            <div class="stat-info">
+              <div class="stat-value" id="statPendingOrders">0</div>
+              <div class="stat-label">待处理订单</div>
+            </div>
+          </div>
+          <div class="stat-card info">
+            <div class="stat-icon">🔄</div>
+            <div class="stat-info">
+              <div class="stat-value" id="statProcessingOrders">0</div>
+              <div class="stat-label">处理中订单</div>
+            </div>
+          </div>
+          <div class="stat-card success">
+            <div class="stat-icon">💰</div>
+            <div class="stat-info">
+              <div class="stat-value" id="statTodayRecycle">¥0</div>
+              <div class="stat-label">今日回收金额</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-info">
+              <div class="stat-value" id="statTotalUsers">0</div>
+              <div class="stat-label">总用户数</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">💵</div>
+            <div class="stat-info">
+              <div class="stat-value" id="statTotalRecycle">¥0</div>
+              <div class="stat-label">累计回收金额</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 订单管理 -->
+      <div id="ordersPage" class="content-page">
+        <div class="page-header">
+          <h2>订单管理</h2>
+        </div>
+        <!-- 订单类型Tab -->
+        <div class="order-tabs" style="display:flex;gap:0;margin-bottom:16px;border-bottom:2px solid #e8e8e8;">
+          <div class="order-tab active" data-tab="seller" style="padding:10px 24px;cursor:pointer;font-size:15px;font-weight:500;border-bottom:2px solid #1890ff;margin-bottom:-2px;color:#1890ff;">卖家订单</div>
+          <div class="order-tab" data-tab="buyer" style="padding:10px 24px;cursor:pointer;font-size:15px;font-weight:500;border-bottom:2px solid transparent;margin-bottom:-2px;color:#666;">买家订单</div>
+        </div>
+        <!-- 卖家订单区域 -->
+        <div id="sellerOrderSection">
+          <div class="filter-bar">
+            <select id="filterStatus">
+              <option value="">全部状态</option>
+              <option value="PENDING">待处理</option>
+              <option value="PROCESSING">处理中</option>
+              <option value="SUCCESS">已完成</option>
+              <option value="FAILED">已失败</option>
+              <option value="CANCELLED">已取消</option>
+            </select>
+            <input type="text" id="filterOrderNo" placeholder="订单号搜索">
+            <button class="btn-primary btn-sm" id="refreshOrdersBtn">刷新</button>
+          </div>
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>订单号</th>
+                  <th>卖家</th>
+                  <th>卡券类型</th>
+                  <th>面值</th>
+                  <th>回收金额</th>
+                  <th>状态</th>
+                  <th>创建时间</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="orderTableBody">
+                <tr><td colspan="8" class="empty-row">加载中...</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="pagination" id="orderPagination"></div>
+        </div>
+        <!-- 买家订单区域 -->
+        <div id="buyerOrderSection" style="display:none;">
+          <div class="filter-bar">
+            <select id="filterBuyOrderStatus">
+              <option value="">全部状态</option>
+              <option value="PENDING">待支付</option>
+              <option value="PAID">已支付</option>
+              <option value="CANCELLED">已取消</option>
+            </select>
+            <input type="text" id="filterBuyOrderNo" placeholder="订单号搜索">
+            <button class="btn-primary btn-sm" id="refreshBuyOrdersBtn">刷新</button>
+          </div>
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>订单号</th>
+                  <th>买家</th>
+                  <th>卖家</th>
+                  <th>卡券类型</th>
+                  <th>面值</th>
+                  <th>购买价格</th>
+                  <th>折扣率</th>
+                  <th>状态</th>
+                  <th>创建时间</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="buyOrderTableBody">
+                <tr><td colspan="10" class="empty-row">加载中...</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="pagination" id="buyOrderPagination"></div>
+        </div>
+      </div>
+
+      <!-- 用户管理 -->
+      <div id="usersPage" class="content-page">
+        <div class="page-header">
+          <h2>用户管理</h2>
+        </div>
+        <!-- 筛选栏 -->
+        <div class="filter-bar">
+          <input type="text" id="filterUserPhone" placeholder="手机号搜索">
+          <input type="text" id="filterUserNickname" placeholder="昵称搜索">
+          <button class="btn-primary btn-sm" id="refreshUsersBtn">刷新</button>
+        </div>
+        <!-- 用户表格 -->
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>昵称</th>
+                <th>手机号</th>
+                <th>认证状态</th>
+                <th>余额</th>
+                <th>累计回收</th>
+                <th>订单数</th>
+                <th>注册时间</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="userTableBody">
+              <tr><td colspan="9" class="empty-row">加载中...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- 分页 -->
+        <div class="pagination" id="userPagination"></div>
+      </div>
+
+      <!-- 回收资产 -->
+      <div id="assetsPage" class="content-page">
+        <div class="page-header">
+          <h2>回收资产</h2>
+        </div>
+        <!-- 统计概览卡片 -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">📦</div>
+            <div class="stat-info">
+              <div class="stat-value" id="statAssetTotalCount">0</div>
+              <div class="stat-label">回收总张数</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">💵</div>
+            <div class="stat-info">
+              <div class="stat-value" id="statAssetTotalFaceValue">¥0</div>
+              <div class="stat-label">回收总面值</div>
+            </div>
+          </div>
+          <div class="stat-card success">
+            <div class="stat-icon">💰</div>
+            <div class="stat-info">
+              <div class="stat-value" id="statAssetTotalRecycleAmount">¥0</div>
+              <div class="stat-label">回收总金额</div>
+            </div>
+          </div>
+          <div class="stat-card info">
+            <div class="stat-icon">🎫</div>
+            <div class="stat-info">
+              <div class="stat-value" id="statAssetCardTypeCount">0</div>
+              <div class="stat-label">卡券种类数</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 篩选栏 -->
+        <div class="filter-bar">
+          <select id="filterAssetCardType">
+            <option value="">全部卡券类型</option>
+          </select>
+          <input type="number" id="filterAssetMinFaceValue" placeholder="最小面值" style="width:120px;">
+          <input type="number" id="filterAssetMaxFaceValue" placeholder="最大面值" style="width:120px;">
+          <input type="date" id="filterAssetStartDate" style="width:150px;">
+          <input type="date" id="filterAssetEndDate" style="width:150px;">
+          <input type="text" id="filterAssetPhone" placeholder="用户手机号" style="width:150px;">
+          <button class="btn-primary btn-sm" id="refreshAssetsBtn">刷新</button>
+          <button class="btn-success btn-sm" id="exportAssetsBtn">导出Excel</button>
+        </div>
+
+        <!-- 卡券分类汇总表格 -->
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>卡券类型</th>
+                <th>总张数</th>
+                <th>总面值金额</th>
+                <th>总回收金额</th>
+                <th>平均折扣率</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="assetSummaryTableBody">
+              <tr><td colspan="6" class="empty-row">加载中...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 面值分布区域 -->
+        <div id="assetFaceValueSection" class="detail-section" style="display:none;">
+          <div class="detail-section-title" id="assetFaceValueTitle">面值分布</div>
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>面值</th>
+                  <th>张数</th>
+                  <th>总面值</th>
+                  <th>总回收金额</th>
+                </tr>
+              </thead>
+              <tbody id="assetFaceValueTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 已销售资产 -->
+      <div id="soldAssetsPage" class="content-page">
+        <div class="page-header">
+          <h2>已销售资产</h2>
+        </div>
+        <!-- 统计概览卡片 -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">🛒</div>
+            <div class="stat-info">
+              <div class="stat-value" id="statSoldTotalCount">0</div>
+              <div class="stat-label">已售总张数</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">💵</div>
+            <div class="stat-info">
+              <div class="stat-value" id="statSoldTotalFaceValue">¥0</div>
+              <div class="stat-label">已售总面值</div>
+            </div>
+          </div>
+          <div class="stat-card success">
+            <div class="stat-icon">💰</div>
+            <div class="stat-info">
+              <div class="stat-value" id="statSoldTotalBuyAmount">¥0</div>
+              <div class="stat-label">销售总收入</div>
+            </div>
+          </div>
+          <div class="stat-card info">
+            <div class="stat-icon">🎫</div>
+            <div class="stat-info">
+              <div class="stat-value" id="statSoldCardTypeCount">0</div>
+              <div class="stat-label">卡券种类数</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 筛选栏 -->
+        <div class="filter-bar">
+          <select id="filterSoldCardType">
+            <option value="">全部卡券类型</option>
+          </select>
+          <input type="number" id="filterSoldMinFaceValue" placeholder="最小面值" style="width:120px;">
+          <input type="number" id="filterSoldMaxFaceValue" placeholder="最大面值" style="width:120px;">
+          <input type="date" id="filterSoldStartDate" style="width:150px;">
+          <input type="date" id="filterSoldEndDate" style="width:150px;">
+          <input type="text" id="filterSoldSellerPhone" placeholder="卖家手机号" style="width:130px;">
+          <input type="text" id="filterSoldBuyerPhone" placeholder="买家手机号" style="width:130px;">
+          <button class="btn-primary btn-sm" id="refreshSoldAssetsBtn">刷新</button>
+          <button class="btn-success btn-sm" id="exportSoldAssetsBtn">导出Excel</button>
+        </div>
+
+        <!-- 卡券分类汇总表格 -->
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>卡券类型</th>
+                <th>已售张数</th>
+                <th>总面值金额</th>
+                <th>总回收金额</th>
+                <th>总销售金额</th>
+                <th>平均折扣率</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="soldAssetSummaryTableBody">
+              <tr><td colspan="7" class="empty-row">加载中...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 面值分布区域 -->
+        <div id="soldAssetFaceValueSection" class="detail-section" style="display:none;">
+          <div class="detail-section-title" id="soldAssetFaceValueTitle">面值分布</div>
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>面值</th>
+                  <th>已售张数</th>
+                  <th>总面值</th>
+                  <th>总回收金额</th>
+                  <th>总销售金额</th>
+                </tr>
+              </thead>
+              <tbody id="soldAssetFaceValueTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 可销售资产 -->
+      <div id="availableAssetsPage" class="content-page">
+        <div class="page-header">
+          <h2>可销售资产</h2>
+        </div>
+        <!-- 统计概览卡片 -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">📦</div>
+            <div class="stat-info">
+              <div class="stat-value" id="statAvailableTotalCount">0</div>
+              <div class="stat-label">可售总张数</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">💵</div>
+            <div class="stat-info">
+              <div class="stat-value" id="statAvailableTotalFaceValue">¥0</div>
+              <div class="stat-label">可售总面值</div>
+            </div>
+          </div>
+          <div class="stat-card success">
+            <div class="stat-icon">💰</div>
+            <div class="stat-info">
+              <div class="stat-value" id="statAvailableEstimatedBuyAmount">¥0</div>
+              <div class="stat-label">预估销售总收入</div>
+            </div>
+          </div>
+          <div class="stat-card info">
+            <div class="stat-icon">🎫</div>
+            <div class="stat-info">
+              <div class="stat-value" id="statAvailableCardTypeCount">0</div>
+              <div class="stat-label">卡券种类数</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 筛选栏 -->
+        <div class="filter-bar">
+          <select id="filterAvailableCardType">
+            <option value="">全部卡券类型</option>
+          </select>
+          <input type="number" id="filterAvailableMinFaceValue" placeholder="最小面值" style="width:120px;">
+          <input type="number" id="filterAvailableMaxFaceValue" placeholder="最大面值" style="width:120px;">
+          <input type="date" id="filterAvailableStartDate" style="width:150px;">
+          <input type="date" id="filterAvailableEndDate" style="width:150px;">
+          <input type="text" id="filterAvailableSellerPhone" placeholder="卖家手机号" style="width:130px;">
+          <button class="btn-primary btn-sm" id="refreshAvailableAssetsBtn">刷新</button>
+          <button class="btn-success btn-sm" id="exportAvailableAssetsBtn">导出Excel</button>
+        </div>
+
+        <!-- 卡券分类汇总表格 -->
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>卡券类型</th>
+                <th>可售张数</th>
+                <th>总面值金额</th>
+                <th>总回收金额</th>
+                <th>预估销售金额</th>
+                <th>平均折扣率</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="availableAssetSummaryTableBody">
+              <tr><td colspan="7" class="empty-row">加载中...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 面值分布区域 -->
+        <div id="availableAssetFaceValueSection" class="detail-section" style="display:none;">
+          <div class="detail-section-title" id="availableAssetFaceValueTitle">面值分布</div>
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>面值</th>
+                  <th>可售张数</th>
+                  <th>总面值</th>
+                  <th>总回收金额</th>
+                  <th>预估销售金额</th>
+                </tr>
+              </thead>
+              <tbody id="availableAssetFaceValueTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 订单详情弹窗 -->
+  <div id="orderDetailModal" class="modal">
+    <div class="modal-content modal-lg">
+      <div class="modal-header">
+        <h3>订单详情</h3>
+        <button class="modal-close" data-close="orderDetailModal">✕</button>
+      </div>
+      <div class="modal-body" id="orderDetailBody">
+        <!-- 动态填充 -->
+      </div>
+      <div class="modal-footer" id="orderDetailFooter">
+        <!-- 动态填充操作按钮 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 拒绝订单弹窗 -->
+  <div id="rejectModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>拒绝订单</h3>
+        <button class="modal-close" data-close="rejectModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>拒绝原因</label>
+          <textarea id="rejectReason" placeholder="请输入拒绝原因（如：卡券无效、卡密错误等）" rows="4"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-default" data-close="rejectModal">取消</button>
+        <button class="btn-danger" id="confirmRejectBtn">确认拒绝</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 用户详情弹窗 -->
+  <div id="userDetailModal" class="modal">
+    <div class="modal-content modal-lg">
+      <div class="modal-header">
+        <h3>用户详情</h3>
+        <button class="modal-close" data-close="userDetailModal">✕</button>
+      </div>
+      <div class="modal-body" id="userDetailBody">
+        <!-- 动态填充 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 卡券明细弹窗 -->
+  <div id="assetDetailModal" class="modal">
+    <div class="modal-content modal-lg">
+      <div class="modal-header">
+        <h3 id="assetDetailModalTitle">卡券明细</h3>
+        <button class="modal-close" data-close="assetDetailModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="sensitive-tip" style="color:#F5222D;font-size:13px;margin-bottom:10px;">
+          ⚠️ 卡号、卡密为敏感信息，仅管理员可见，请勿外泄
+        </div>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>订单号</th>
+                <th>用户昵称</th>
+                <th>用户手机号</th>
+                <th>卡券面值</th>
+                <th>回收金额</th>
+                <th>卡号</th>
+                <th>卡密</th>
+                <th>提交时间</th>
+                <th>完结时间</th>
+              </tr>
+            </thead>
+            <tbody id="assetDetailTableBody">
+              <tr><td colspan="9" class="empty-row">加载中...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- 明细分页 -->
+        <div class="pagination" id="assetDetailPagination"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast提示 -->
+  <div id="toast" class="toast"></div>
+
+  <!-- 已销售资产明细弹窗 -->
+  <div id="soldAssetDetailModal" class="modal">
+    <div class="modal-content modal-lg">
+      <div class="modal-header">
+        <h3 id="soldAssetDetailModalTitle">已销售卡券明细</h3>
+        <button class="modal-close" data-close="soldAssetDetailModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="sensitive-tip" style="color:#F5222D;font-size:13px;margin-bottom:10px;">
+          ⚠️ 卡号、卡密为敏感信息，仅管理员可见，请勿外泄
+        </div>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>回收订单号</th>
+                <th>卖家昵称</th>
+                <th>卖家手机号</th>
+                <th>卡券面值</th>
+                <th>回收金额</th>
+                <th>购买价格</th>
+                <th>买家昵称</th>
+                <th>买家手机号</th>
+                <th>购买订单号</th>
+                <th>卡号</th>
+                <th>卡密</th>
+                <th>完结时间</th>
+                <th>售出时间</th>
+              </tr>
+            </thead>
+            <tbody id="soldAssetDetailTableBody">
+              <tr><td colspan="13" class="empty-row">加载中...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="pagination" id="soldAssetDetailPagination"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 可销售资产明细弹窗 -->
+  <div id="availableAssetDetailModal" class="modal">
+    <div class="modal-content modal-lg">
+      <div class="modal-header">
+        <h3 id="availableAssetDetailModalTitle">可销售卡券明细</h3>
+        <button class="modal-close" data-close="availableAssetDetailModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="sensitive-tip" style="color:#F5222D;font-size:13px;margin-bottom:10px;">
+          ⚠️ 卡号、卡密为敏感信息，仅管理员可见，请勿外泄
+        </div>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>回收订单号</th>
+                <th>卖家昵称</th>
+                <th>卖家手机号</th>
+                <th>卡券面值</th>
+                <th>回收金额</th>
+                <th>购买折扣</th>
+                <th>购买价格</th>
+                <th>卡号</th>
+                <th>卡密</th>
+                <th>完结时间</th>
+              </tr>
+            </thead>
+            <tbody id="availableAssetDetailTableBody">
+              <tr><td colspan="10" class="empty-row">加载中...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="pagination" id="availableAssetDetailPagination"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

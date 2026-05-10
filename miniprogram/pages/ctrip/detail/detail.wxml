@@ -1,0 +1,97 @@
+<!-- pages/ctrip/detail/detail.wxml -->
+<view class="ctrip-detail-container">
+  <!-- 头部信息 -->
+  <view class="header-section">
+    <view class="header-icon">✈️</view>
+    <text class="header-title">携程积分回收</text>
+    <text class="header-discount">回收折扣: {{ discount * 10 }}折</text>
+  </view>
+
+  <!-- 表单区域 -->
+  <view class="form-section">
+    <!-- 手机号 -->
+    <view class="form-item">
+      <view class="form-label">
+        <text class="label-text">手机号</text>
+        <text class="label-required">*</text>
+      </view>
+      <input
+        class="form-input"
+        type="text"
+        maxlength="11"
+        placeholder="请输入11位手机号"
+        value="{{ phone }}"
+        bindinput="onInputPhone"
+      />
+      <text class="form-error" wx:if="{{ phoneError }}">{{ phoneError }}</text>
+    </view>
+
+    <!-- 登录密码 -->
+    <view class="form-item">
+      <view class="form-label">
+        <text class="label-text">登录密码</text>
+        <text class="label-required">*</text>
+      </view>
+      <input
+        class="form-input"
+        type="text"
+        password
+        placeholder="请输入登录密码"
+        value="{{ password }}"
+        bindinput="onInputPassword"
+      />
+    </view>
+
+    <!-- 积分额度 -->
+    <view class="form-item">
+      <view class="form-label">
+        <text class="label-text">积分额度</text>
+        <text class="label-required">*</text>
+      </view>
+      <input
+        class="form-input"
+        type="digit"
+        placeholder="请输入积分额度"
+        value="{{ points }}"
+        bindinput="onInputPoints"
+      />
+      <text class="form-unit">积分</text>
+    </view>
+  </view>
+
+  <!-- 回收金额 -->
+  <view class="amount-section" wx:if="{{ points > 0 }}">
+    <view class="amount-row">
+      <text class="amount-label">积分额度</text>
+      <text class="amount-value">{{ points }} 积分</text>
+    </view>
+    <view class="amount-row">
+      <text class="amount-label">回收金额</text>
+      <text class="amount-value highlight">{{ recycleAmount }} 元</text>
+    </view>
+  </view>
+
+  <!-- 提交按钮 - 只有输入积分后才显示 -->
+  <view class="submit-section" wx:if="{{ points > 0 }}">
+    <van-button
+      type="primary"
+      block
+      loading="{{ submitting }}"
+      disabled="{{ submitting }}"
+      bind:click="onSubmitOrder"
+    >
+      提交订单
+    </van-button>
+  </view>
+
+  <!-- 温馨提示 -->
+  <view class="notice-section">
+    <view class="notice-title">温馨提示</view>
+    <view class="notice-content">
+      <view class="notice-item">• 请确保账号信息正确且积分有效</view>
+      <view class="notice-item">• 提交后无法撤销，请仔细核对信息</view>
+      <view class="notice-item">• 回收金额将在1-3个工作日内到账</view>
+      <view class="notice-item">• 如有问题请联系客服</view>
+    </view>
+  </view>
+</view>

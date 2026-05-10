@@ -1,0 +1,13 @@
+/* pages/webview/webview.wxss */
+
+.webview-container {
+  min-height: 100vh;
+  background-color: #fff;
+}
+
+.loading-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 100px 0;
+}

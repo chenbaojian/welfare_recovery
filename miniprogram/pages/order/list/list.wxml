@@ -1,0 +1,74 @@
+<!-- pages/order/list/list.wxml -->
+<view class="order-list-container">
+  <!-- 状态Tab -->
+  <van-tabs
+    active="{{ activeTab }}"
+    bind:change="onTabChange"
+    sticky
+    color="#1890FF"
+  >
+    <van-tab
+      wx:for="{{ tabs }}"
+      wx:key="value"
+      title="{{ item.name }}"
+    >
+      <view class="order-content">
+        <view class="loading-section" wx:if="{{ loading && page === 1 }}">
+          <van-loading size="24px" vertical>加载中...</van-loading>
+        </view>
+
+        <view class="order-list" wx:elif="{{ orders.length > 0 }}">
+          <view
+            class="order-card"
+            wx:for="{{ orders }}"
+            wx:key="id"
+            data-id="{{ item.id }}"
+            data-type="{{ item.orderType }}"
+            bindtap="onOrderClick"
+          >
+            <view class="order-header">
+              <view class="order-type-wrap">
+                <text class="order-type-tag {{ item.orderType }}">{{ item.orderTypeText }}</text>
+                <text class="order-type">{{ item.cardTypeName || item.card_type_name || '卡券' }}</text>
+              </view>
+              <text class="order-status" style="color: {{ item.statusColor }}">{{ item.statusText }}</text>
+            </view>
+            <view class="order-body">
+              <view class="order-info">
+                <text class="info-label">订单编号</text>
+                <text class="info-value">{{ item.orderNo || item.id }}</text>
+              </view>
+              <view class="order-info" wx:if="{{ item.faceValue }}">
+                <text class="info-label">面值</text>
+                <text class="info-value">{{ item.faceValue }}元</text>
+              </view>
+              <view class="order-info">
+                <text class="info-label">{{ item.displayAmountLabel }}</text>
+                <text class="info-value highlight">¥{{ item.displayAmount }}</text>
+              </view>
+            </view>
+            <view class="order-footer">
+              <text class="order-time">{{ item.createTime }}</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="empty-section" wx:if="{{ !loading && orders.length === 0 }}">
+          <view class="empty-icon">📋</view>
+          <text class="empty-text">暂无订单</text>
+          <van-button type="primary" size="small" bind:click="onGoToHome">
+            去首页
+          </van-button>
+        </view>
+      </view>
+    </van-tab>
+  </van-tabs>
+
+  <!-- 加载更多 -->
+  <view class="load-more" wx:if="{{ loading && page > 1 }}">
+    <van-loading size="20px">加载更多...</van-loading>
+  </view>
+  <view class="no-more" wx:if="{{ !hasMore && orders.length > 0 }}">
+    <text>没有更多了</text>
+  </view>
+</view>

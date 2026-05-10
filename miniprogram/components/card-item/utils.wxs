@@ -1,0 +1,10 @@
+// WXS 工具函数
+var formatDiscount = function(discount) {
+  var result = discount * 10;
+  // 模拟 toFixed(1)
+  return Math.round(result * 10) / 10;
+};
+
+module.exports = {
+  formatDiscount: formatDiscount
+};

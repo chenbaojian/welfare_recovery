@@ -1,0 +1,135 @@
+<!-- pages/order/detail/detail.wxml -->
+<view class="order-detail-container">
+  <!-- 加载中 -->
+  <view class="loading-section" wx:if="{{ loading }}">
+    <van-loading size="24px" vertical>加载中...</van-loading>
+  </view>
+
+  <!-- 订单详情 -->
+  <view class="detail-content" wx:if="{{ !loading && order }}">
+    <!-- 状态卡片 -->
+    <view class="status-card {{ order.status }}">
+      <view class="status-icon">
+        <text wx:if="{{ order.status === 'PENDING' || order.status === 'pending' }}">⏳</text>
+        <text wx:elif="{{ order.status === 'PROCESSING' || order.status === 'processing' }}">🔄</text>
+        <text wx:elif="{{ order.status === 'SUCCESS' || order.status === 'success' }}">✅</text>
+        <text wx:elif="{{ order.status === 'CANCELLED' || order.status === 'cancelled' }}">🚫</text>
+        <text wx:else>❌</text>
+      </view>
+      <text class="status-text">{{ order.statusText }}</text>
+      <text class="status-tip" wx:if="{{ order.status === 'PENDING' || order.status === 'pending' || order.status === 'PROCESSING' || order.status === 'processing' }}">
+        管理员正在审核您的卡券，请耐心等待
+      </text>
+    </view>
+
+    <!-- 订单信息 -->
+    <view class="info-section">
+      <view class="section-title">订单信息</view>
+      <view class="info-list">
+        <view class="info-item">
+          <text class="info-label">订单编号</text>
+          <view class="info-value-wrap">
+            <text class="info-value">{{ order.id }}</text>
+            <text class="copy-btn" bindtap="onCopyOrderId">复制</text>
+          </view>
+        </view>
+        <view class="info-item">
+          <text class="info-label">卡券类型</text>
+          <text class="info-value">{{ order.typeName || order.typeText }}</text>
+        </view>
+        <view class="info-item" wx:if="{{ order.cardNo }}">
+          <text class="info-label">卡号</text>
+          <text class="info-value">{{ order.cardNo }}</text>
+        </view>
+        <view class="info-item" wx:if="{{ order.phone }}">
+          <text class="info-label">手机号</text>
+          <text class="info-value">{{ order.phone }}</text>
+        </view>
+        <view class="info-item" wx:if="{{ order.faceValue }}">
+          <text class="info-label">面值</text>
+          <text class="info-value">{{ order.faceValue }} 元</text>
+        </view>
+        <view class="info-item" wx:if="{{ order.points }}">
+          <text class="info-label">积分额度</text>
+          <text class="info-value">{{ order.points }} 积分</text>
+        </view>
+        <view class="info-item" wx:if="{{ order.recycleAmount }}">
+          <text class="info-label">回收金额</text>
+          <text class="info-value highlight">{{ order.recycleAmount }} 元</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 时间信息 -->
+    <view class="info-section">
+      <view class="section-title">时间信息</view>
+      <view class="info-list">
+        <view class="info-item">
+          <text class="info-label">创建时间</text>
+          <text class="info-value">{{ order.createTime }}</text>
+        </view>
+        <view class="info-item" wx:if="{{ order.updateTime }}">
+          <text class="info-label">更新时间</text>
+          <text class="info-value">{{ order.updateTime }}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 失败原因 -->
+    <view class="info-section" wx:if="{{ order.failReason }}">
+      <view class="section-title">失败原因</view>
+      <view class="info-list">
+        <view class="info-item">
+          <text class="info-value" style="color: #F5222D;">{{ order.failReason }}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 待处理/处理中提示 -->
+    <view class="result-section" wx:if="{{ order.status === 'PENDING' || order.status === 'pending' || order.status === 'PROCESSING' || order.status === 'processing' }}">
+      <view class="result-card pending">
+        <text class="result-icon">⏳</text>
+        <text class="result-text">订单正在审核中</text>
+        <text class="result-desc">管理员将核验您的卡券信息，审核通过后金额自动入账</text>
+        <van-button type="primary" size="small" custom-style="margin-top: 15px;" bind:click="onContactService">
+          联系客服
+        </van-button>
+      </view>
+    </view>
+
+    <!-- 已完成提示 -->
+    <view class="result-section" wx:if="{{ order.status === 'SUCCESS' || order.status === 'success' }}">
+      <view class="result-card success">
+        <text class="result-icon">🎉</text>
+        <text class="result-text">订单已完成</text>
+        <text class="result-desc">回收金额 {{ order.recycleAmount }} 元已入账到您的余额</text>
+      </view>
+    </view>
+
+    <!-- 已失败提示 -->
+    <view class="result-section" wx:if="{{ order.status === 'FAILED' || order.status === 'failed' }}">
+      <view class="result-card failed">
+        <text class="result-icon">😔</text>
+        <text class="result-text">订单已失败</text>
+        <text class="result-desc" wx:if="{{ order.failReason }}">{{ order.failReason }}</text>
+        <van-button type="primary" size="small" custom-style="margin-top: 15px;" bind:click="onContactService">
+          联系客服咨询
+        </van-button>
+      </view>
+    </view>
+
+    <!-- 已取消提示 -->
+    <view class="result-section" wx:if="{{ order.status === 'CANCELLED' || order.status === 'cancelled' }}">
+      <view class="result-card cancelled">
+        <text class="result-icon">🚫</text>
+        <text class="result-text">订单已取消</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 订单不存在 -->
+  <view class="empty-section" wx:if="{{ !loading && !order }}">
+    <view class="empty-icon">📋</view>
+    <text class="empty-text">订单不存在</text>
+  </view>
+</view>

@@ -1,0 +1,134 @@
+<!-- pages/bank/bank.wxml -->
+<view class="bank-container">
+  <!-- 加载中 -->
+  <view class="loading-section" wx:if="{{ loading }}">
+    <van-loading size="24px" vertical>加载中...</van-loading>
+  </view>
+
+  <!-- 主内容 -->
+  <view class="main-content" wx:else>
+    <!-- 账户列表 -->
+    <view class="bank-list">
+      <view
+        class="bank-item {{ item.isDefault ? 'default' : '' }}"
+        wx:for="{{ banks }}"
+        wx:key="id"
+      >
+        <view class="bank-header">
+          <view class="bank-icon-emoji">🏦</view>
+          <view class="bank-text">
+            <text class="bank-name">{{ item.bankName }}</text>
+            <text class="bank-no">{{ item.displayCardNo }}</text>
+          </view>
+          <view class="default-badge" wx:if="{{ item.isDefault }}">默认</view>
+        </view>
+
+        <view class="bank-actions">
+          <view
+            class="action-btn"
+            wx:if="{{ !item.isDefault }}"
+            data-id="{{ item.id }}"
+            bindtap="onSetDefault"
+          >
+            设为默认
+          </view>
+          <view
+            class="action-btn delete"
+            data-id="{{ item.id }}"
+            bindtap="onDeleteBank"
+          >
+            删除
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="empty-section" wx:if="{{ banks.length === 0 }}">
+      <van-icon name="card" size="60" color="#ccc" />
+      <text class="empty-text">暂无结算账户</text>
+    </view>
+
+    <!-- 添加按钮 -->
+    <view class="add-section">
+      <view class="add-btn" bindtap="onShowAddPopup">
+        <van-icon name="add-o" size="20" color="#1890FF" />
+        <text class="add-text">添加结算账户</text>
+      </view>
+    </view>
+
+    <!-- 说明 -->
+    <view class="notice-section">
+      <view class="notice-title">说明</view>
+      <view class="notice-item">• 添加的银行卡需与实名认证姓名一致</view>
+      <view class="notice-item">• 最多可添加5张银行卡</view>
+      <view class="notice-item">• 提现将转入默认结算账户</view>
+    </view>
+  </view>
+
+  <!-- 添加账户弹窗 -->
+  <van-popup
+    show="{{ showAddPopup }}"
+    position="bottom"
+    round
+    closeable
+    bind:close="onCloseAddPopup"
+  >
+    <view class="popup-content">
+      <view class="popup-title">添加结算账户</view>
+
+      <!-- 选择银行 -->
+      <view class="form-item" bindtap="onShowBankPicker">
+        <text class="form-label">银行</text>
+        <view class="form-value">
+          <text wx:if="{{ selectedBank }}">{{ selectedBank.name }}</text>
+          <text wx:else class="placeholder">请选择银行</text>
+        </view>
+        <van-icon name="arrow" color="#999" />
+      </view>
+
+      <!-- 银行卡号 -->
+      <view class="form-item">
+        <text class="form-label">银行卡号</text>
+        <input
+          class="form-input"
+          type="number"
+          placeholder="请输入银行卡号"
+          maxlength="19"
+          value="{{ addForm.cardNo }}"
+          bindinput="onCardNoInput"
+        />
+      </view>
+      <text class="error-text" wx:if="{{ errors.cardNo }}">{{ errors.cardNo }}</text>
+
+      <!-- 持卡人姓名 -->
+      <view class="form-item">
+        <text class="form-label">持卡人</text>
+        <input
+          class="form-input"
+          placeholder="持卡人姓名"
+          maxlength="20"
+          value="{{ addForm.realName }}"
+          disabled
+        />
+      </view>
+
+      <!-- 提交按钮 -->
+      <view class="popup-btn" bindtap="onSubmitAdd">确认添加</view>
+    </view>
+  </van-popup>
+
+  <!-- 银行选择器 -->
+  <van-popup show="{{ showBankPicker }}" position="bottom" round>
+    <van-picker
+      columns="{{ bankList }}"
+      show-toolbar
+      title="选择银行"
+      value-key="name"
+      bind:confirm="onBankConfirm"
+      bind:cancel="onCloseBankPicker"
+    />
+  </van-popup>
+</view>
+
+<van-dialog id="van-dialog" />

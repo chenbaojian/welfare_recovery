@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "我的订单",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "van-tabs": "@vant/weapp/lib/tabs/index",
+    "van-tab": "@vant/weapp/lib/tab/index",
+    "van-loading": "@vant/weapp/lib/loading/index",
+    "van-button": "@vant/weapp/lib/button/index"
+  }
+}

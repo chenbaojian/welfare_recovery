@@ -1,0 +1,108 @@
+<!-- pages/buy/order/detail/detail.wxml - 买家订单详情页 -->
+<view class="buy-order-detail-container">
+  <!-- 加载中 -->
+  <view class="loading-section" wx:if="{{ loading }}">
+    <van-loading size="24px" vertical>加载中...</van-loading>
+  </view>
+
+  <!-- 订单详情 -->
+  <view class="order-detail" wx:if="{{ !loading && order }}">
+    <!-- 订单状态卡片 -->
+    <view class="status-card {{ order.status }}">
+      <view class="status-icon">
+        <text wx:if="{{ order.status === 'PENDING' }}">⏳</text>
+        <text wx:elif="{{ order.status === 'PAID' }}">✅</text>
+        <text wx:elif="{{ order.status === 'CANCELLED' }}">❌</text>
+      </view>
+      <view class="status-info">
+        <text class="status-text">{{ order.statusText }}</text>
+        <text class="status-desc" wx:if="{{ order.status === 'PENDING' && countdown }}">
+          请在 {{ countdown }} 内完成支付
+        </text>
+        <text class="status-desc" wx:elif="{{ order.status === 'PAID' }}">
+          卡密信息已展示，请妥善保管
+        </text>
+      </view>
+    </view>
+
+    <!-- 卡券信息 -->
+    <view class="info-card">
+      <view class="card-header">
+        <text class="card-type">{{ order.cardTypeName }}</text>
+        <view class="discount-tag" wx:if="{{ order.discountText }}">
+          {{ order.discountText }}折
+        </view>
+      </view>
+
+      <view class="price-row">
+        <view class="price-item">
+          <text class="price-label">面值</text>
+          <text class="price-value original">¥{{ order.faceValue }}</text>
+        </view>
+        <view class="price-divider"></view>
+        <view class="price-item">
+          <text class="price-label">售价</text>
+          <text class="price-value buy">¥{{ order.buyPrice }}</text>
+        </view>
+      </view>
+
+      <view class="info-list">
+        <view class="info-row">
+          <text class="info-label">订单编号</text>
+          <text class="info-value">{{ order.orderNo || order.buyOrderId }}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">创建时间</text>
+          <text class="info-value">{{ order.createTime }}</text>
+        </view>
+        <view class="info-row" wx:if="{{ order.payTime }}">
+          <text class="info-label">支付时间</text>
+          <text class="info-value">{{ order.payTime }}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 卡密信息（已支付状态） -->
+    <view class="secret-card" wx:if="{{ order.status === 'PAID' && (order.cardNo || order.cardPwd) }}">
+      <view class="secret-title">卡密信息</view>
+      <view class="secret-content">
+        <view class="secret-row" wx:if="{{ order.cardNo }}">
+          <text class="secret-label">卡号</text>
+          <text class="secret-value">{{ order.cardNo }}</text>
+          <view class="copy-btn" data-text="{{ order.cardNo }}" bindtap="onCopyText">复制</view>
+        </view>
+        <view class="secret-row" wx:if="{{ order.cardPwd }}">
+          <text class="secret-label">卡密</text>
+          <text class="secret-value">{{ order.cardPwd }}</text>
+          <view class="copy-btn" data-text="{{ order.cardPwd }}" bindtap="onCopyText">复制</view>
+        </view>
+      </view>
+      <view class="secret-warning">
+        ⚠️ 请妥善保管卡密信息，不要泄露给他人
+      </view>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="action-bar">
+      <!-- 待支付状态 -->
+      <block wx:if="{{ order.status === 'PENDING' }}">
+        <view class="action-btn cancel-btn" bindtap="onCancelOrder">取消订单</view>
+        <view class="action-btn pay-btn {{ isPaying ? 'disabled' : '' }}" bindtap="onPayOrder">
+          {{ isPaying ? '支付中...' : '立即支付' }}
+        </view>
+      </block>
+
+      <!-- 已支付/已取消状态 -->
+      <block wx:else>
+        <view class="action-btn secondary-btn" bindtap="onGoHome">返回首页</view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 订单不存在 -->
+  <view class="not-found" wx:if="{{ !loading && !order }}">
+    <view class="not-found-icon">🔍</view>
+    <text class="not-found-text">订单不存在</text>
+    <view class="action-btn secondary-btn" bindtap="onGoHome" style="margin-top: 20px;">返回首页</view>
+  </view>
+</view>

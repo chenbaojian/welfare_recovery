@@ -1,0 +1,57 @@
+<!-- components/order-card/order-card.wxml -->
+<view class="order-card" bindtap="onTap">
+  <!-- 订单头部 -->
+  <view class="order-header">
+    <view class="order-no" bindtap="onCopyOrderNo" catchtap="onCopyOrderNo">
+      <text class="label">订单号：</text>
+      <text class="value">{{ order.orderNo }}</text>
+      <van-icon name="description" size="14" color="#999" />
+    </view>
+    <view class="order-status" style="color: {{ statusMap[order.status].color }}">
+      <van-icon name="{{ statusMap[order.status].icon }}" size="14" />
+      <text>{{ statusMap[order.status].text }}</text>
+    </view>
+  </view>
+  
+  <!-- 订单内容 -->
+  <view class="order-body">
+    <view class="order-info">
+      <view class="card-type">
+        <text class="card-name">{{ order.cardTypeName || '卡券回收' }}</text>
+        <text class="face-value">{{ order.faceValue }}元</text>
+      </view>
+      <view class="order-time">{{ order.createTime }}</view>
+    </view>
+    
+    <view class="order-amount">
+      <text class="label">回收金额</text>
+      <text class="amount">¥{{ order.recycleAmount }}</text>
+    </view>
+  </view>
+  
+  <!-- 订单底部操作 -->
+  <view class="order-footer" wx:if="{{ showAction }}">
+    <view class="action-btns">
+      <!-- 待处理状态 -->
+      <block wx:if="{{ order.status === 'PENDING' }}">
+        <view class="btn btn-default" catchtap="onCancel">取消订单</view>
+      </block>
+      
+      <!-- 处理中状态 -->
+      <block wx:if="{{ order.status === 'PROCESSING' }}">
+        <view class="btn btn-default" catchtap="onViewDetail">查看详情</view>
+      </block>
+      
+      <!-- 失败状态 -->
+      <block wx:if="{{ order.status === 'FAILED' }}">
+        <view class="btn btn-default" catchtap="onViewDetail">查看原因</view>
+        <view class="btn btn-primary" catchtap="onResubmit">重新提交</view>
+      </block>
+      
+      <!-- 成功状态 -->
+      <block wx:if="{{ order.status === 'SUCCESS' }}">
+        <view class="btn btn-default" catchtap="onViewDetail">查看详情</view>
+      </block>
+    </view>
+  </view>
+</view>

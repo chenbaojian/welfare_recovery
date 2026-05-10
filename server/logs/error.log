@@ -1,0 +1,68 @@
+2026-05-06 20:21:07 [ERROR] 管理员登录失败: Unknown column 'realName' in 'field list'
+2026-05-06 20:27:05 [ERROR] 管理员登录失败: 用户名或密码错误
+2026-05-06 20:38:07 [ERROR] 获取统计数据失败: Cannot read properties of undefined (reading 'Op')
+2026-05-06 20:38:11 [ERROR] 获取统计数据失败: Cannot read properties of undefined (reading 'Op')
+2026-05-06 20:38:22 [ERROR] 获取订单列表失败: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''10'' at line 1
+2026-05-06 20:38:27 [ERROR] 获取订单列表失败: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''10'' at line 1
+2026-05-06 20:38:58 [ERROR] 获取订单列表失败: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''10'' at line 1
+2026-05-06 20:42:11 [ERROR] 获取统计数据失败: Cannot read properties of undefined (reading 'Op')
+2026-05-06 20:42:12 [ERROR] 获取订单列表失败: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''10'' at line 1
+2026-05-06 20:42:20 [ERROR] 获取统计数据失败: Cannot read properties of undefined (reading 'Op')
+2026-05-06 20:42:22 [ERROR] 获取订单列表失败: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''10'' at line 1
+2026-05-06 20:44:30 [ERROR] 获取统计数据失败: Cannot read properties of undefined (reading 'Op')
+2026-05-06 20:44:36 [ERROR] 获取统计数据失败: Cannot read properties of undefined (reading 'Op')
+2026-05-06 20:44:38 [ERROR] 获取统计数据失败: Cannot read properties of undefined (reading 'Op')
+2026-05-06 20:44:41 [ERROR] 获取统计数据失败: Cannot read properties of undefined (reading 'Op')
+2026-05-06 20:44:45 [ERROR] 获取统计数据失败: Cannot read properties of undefined (reading 'Op')
+2026-05-06 20:49:21 [ERROR] 获取统计数据失败: Cannot read properties of undefined (reading 'gte')
+2026-05-06 20:49:23 [ERROR] 获取统计数据失败: Cannot read properties of undefined (reading 'gte')
+2026-05-06 20:49:25 [ERROR] 获取订单列表失败: Unknown column 'orderNo' in 'field list'
+2026-05-06 20:49:25 [ERROR] 获取订单列表失败: Unknown column 'orderNo' in 'field list'
+2026-05-06 20:49:27 [ERROR] 获取统计数据失败: Cannot read properties of undefined (reading 'gte')
+2026-05-06 20:51:50 [ERROR] 获取统计数据失败: Cannot read properties of undefined (reading 'gte')
+2026-05-06 20:52:52 [ERROR] 获取统计数据失败: Unknown column 'Order.createTime' in 'where clause'
+2026-05-06 20:52:54 [ERROR] 获取统计数据失败: Unknown column 'Order.createTime' in 'where clause'
+2026-05-06 20:58:31 [ERROR] 获取统计数据失败: Invalid value { '$gte': 2026-05-05T16:00:00.000Z }
+2026-05-06 20:58:33 [ERROR] 获取统计数据失败: Invalid value { '$gte': 2026-05-05T16:00:00.000Z }
+2026-05-06 20:58:35 [ERROR] 获取订单列表失败: Unknown column 'Order.createTime' in 'order clause'
+2026-05-06 20:58:36 [ERROR] 获取统计数据失败: Invalid value { '$gte': 2026-05-05T16:00:00.000Z }
+2026-05-06 21:00:38 [ERROR] 获取统计数据失败: Unknown column 'Order.createTime' in 'where clause'
+2026-05-06 21:00:41 [ERROR] 获取统计数据失败: Unknown column 'Order.createTime' in 'where clause'
+2026-05-07 18:53:44 [ERROR] 管理员登录失败: 用户名或密码错误
+2026-05-07 20:05:13 [ERROR] 未捕获异常: listen EADDRINUSE: address already in use :::3000
+2026-05-07 20:48:33 [ERROR] 获取订单列表失败: Unknown column 'Order.userId' in 'where clause'
+2026-05-07 20:53:53 [ERROR] 获取订单列表失败: Unknown column 'Order.userId' in 'where clause'
+2026-05-08 17:43:37 [ERROR] 获取订单列表失败: Unknown column 'Order.userId' in 'where clause'
+2026-05-08 17:43:39 [ERROR] 获取订单列表失败: Unknown column 'Order.userId' in 'where clause'
+2026-05-08 17:52:11 [ERROR] 获取订单列表失败: Unknown column 'Order.userId' in 'where clause'
+2026-05-08 17:53:54 [ERROR] 获取订单列表失败: Unknown column 'Order.userId' in 'where clause'
+2026-05-08 18:04:45 [ERROR] 获取订单列表失败: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''10'' at line 1
+2026-05-08 18:04:49 [ERROR] 获取订单列表失败: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''10'' at line 1
+2026-05-08 18:06:01 [ERROR] 数据库同步失败: Too many keys specified; max 64 keys allowed
+2026-05-08 18:06:14 [ERROR] 数据库同步失败: Too many keys specified; max 64 keys allowed
+2026-05-08 18:06:48 [ERROR] 数据库同步失败: Too many keys specified; max 64 keys allowed
+2026-05-08 18:07:00 [ERROR] 数据库同步失败: Too many keys specified; max 64 keys allowed
+2026-05-08 18:07:14 [ERROR] 数据库同步失败: Too many keys specified; max 64 keys allowed
+2026-05-08 18:07:24 [ERROR] 数据库同步失败: Too many keys specified; max 64 keys allowed
+2026-05-08 18:08:08 [ERROR] 数据库同步失败: Too many keys specified; max 64 keys allowed
+2026-05-08 18:08:38 [ERROR] 数据库同步失败: Too many keys specified; max 64 keys allowed
+2026-05-08 18:09:05 [ERROR] 数据库同步失败: Too many keys specified; max 64 keys allowed
+2026-05-08 18:09:49 [ERROR] 获取订单列表失败: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''10'' at line 1
+2026-05-08 18:10:00 [ERROR] 获取订单列表失败: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''10'' at line 1
+2026-05-08 18:10:25 [ERROR] 数据库同步失败: Too many keys specified; max 64 keys allowed
+2026-05-08 18:11:23 [ERROR] 获取订单列表失败: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''10'' at line 1
+2026-05-08 18:12:39 [ERROR] 获取订单列表失败: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''10'' at line 1
+2026-05-08 18:13:17 [ERROR] 数据库同步失败: Too many keys specified; max 64 keys allowed
+2026-05-08 18:13:39 [ERROR] 数据库同步失败: Too many keys specified; max 64 keys allowed
+2026-05-08 18:14:26 [ERROR] 数据库同步失败: Too many keys specified; max 64 keys allowed
+2026-05-08 18:15:55 [ERROR] 数据库同步失败: Too many keys specified; max 64 keys allowed
+2026-05-08 18:23:15 [ERROR] 数据库同步失败: Too many keys specified; max 64 keys allowed
+2026-05-08 18:24:22 [ERROR] 数据库同步失败: Too many keys specified; max 64 keys allowed
+2026-05-08 18:24:52 [ERROR] 数据库同步失败: Too many keys specified; max 64 keys allowed
+2026-05-08 18:25:21 [ERROR] 数据库同步失败: Too many keys specified; max 64 keys allowed
+2026-05-08 18:30:31 [ERROR] 数据库同步失败: Too many keys specified; max 64 keys allowed
+2026-05-08 18:31:18 [ERROR] 数据库同步失败: Too many keys specified; max 64 keys allowed
+2026-05-08 18:32:08 [ERROR] 数据库同步失败: Too many keys specified; max 64 keys allowed
+2026-05-08 18:38:53 [ERROR] 未捕获异常: listen EADDRINUSE: address already in use :::3000
+2026-05-08 19:00:15 [ERROR] 创建订单失败: Invalid key length
+2026-05-09 21:14:35 [ERROR] 未捕获异常: listen EADDRINUSE: address already in use :::3000

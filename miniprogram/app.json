@@ -1,0 +1,106 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/login/login",
+    "pages/verify/verify",
+    "pages/detail/detail",
+    "pages/phone/list/list",
+    "pages/phone/detail/detail",
+    "pages/gas/list/list",
+    "pages/gas/detail/detail",
+    "pages/game/list/list",
+    "pages/game/detail/detail",
+    "pages/music/list/list",
+    "pages/music/detail/detail",
+    "pages/jd/detail/detail",
+    "pages/ecommerce/list/list",
+    "pages/ecommerce/detail/detail",
+    "pages/supermarket/list/list",
+    "pages/supermarket/detail/detail",
+    "pages/food/list/list",
+    "pages/food/detail/detail",
+    "pages/meituan/detail/detail",
+    "pages/laobao/detail/detail",
+    "pages/travel/list/list",
+    "pages/ctrip/detail/detail",
+    "pages/rsctrip/detail/detail",
+    "pages/order/list/list",
+    "pages/order/detail/detail",
+    "pages/mine/mine",
+    "pages/withdraw/withdraw",
+    "pages/bank/bank",
+    "pages/contact/contact",
+    "pages/feedback/feedback",
+    "pages/about/about",
+    "pages/webview/webview",
+    "pages/buy/list/list",
+    "pages/buy/detail/detail",
+    "pages/buy/order/list/list",
+    "pages/buy/order/detail/detail"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#1890FF",
+    "navigationBarTitleText": "福利回收",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#F5F5F5"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#1890FF",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "assets/icons/home.png",
+        "selectedIconPath": "assets/icons/home-active.png"
+      },
+      {
+        "pagePath": "pages/order/list/list",
+        "text": "订单",
+        "iconPath": "assets/icons/order.png",
+        "selectedIconPath": "assets/icons/order-active.png"
+      },
+      {
+        "pagePath": "pages/mine/mine",
+        "text": "我的",
+        "iconPath": "assets/icons/mine.png",
+        "selectedIconPath": "assets/icons/mine-active.png"
+      }
+    ]
+  },
+  "usingComponents": {
+    "van-button": "@vant/weapp/lib/button/index",
+    "van-cell": "@vant/weapp/lib/cell/index",
+    "van-cell-group": "@vant/weapp/lib/cell-group/index",
+    "van-field": "@vant/weapp/lib/field/index",
+    "van-toast": "@vant/weapp/lib/toast/index",
+    "van-loading": "@vant/weapp/lib/loading/index",
+    "van-dialog": "@vant/weapp/lib/dialog/index",
+    "van-icon": "@vant/weapp/lib/icon/index",
+    "van-tag": "@vant/weapp/lib/tag/index",
+    "van-search": "@vant/weapp/lib/search/index",
+    "van-tabs": "@vant/weapp/lib/tabs/index",
+    "van-tab": "@vant/weapp/lib/tab/index",
+    "van-popup": "@vant/weapp/lib/popup/index",
+    "van-picker": "@vant/weapp/lib/picker/index",
+    "van-checkbox": "@vant/weapp/lib/checkbox/index",
+    "van-radio": "@vant/weapp/lib/radio/index",
+    "van-radio-group": "@vant/weapp/lib/radio-group/index",
+    "van-uploader": "@vant/weapp/lib/uploader/index",
+    "van-notice-bar": "@vant/weapp/lib/notice-bar/index",
+    "van-divider": "@vant/weapp/lib/divider/index",
+    "van-empty": "@vant/weapp/lib/empty/index",
+    "van-skeleton": "@vant/weapp/lib/skeleton/index"
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "用于获取您的位置信息"
+    }
+  },
+  "sitemapLocation": "sitemap.json",
+  "style": "v2",
+  "lazyCodeLoading": "requiredComponents"
+}

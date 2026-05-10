@@ -1,0 +1,129 @@
+/* components/order-card/order-card.wxss */
+
+.order-card {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* 订单头部 */
+.order-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.order-no {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  color: #999;
+}
+
+.order-no .label {
+  color: #999;
+}
+
+.order-no .value {
+  color: #666;
+  margin-right: 5px;
+}
+
+.order-status {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.order-status text {
+  margin-left: 4px;
+}
+
+/* 订单内容 */
+.order-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+}
+
+.order-info {
+  flex: 1;
+}
+
+.card-type {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.card-name {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+  margin-right: 10px;
+}
+
+.face-value {
+  font-size: 12px;
+  color: #666;
+  background-color: #f5f5f5;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.order-time {
+  font-size: 12px;
+  color: #999;
+}
+
+.order-amount {
+  text-align: right;
+}
+
+.order-amount .label {
+  font-size: 12px;
+  color: #999;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.order-amount .amount {
+  font-size: 18px;
+  color: #F5222D;
+  font-weight: bold;
+}
+
+/* 订单底部 */
+.order-footer {
+  padding-top: 12px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.action-btns {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn {
+  padding: 6px 12px;
+  font-size: 12px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.btn-default {
+  background-color: #f5f5f5;
+  color: #666;
+}
+
+.btn-primary {
+  background-color: #1890FF;
+  color: #fff;
+}

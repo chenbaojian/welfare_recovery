@@ -1,0 +1,73 @@
+<!-- pages/verify/verify.wxml -->
+<view class="verify-container">
+  <!-- 提示信息 -->
+  <van-notice-bar
+    left-icon="info-o"
+    text="为保障交易安全，需完成实名认证"
+    wrapable
+  />
+
+  <!-- 表单区域 -->
+  <view class="form-section">
+    <van-cell-group inset>
+      <!-- 真实姓名 -->
+      <van-field
+        value="{{ form.realName }}"
+        label="真实姓名"
+        placeholder="请输入真实姓名"
+        required
+        clearable
+        maxlength="20"
+        bindinput="onNameInput"
+        error-message="{{ errors.realName }}"
+      />
+
+      <!-- 身份证号 -->
+      <van-field
+        value="{{ form.idCard }}"
+        label="身份证号"
+        placeholder="请输入身份证号"
+        required
+        clearable
+        maxlength="18"
+        bindinput="onIdCardInput"
+        error-message="{{ errors.idCard }}"
+      />
+    </van-cell-group>
+  </view>
+
+  <!-- 协议区域 -->
+  <view class="agreement-section">
+    <van-checkbox 
+      value="{{ agreed }}" 
+      bind:change="onAgreeChange"
+      checked-color="#1890FF"
+    >
+      <view class="agreement-text">
+        我已阅读并同意
+        <text class="link" bindtap="onViewProtocol" catchtap="onViewProtocol">《实名认证协议》</text>
+      </view>
+    </van-checkbox>
+  </view>
+
+  <!-- 提交按钮 -->
+  <view class="submit-section">
+    <view class="submit-btn {{ loading ? 'disabled' : '' }}" bindtap="onSubmit">
+      <text wx:if="{{ !loading }}">提交认证</text>
+      <van-loading wx:if="{{ loading }}" size="20px" color="#fff" />
+    </view>
+  </view>
+
+  <!-- 说明区域 -->
+  <view class="notice-section">
+    <view class="notice-title">说明</view>
+    <view class="notice-item">• 信息仅用于身份验证，严格保密</view>
+    <view class="notice-item">• 认证后可正常使用回收服务</view>
+    <view class="notice-item">• 每个身份证仅能认证一个账号</view>
+  </view>
+
+  <!-- 跳过按钮 -->
+  <view class="skip-section">
+    <text class="skip-text" bindtap="onSkip">暂不认证</text>
+  </view>
+</view>

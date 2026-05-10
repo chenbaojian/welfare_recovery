@@ -1,0 +1,21 @@
+<!-- components/card-item/card-item.wxml -->
+<wxs src="./utils.wxs" module="utils" />
+
+<!-- 网格模式 -->
+<view class="card-item grid-mode" wx:if="{{ mode === 'grid' }}" bindtap="onTap">
+  <view class="card-icon-emoji">{{ card.icon }}</view>
+  <text class="card-name">{{ card.name }}</text>
+</view>
+
+<!-- 列表模式 -->
+<view class="card-item list-mode" wx:if="{{ mode === 'list' }}" bindtap="onTap">
+  <view class="card-icon-emoji">{{ card.icon }}</view>
+  <view class="card-info">
+    <text class="card-name">{{ card.name }}</text>
+    <text class="card-desc">{{ card.description || '支持多种面值回收' }}</text>
+  </view>
+  <view class="card-discount">
+    <text class="discount-text">最高{{ utils.formatDiscount(card.discount) }}折</text>
+  </view>
+  <van-icon name="arrow" color="#999" />
+</view>

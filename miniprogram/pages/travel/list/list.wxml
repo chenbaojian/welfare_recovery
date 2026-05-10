@@ -1,0 +1,45 @@
+<!-- pages/travel/list/list.wxml -->
+<view class="travel-list-container">
+  <!-- 提示信息 -->
+  <view class="tip-section">
+    <van-notice-bar
+      left-icon="info-o"
+      text="请选择卡券类型，支持融晟携程卡包和携程积分回收"
+    />
+  </view>
+
+  <!-- 卡券列表 -->
+  <view class="item-list">
+    <view
+      class="item-card"
+      wx:for="{{ items }}"
+      wx:key="id"
+      data-id="{{ item.id }}"
+      bindtap="onSelectItem"
+    >
+      <view class="item-icon" style="background-color: {{ item.color }};">
+        <text class="icon-text">{{ item.icon }}</text>
+      </view>
+      <view class="item-info">
+        <text class="item-name">{{ item.name }}</text>
+        <text class="item-desc">{{ item.description }}</text>
+        <view class="item-meta">
+          <text class="item-discount">回收折扣: {{ item.discount * 10 }}折</text>
+        </view>
+      </view>
+      <view class="item-arrow">
+        <van-icon name="arrow" color="#999" />
+      </view>
+    </view>
+  </view>
+
+  <!-- 回收说明 -->
+  <view class="notice-section">
+    <view class="section-title">回收说明</view>
+    <view class="notice-list">
+      <view class="notice-item">1. 请确保卡券有效且未使用</view>
+      <view class="notice-item">2. 提交后无法撤销，请仔细核对</view>
+      <view class="notice-item">3. 回收金额将在1-3个工作日内到账</view>
+    </view>
+  </view>
+</view>

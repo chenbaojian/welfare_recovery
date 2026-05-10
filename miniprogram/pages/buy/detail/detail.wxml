@@ -1,0 +1,177 @@
+<!-- pages/buy/detail/detail.wxml - 买家卡券详情/下单页 -->
+<view class="buy-detail-container">
+  <!-- 加载中 -->
+  <view class="loading-section" wx:if="{{ loading }}">
+    <van-loading size="24px" vertical>加载中...</van-loading>
+  </view>
+
+  <!-- ===== 未下单状态：展示卡券信息 ===== -->
+  <view class="card-info-section" wx:if="{{ !loading && cardInfo && !buyOrder }}">
+    <view class="card-detail-card">
+      <!-- 卡券类型 -->
+      <view class="detail-header">
+        <text class="detail-type">{{ cardInfo.cardTypeName }}</text>
+        <view class="detail-discount-tag" wx:if="{{ cardInfo.discountText }}">
+          {{ cardInfo.discountText }}折
+        </view>
+      </view>
+
+      <!-- 面值与价格 -->
+      <view class="detail-price-row">
+        <view class="price-item">
+          <text class="price-label">面值</text>
+          <text class="price-value original">¥{{ cardInfo.faceValue }}</text>
+        </view>
+        <view class="price-divider"></view>
+        <view class="price-item">
+          <text class="price-label">售价</text>
+          <text class="price-value buy">¥{{ cardInfo.buyPrice }}</text>
+        </view>
+        <view class="price-divider"></view>
+        <view class="price-item">
+          <text class="price-label">节省</text>
+          <text class="price-value save">¥{{ cardInfo.saveAmount }}</text>
+        </view>
+      </view>
+
+      <!-- 卡券信息 -->
+      <view class="detail-info-list">
+        <view class="info-row">
+          <text class="info-label">描述</text>
+          <text class="info-value">{{ cardInfo.description || '暂无描述' }}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">面值</text>
+          <text class="info-value">¥{{ cardInfo.faceValue }}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">折扣</text>
+          <text class="info-value">{{ cardInfo.discountText ? cardInfo.discountText + '折' : '-' }}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 购买须知 -->
+    <view class="notice-section">
+      <view class="notice-title">购买须知</view>
+      <view class="notice-list">
+        <text class="notice-item">1. 购买后卡密信息将直接展示，请妥善保管</text>
+        <text class="notice-item">2. 订单创建后需在30分钟内完成支付，超时自动取消</text>
+        <text class="notice-item">3. 支付成功后不支持退款，请确认后再购买</text>
+      </view>
+    </view>
+
+    <!-- 购买按钮 -->
+    <view class="buy-action-bar">
+      <view class="buy-price-total">
+        <text class="total-label">支付金额</text>
+        <text class="total-value">¥{{ cardInfo.buyPrice }}</text>
+      </view>
+      <view class="buy-btn" bindtap="onConfirmBuy">立即购买</view>
+    </view>
+  </view>
+
+  <!-- ===== 已下单状态：展示订单信息 ===== -->
+  <view class="order-info-section" wx:if="{{ !loading && buyOrder }}">
+    <!-- 订单状态 -->
+    <view class="order-status-card {{ buyOrder.status }}">
+      <view class="status-icon">
+        <text wx:if="{{ buyOrder.status === 'PENDING' }}">⏳</text>
+        <text wx:elif="{{ buyOrder.status === 'PAID' }}">✅</text>
+        <text wx:elif="{{ buyOrder.status === 'CANCELLED' }}">❌</text>
+      </view>
+      <view class="status-info">
+        <text class="status-text">{{ buyOrder.status === 'PENDING' ? '待支付' : buyOrder.status === 'PAID' ? '已支付' : '已取消' }}</text>
+        <text class="status-desc" wx:if="{{ buyOrder.status === 'PENDING' && countdown }}">
+          请在 {{ countdown }} 内完成支付
+        </text>
+        <text class="status-desc" wx:elif="{{ buyOrder.status === 'PAID' }}">
+          卡密信息已展示，请妥善保管
+        </text>
+        <text class="status-desc" wx:elif="{{ buyOrder.status === 'CANCELLED' }}">
+          订单已取消
+        </text>
+      </view>
+    </view>
+
+    <!-- 订单基本信息 -->
+    <view class="order-detail-card">
+      <view class="detail-header">
+        <text class="detail-type">{{ cardInfo.cardTypeName || buyOrder.cardTypeName }}</text>
+      </view>
+
+      <view class="detail-price-row">
+        <view class="price-item">
+          <text class="price-label">面值</text>
+          <text class="price-value original">¥{{ cardInfo.faceValue || buyOrder.faceValue }}</text>
+        </view>
+        <view class="price-divider"></view>
+        <view class="price-item">
+          <text class="price-label">售价</text>
+          <text class="price-value buy">¥{{ cardInfo.buyPrice || buyOrder.buyPrice }}</text>
+        </view>
+      </view>
+
+      <view class="detail-info-list">
+        <view class="info-row">
+          <text class="info-label">订单编号</text>
+          <text class="info-value">{{ buyOrder.orderNo || buyOrder.buyOrderId }}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">创建时间</text>
+          <text class="info-value">{{ buyOrder.createTime }}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 卡密信息（已支付状态才展示） -->
+    <view class="card-secret-section" wx:if="{{ buyOrder.status === 'PAID' && (buyOrder.cardNo || buyOrder.cardPwd) }}">
+      <view class="secret-title">卡密信息</view>
+      <view class="secret-card">
+        <view class="secret-row" wx:if="{{ buyOrder.cardNo }}">
+          <text class="secret-label">卡号</text>
+          <text class="secret-value">{{ buyOrder.cardNo }}</text>
+          <view class="copy-btn" data-text="{{ buyOrder.cardNo }}" bindtap="onCopyText">复制</view>
+        </view>
+        <view class="secret-row" wx:if="{{ buyOrder.cardPwd }}">
+          <text class="secret-label">卡密</text>
+          <text class="secret-value">{{ buyOrder.cardPwd }}</text>
+          <view class="copy-btn" data-text="{{ buyOrder.cardPwd }}" bindtap="onCopyText">复制</view>
+        </view>
+      </view>
+      <view class="secret-warning">
+        ⚠️ 请妥善保管卡密信息，不要泄露给他人
+      </view>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="order-action-bar">
+      <!-- 待支付状态 -->
+      <block wx:if="{{ buyOrder.status === 'PENDING' }}">
+        <view class="action-btn cancel-btn" bindtap="onCancelOrder">取消订单</view>
+        <view class="action-btn pay-btn {{ isPaying ? 'disabled' : '' }}" bindtap="onPayOrder">
+          {{ isPaying ? '支付中...' : '立即支付 ¥' + (cardInfo.buyPrice || buyOrder.buyPrice) }}
+        </view>
+      </block>
+
+      <!-- 已支付状态 -->
+      <block wx:elif="{{ buyOrder.status === 'PAID' }}">
+        <view class="action-btn secondary-btn" bindtap="onGoToBuyOrders">查看我的订单</view>
+        <view class="action-btn secondary-btn" bindtap="onGoBack">返回首页</view>
+      </block>
+
+      <!-- 已取消状态 -->
+      <block wx:elif="{{ buyOrder.status === 'CANCELLED' }}">
+        <view class="action-btn secondary-btn" bindtap="onGoBack">返回首页</view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 卡券已不可购买 -->
+  <view class="unavailable-section" wx:if="{{ !loading && !cardInfo && !buyOrder }}">
+    <view class="unavailable-icon">😔</view>
+    <text class="unavailable-text">该卡券已不可购买</text>
+    <text class="unavailable-sub">可能已被其他用户购买</text>
+    <view class="action-btn secondary-btn" bindtap="onGoBack" style="margin-top: 20px;">返回首页</view>
+  </view>
+</view>

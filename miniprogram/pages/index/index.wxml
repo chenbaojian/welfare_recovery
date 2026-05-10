@@ -1,0 +1,173 @@
+<!-- pages/index/index.wxml -->
+<wxs src="./utils.wxs" module="utils" />
+
+<view class="index-container">
+  <!-- 模式切换下拉 -->
+  <view class="mode-selector">
+    <view class="mode-dropdown" bindtap="onToggleModeMenu">
+      <text class="mode-current">{{ currentMode === 'BUYER' ? '我是买家' : '我是卖家' }}</text>
+      <van-icon name="{{ showModeMenu ? 'arrow-up' : 'arrow-down' }}" size="14" color="#1890FF" />
+    </view>
+    <!-- 下拉菜单 -->
+    <view class="mode-menu {{ showModeMenu ? 'show' : '' }}" wx:if="{{ showModeMenu }}">
+      <view class="mode-menu-mask" bindtap="onCloseModeMenu"></view>
+      <view class="mode-menu-list">
+        <view
+          class="mode-menu-item {{ currentMode === 'SELLER' ? 'active' : '' }}"
+          bindtap="onSelectMode"
+          data-mode="SELLER"
+        >
+          <text>我是卖家</text>
+          <van-icon wx:if="{{ currentMode === 'SELLER' }}" name="success" size="16" color="#1890FF" />
+        </view>
+        <view
+          class="mode-menu-item {{ currentMode === 'BUYER' ? 'active' : '' }}"
+          bindtap="onSelectMode"
+          data-mode="BUYER"
+        >
+          <text>我是买家</text>
+          <van-icon wx:if="{{ currentMode === 'BUYER' }}" name="success" size="16" color="#1890FF" />
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <van-search
+      value="{{ searchValue }}"
+      placeholder="{{ currentMode === 'BUYER' ? '搜索可购卡券' : '搜索卡券类型' }}"
+      use-action-slot
+      bind:change="onSearch"
+      bind:clear="onSearchClear"
+    />
+  </view>
+
+  <!-- 骨架屏 -->
+  <view class="skeleton-section" wx:if="{{ skeletonLoading }}">
+    <van-skeleton row="3" row-width="100%" title avatar animate />
+  </view>
+
+  <!-- ===== 卖家模式内容 ===== -->
+  <view class="main-content" wx:if="{{ !skeletonLoading && currentMode === 'SELLER' }}">
+    <!-- 卡券分类 -->
+    <view class="card-section">
+      <view class="section-title">卡券类型</view>
+      <view class="card-grid">
+        <view
+          class="card-item"
+          wx:for="{{ cardTypes }}"
+          wx:key="id"
+          data-id="{{ item.id }}"
+          bindtap="onSelectCard"
+        >
+          <view class="card-icon-emoji">{{ item.icon }}</view>
+          <text class="card-name">{{ item.name }}</text>
+          <view class="card-discount" wx:if="{{ item.discount }}">
+            <text class="discount-text">{{ utils.formatDiscount(item.discount) }}折</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 热门回收 -->
+    <view class="hot-section" wx:if="{{ hotCards.length > 0 }}">
+      <view class="section-title">热门回收</view>
+      <view class="hot-list">
+        <view
+          class="hot-item"
+          wx:for="{{ hotCards }}"
+          wx:key="id"
+          data-id="{{ item.id }}"
+          bindtap="onHotCardTap"
+        >
+          <view class="hot-left">
+            <view class="hot-icon-emoji">{{ item.icon }}</view>
+            <view class="hot-info">
+              <text class="hot-name">{{ item.name }}</text>
+              <text class="hot-desc">{{ item.description || '支持多种面值' }}</text>
+            </view>
+          </view>
+          <view class="hot-right">
+            <text class="hot-discount">最高{{ utils.formatDiscount(item.discount) }}折</text>
+            <van-icon name="arrow" color="#999" />
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <empty
+      wx:if="{{ !loading && cardTypes.length === 0 }}"
+      type="search"
+      description="未找到相关卡券类型"
+    />
+  </view>
+
+  <!-- ===== 买家模式内容 ===== -->
+  <view class="main-content" wx:if="{{ !skeletonLoading && currentMode === 'BUYER' }}">
+    <!-- 可购卡券分类 -->
+    <view class="card-section">
+      <view class="section-title">可购卡券</view>
+      <view class="card-grid">
+        <view
+          class="card-item buy-card-item"
+          wx:for="{{ buyCardTypes }}"
+          wx:key="cardTypeId"
+          data-id="{{ item.cardTypeId }}"
+          bindtap="onSelectBuyCard"
+        >
+          <view class="card-icon-emoji">{{ item.icon }}</view>
+          <text class="card-name">{{ item.name }}</text>
+          <view class="card-stock" wx:if="{{ item.availableCount > 0 }}">
+            <text class="stock-text">{{ item.availableCount }}张可购</text>
+          </view>
+          <view class="card-stock no-stock" wx:elif="{{ item.availableCount === 0 }}">
+            <text class="stock-text">暂无库存</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 无可售卡券 -->
+      <view class="buy-empty" wx:if="{{ buyCardTypes.length === 0 && !loading }}">
+        <view class="empty-icon">🛒</view>
+        <text class="empty-text">暂无可购卡券</text>
+        <text class="empty-sub-text">请稍后再来看看</text>
+      </view>
+    </view>
+
+    <!-- 买家热门卡券 -->
+    <view class="hot-section" wx:if="{{ buyHotCards.length > 0 }}">
+      <view class="section-title">热门卡券</view>
+      <view class="hot-list">
+        <view
+          class="hot-item"
+          wx:for="{{ buyHotCards }}"
+          wx:key="cardTypeId"
+          data-id="{{ item.cardTypeId }}"
+          bindtap="onHotCardTap"
+        >
+          <view class="hot-left">
+            <view class="hot-icon-emoji">{{ item.icon }}</view>
+            <view class="hot-info">
+              <text class="hot-name">{{ item.name }}</text>
+              <text class="hot-desc">{{ item.availableCount }}张可购 · 最低¥{{ item.minFaceValue }}</text>
+            </view>
+          </view>
+          <view class="hot-right">
+            <text class="hot-discount buy-price">¥{{ item.minFaceValue }}起</text>
+            <van-icon name="arrow" color="#999" />
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 未登录提示 -->
+  <view class="login-tip" wx:if="{{ !isLoggedIn }}">
+    <view class="tip-content">
+      <van-icon name="user-o" size="20" color="#1890FF" />
+      <text class="tip-text">{{ currentMode === 'BUYER' ? '登录后可购买卡券' : '登录后可进行卡券回收' }}</text>
+    </view>
+    <view class="tip-btn" bindtap="goToLogin">立即登录</view>
+  </view>
+</view>

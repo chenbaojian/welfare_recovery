@@ -1,0 +1,83 @@
+/* pages/verify/verify.wxss */
+
+.verify-container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: 30px;
+}
+
+/* 表单区域 */
+.form-section {
+  margin-top: 15px;
+}
+
+/* 协议区域 */
+.agreement-section {
+  padding: 20px 15px;
+}
+
+.agreement-text {
+  font-size: 12px;
+  color: #666;
+}
+
+.agreement-text .link {
+  color: #1890FF;
+}
+
+/* 提交按钮 */
+.submit-section {
+  padding: 20px 15px;
+}
+
+.submit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  background-color: #1890FF;
+  color: #fff;
+  font-size: 16px;
+  border-radius: 24px;
+}
+
+.submit-btn:active {
+  opacity: 0.8;
+}
+
+.submit-btn.disabled {
+  opacity: 0.6;
+}
+
+/* 说明区域 */
+.notice-section {
+  margin: 20px 15px;
+  padding: 15px;
+  background-color: #fff;
+  border-radius: 8px;
+}
+
+.notice-title {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.notice-item {
+  font-size: 12px;
+  color: #999;
+  line-height: 2;
+}
+
+/* 跳过按钮 */
+.skip-section {
+  text-align: center;
+  padding: 20px;
+}
+
+.skip-text {
+  font-size: 14px;
+  color: #999;
+  text-decoration: underline;
+}

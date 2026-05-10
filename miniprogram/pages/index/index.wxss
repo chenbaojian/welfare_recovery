@@ -1,0 +1,304 @@
+/* pages/index/index.wxss */
+
+.index-container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: 100px;
+}
+
+/* 模式切换下拉选择器 */
+.mode-selector {
+  position: relative;
+  z-index: 100;
+  background-color: #fff;
+  padding: 10px 15px;
+  display: flex;
+  align-items: center;
+}
+
+.mode-dropdown {
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  background-color: #f5f7fa;
+  border-radius: 20px;
+}
+
+.mode-current {
+  font-size: 15px;
+  font-weight: 500;
+  color: #1890FF;
+  margin-right: 4px;
+}
+
+.mode-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 999;
+}
+
+.mode-menu-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.mode-menu-list {
+  position: relative;
+  background-color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 0 0 8px 8px;
+  overflow: hidden;
+}
+
+.mode-menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  font-size: 15px;
+  color: #333;
+}
+
+.mode-menu-item:active {
+  background-color: #f5f5f5;
+}
+
+.mode-menu-item.active {
+  color: #1890FF;
+  font-weight: 500;
+}
+
+/* 搜索栏 */
+.search-bar {
+  background-color: #fff;
+  padding: 10px 0;
+}
+
+/* 骨架屏 */
+.skeleton-section {
+  padding: 15px;
+  background-color: #fff;
+}
+
+/* 主内容区域 */
+.main-content {
+  padding: 15px;
+}
+
+/* 卡券分类 */
+.card-section {
+  margin-bottom: 20px;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 15px;
+  padding-left: 10px;
+  border-left: 3px solid #1890FF;
+}
+
+/* 卡券网格 */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.card-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 15px 5px;
+  background-color: #fff;
+  border-radius: 8px;
+  transition: all 0.3s;
+  position: relative;
+}
+
+.card-item:active {
+  transform: scale(0.95);
+  background-color: #f5f5f5;
+}
+
+.card-icon-emoji {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.card-name {
+  font-size: 12px;
+  color: #333;
+  text-align: center;
+  line-height: 1.3;
+}
+
+/* 卖家模式折扣标签 */
+.card-discount {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+
+.discount-text {
+  font-size: 10px;
+  color: #F5222D;
+  background-color: rgba(245, 34, 45, 0.1);
+  padding: 1px 4px;
+  border-radius: 2px;
+}
+
+/* 买家模式库存标签 */
+.card-stock {
+  margin-top: 4px;
+}
+
+.stock-text {
+  font-size: 10px;
+  color: #52C41A;
+  background-color: rgba(82, 196, 26, 0.1);
+  padding: 1px 4px;
+  border-radius: 2px;
+}
+
+.no-stock .stock-text {
+  color: #999;
+  background-color: rgba(153, 153, 153, 0.1);
+}
+
+/* 买家空状态 */
+.buy-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 0;
+}
+
+.buy-empty .empty-icon {
+  font-size: 48px;
+  margin-bottom: 10px;
+}
+
+.buy-empty .empty-text {
+  font-size: 14px;
+  color: #999;
+  margin-bottom: 5px;
+}
+
+.buy-empty .empty-sub-text {
+  font-size: 12px;
+  color: #ccc;
+}
+
+/* 热门回收/热门卡券 */
+.hot-section {
+  margin-bottom: 20px;
+}
+
+.hot-list {
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.hot-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.hot-item:last-child {
+  border-bottom: none;
+}
+
+.hot-item:active {
+  background-color: #f5f5f5;
+}
+
+.hot-left {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.hot-icon-emoji {
+  font-size: 28px;
+  margin-right: 12px;
+}
+
+.hot-info {
+  flex: 1;
+}
+
+.hot-name {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.hot-desc {
+  font-size: 12px;
+  color: #999;
+  display: block;
+}
+
+.hot-right {
+  display: flex;
+  align-items: center;
+}
+
+.hot-discount {
+  font-size: 12px;
+  color: #F5222D;
+  font-weight: 500;
+  margin-right: 8px;
+}
+
+.buy-price {
+  color: #1890FF;
+}
+
+/* 未登录提示 */
+.login-tip {
+  position: fixed;
+  bottom: 60px;
+  left: 15px;
+  right: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 15px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.tip-content {
+  display: flex;
+  align-items: center;
+}
+
+.tip-text {
+  font-size: 13px;
+  color: #666;
+  margin-left: 8px;
+}
+
+.tip-btn {
+  padding: 6px 15px;
+  background-color: #1890FF;
+  color: #fff;
+  font-size: 12px;
+  border-radius: 15px;
+}

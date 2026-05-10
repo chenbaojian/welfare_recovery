@@ -1,0 +1,57 @@
+<!-- pages/phone/list/list.wxml -->
+<view class="phone-list-container">
+  <!-- 提示信息 -->
+  <view class="tip-section">
+    <van-notice-bar
+      left-icon="info-o"
+      text="请选择运营商，支持移动、联通、电信充值卡回收"
+    />
+  </view>
+
+  <!-- 运营商列表 -->
+  <view class="provider-list">
+    <view
+      class="provider-item"
+      wx:for="{{ providers }}"
+      wx:key="id"
+      data-id="{{ item.id }}"
+      bindtap="onSelectProvider"
+    >
+      <view class="provider-icon" style="background-color: {{ item.color }};">
+        <text class="icon-text">{{ item.icon }}</text>
+      </view>
+      <view class="provider-info">
+        <text class="provider-name">{{ item.name }}</text>
+        <text class="provider-desc">{{ item.description }}</text>
+        <view class="provider-meta">
+          <text class="provider-discount">回收折扣: {{ item.discount * 10 }}折</text>
+        </view>
+      </view>
+      <view class="provider-arrow">
+        <van-icon name="arrow" color="#999" />
+      </view>
+    </view>
+  </view>
+
+  <!-- 支持面值说明 -->
+  <view class="face-value-section">
+    <view class="section-title">支持面值</view>
+    <view class="face-value-tags">
+      <van-tag plain>20元</van-tag>
+      <van-tag plain>30元</van-tag>
+      <van-tag plain>50元</van-tag>
+      <van-tag plain>100元</van-tag>
+    </view>
+  </view>
+
+  <!-- 回收说明 -->
+  <view class="notice-section">
+    <view class="section-title">回收说明</view>
+    <view class="notice-list">
+      <view class="notice-item">1. 请确保卡券有效且未使用</view>
+      <view class="notice-item">2. 卡号为15位数字，卡密为19位数字</view>
+      <view class="notice-item">3. 提交后无法撤销，请仔细核对</view>
+      <view class="notice-item">4. 回收金额将在1-3个工作日内到账</view>
+    </view>
+  </view>
+</view>

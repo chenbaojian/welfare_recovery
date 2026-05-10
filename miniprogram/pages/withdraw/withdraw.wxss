@@ -1,0 +1,193 @@
+/* pages/withdraw/withdraw.wxss */
+
+.withdraw-container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: 30px;
+}
+
+/* 加载中 */
+.loading-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 100px 0;
+}
+
+/* 账户余额 */
+.balance-section {
+  padding: 15px;
+}
+
+.balance-card {
+  background: linear-gradient(135deg, #1890FF 0%, #40a9ff 100%);
+  border-radius: 8px;
+  padding: 20px;
+  color: #fff;
+}
+
+.balance-label {
+  font-size: 14px;
+  opacity: 0.8;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.balance-value {
+  font-size: 28px;
+  font-weight: bold;
+}
+
+/* 提现金额 */
+.amount-section {
+  background-color: #fff;
+  padding: 15px;
+  margin-bottom: 10px;
+}
+
+.section-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.withdraw-all {
+  font-size: 12px;
+  color: #1890FF;
+  padding: 4px 10px;
+  border: 1px solid #1890FF;
+  border-radius: 12px;
+}
+
+.amount-rules {
+  padding: 10px 15px;
+}
+
+.rule-text {
+  font-size: 12px;
+  color: #999;
+}
+
+/* 结算账户 */
+.bank-section {
+  background-color: #fff;
+  padding: 15px;
+  margin-bottom: 10px;
+}
+
+.bank-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+.bank-info {
+  display: flex;
+  align-items: center;
+}
+
+.bank-icon-emoji {
+  font-size: 28px;
+  margin-right: 12px;
+}
+
+.bank-icon {
+  width: 32px;
+  height: 32px;
+  margin-right: 12px;
+}
+
+.bank-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.bank-name {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.bank-no {
+  font-size: 12px;
+  color: #999;
+}
+
+.no-bank {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+.no-bank-text {
+  font-size: 14px;
+  color: #1890FF;
+  margin-left: 8px;
+}
+
+/* 提现说明 */
+.notice-section {
+  background-color: #fff;
+  padding: 15px;
+  margin: 0 15px 15px;
+  border-radius: 8px;
+}
+
+.notice-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.notice-item {
+  font-size: 12px;
+  color: #999;
+  line-height: 2;
+}
+
+/* 提交按钮 */
+.submit-section {
+  padding: 20px 15px;
+}
+
+.submit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  background-color: #1890FF;
+  color: #fff;
+  font-size: 16px;
+  border-radius: 24px;
+}
+
+.submit-btn:active {
+  opacity: 0.8;
+}
+
+.submit-btn.disabled {
+  opacity: 0.5;
+}
+
+/* 提现记录 */
+.record-section {
+  text-align: center;
+  padding: 20px;
+}
+
+.record-link {
+  font-size: 14px;
+  color: #1890FF;
+  text-decoration: underline;
+}

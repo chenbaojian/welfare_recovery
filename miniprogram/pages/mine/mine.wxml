@@ -1,0 +1,126 @@
+<!-- pages/mine/mine.wxml -->
+<view class="mine-container">
+  <!-- 用户信息头部 -->
+  <view class="user-info-section">
+    <view class="user-header">
+      <view class="user-avatar-emoji">👤</view>
+      <view class="user-text">
+        <text class="user-name">{{ isLoggedIn ? (userInfo.nickname || '用户') : '未登录' }}</text>
+        <view class="user-phone" wx:if="{{ isLoggedIn }}">
+          <van-icon name="phone" size="12" color="rgba(255,255,255,0.8)" />
+          <text>{{ userInfo.phone || '未绑定手机' }}</text>
+        </view>
+        <view class="user-phone" wx:else>
+          <text class="login-tip-text" bindtap="goToLogin">点击登录</text>
+        </view>
+      </view>
+      <view class="verify-badge {{ userInfo.isVerified ? 'verified' : '' }}" bindtap="goToVerify" wx:if="{{ isLoggedIn }}">
+        <van-icon name="{{ userInfo.isVerified ? 'passed' : 'warning-o' }}" size="14" />
+        <text>{{ userInfo.isVerified ? '已认证' : '未认证' }}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 卖家账户信息 -->
+  <view class="account-section">
+    <view class="account-title">卖出统计</view>
+    <view class="account-card">
+      <view class="account-item" bindtap="goToWithdraw">
+        <text class="account-value">¥{{ balance }}</text>
+        <text class="account-label">账户余额</text>
+      </view>
+      <view class="divider"></view>
+      <view class="account-item">
+        <text class="account-value">¥{{ totalRecycle }}</text>
+        <text class="account-label">累计回收</text>
+      </view>
+      <view class="divider"></view>
+      <view class="account-item">
+        <text class="account-value">¥{{ withdrawn }}</text>
+        <text class="account-label">已提现</text>
+      </view>
+      <view class="divider"></view>
+      <view class="account-item" bindtap="goToOrders">
+        <text class="account-value">{{ orderCount }}</text>
+        <text class="account-label">卖出订单</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 买家账户信息 -->
+  <view class="account-section">
+    <view class="account-title">买入统计</view>
+    <view class="account-card">
+      <view class="account-item" bindtap="goToBuyOrders">
+        <text class="account-value">¥{{ totalBuy }}</text>
+        <text class="account-label">累计购买</text>
+      </view>
+      <view class="divider"></view>
+      <view class="account-item" bindtap="goToBuyOrders">
+        <text class="account-value">{{ buyOrderCount }}</text>
+        <text class="account-label">买入订单</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 功能菜单 -->
+  <view class="menu-section">
+    <van-cell-group inset>
+      <van-cell
+        title="我的订单"
+        icon="orders-o"
+        is-link
+        bindtap="goToOrders"
+      />
+      <van-cell
+        title="购买订单"
+        icon="shopping-cart-o"
+        is-link
+        bindtap="goToBuyOrders"
+      />
+      <van-cell
+        title="提现"
+        icon="balance-pay"
+        is-link
+        bindtap="goToWithdraw"
+      />
+      <van-cell
+        title="结算账户"
+        icon="card"
+        is-link
+        bindtap="goToBank"
+      />
+    </van-cell-group>
+  </view>
+
+  <!-- 其他菜单 -->
+  <view class="menu-section">
+    <van-cell-group inset>
+      <van-cell
+        title="联系客服"
+        icon="service"
+        is-link
+        bindtap="onContactService"
+      />
+      <van-cell
+        title="意见反馈"
+        icon="comment-o"
+        is-link
+        bindtap="onFeedback"
+      />
+      <van-cell
+        title="关于我们"
+        icon="info-o"
+        is-link
+        bindtap="onAbout"
+      />
+    </van-cell-group>
+  </view>
+
+  <!-- 退出登录 -->
+  <view class="logout-section" wx:if="{{ isLoggedIn }}">
+    <view class="logout-btn" bindtap="onLogout">退出登录</view>
+  </view>
+</view>
+
+<van-dialog id="van-dialog" />
