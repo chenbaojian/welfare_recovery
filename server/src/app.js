@@ -14,8 +14,25 @@ const routes = require('./routes');
 
 const app = express();
 
-// 安全中间件
-app.use(helmet());
+// 安全中间件（开发环境放宽CSP，生产环境可收紧）
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      baseUri: ["'self'"],
+      fontSrc: ["'self'", "https:", "data:"],
+      formAction: ["'self'"],
+      frameAncestors: ["'self'"],
+      imgSrc: ["'self'", "data:"],
+      objectSrc: ["'none'"],
+      scriptSrc: ["'self'"],
+      scriptSrcAttr: ["'self'"],
+      styleSrc: ["'self'", "https:", "'unsafe-inline'"],
+      connectSrc: ["'self'"],
+      upgradeInsecureRequests: null  // 显式禁用，避免本地HTTP请求被升级为HTTPS
+    }
+  }
+}));
 
 // CORS配置
 app.use(cors({
@@ -36,7 +53,7 @@ app.use('/admin', express.static(path.join(__dirname, '..', 'admin')));
 // 请求限流
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15分钟
-  max: 100, // 限制100次请求
+  max: process.env.NODE_ENV === 'production' ? 200 : 1000, // 生产200次，开发1000次
   message: { code: 429, message: '请求过于频繁，请稍后再试' }
 });
 app.use('/api', limiter);

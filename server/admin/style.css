@@ -160,6 +160,22 @@ body {
   background-color: #cf1322;
 }
 
+.btn-warning {
+  height: 36px;
+  padding: 0 20px;
+  background-color: #FAAD14;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-warning:hover {
+  background-color: #d48806;
+}
+
 .btn-success {
   height: 36px;
   padding: 0 20px;

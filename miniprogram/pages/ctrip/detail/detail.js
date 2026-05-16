@@ -6,22 +6,55 @@ const { addOrder } = require('../../../utils/userData');
 
 Page({
   data: {
+    cardProductId: null,
     phone: '',
     phoneError: '',
     password: '',
     points: '',
-    discount: 0.72,
+    discountRate: 0,       // 从API获取的折扣率
     recycleAmount: 0,
     submitting: false,
-    isLoggedIn: false
+    isLoggedIn: false,
+    loading: true
   },
 
   onLoad(options) {
     const isLoggedIn = checkLogin();
-    this.setData({ isLoggedIn });
+    const cardProductId = options.cardProductId || null;
+
+    this.setData({ isLoggedIn, cardProductId });
     wx.setNavigationBarTitle({
       title: '携程积分回收'
     });
+
+    if (cardProductId) {
+      this.loadFaceValues(cardProductId);
+    } else {
+      this.setData({ loading: false });
+    }
+  },
+
+  /**
+   * 从API加载面值列表（获取折扣率）
+   */
+  async loadFaceValues(cardProductId) {
+    try {
+      const data = await request.get(`${API.card.recycleFaceValues}/${cardProductId}/face-values`);
+      const faceValueList = data || [];
+      // 对于手动输入额度的卡类型，取第一个面值记录的折扣率作为默认折扣率
+      if (faceValueList.length > 0) {
+        this.setData({
+          discountRate: faceValueList[0].discountRate,
+          loading: false
+        });
+      } else {
+        this.setData({ loading: false });
+      }
+    } catch (err) {
+      console.error('加载折扣率失败:', err);
+      this.setData({ loading: false });
+      wx.showToast({ title: '加载折扣率失败', icon: 'none' });
+    }
   },
 
   /**
@@ -56,7 +89,7 @@ Page({
   },
 
   /**
-   * 输入积分额度
+   * 输入积分额度 - 使用API返回的折扣率计算回收金额
    */
   onInputPoints(e) {
     let value = e.detail.value || '';
@@ -70,7 +103,7 @@ Page({
 
     // 计算回收金额
     const points = parseFloat(value) || 0;
-    const recycleAmount = (points * this.data.discount).toFixed(2);
+    const recycleAmount = (points * this.data.discountRate).toFixed(2);
 
     this.setData({
       points: value,
@@ -164,7 +197,7 @@ Page({
   async doSubmitOrder() {
     this.setData({ submitting: true });
 
-    const { phone, password, points, recycleAmount } = this.data;
+    const { cardProductId, phone, password, points, recycleAmount } = this.data;
 
     // 本地开发模式
     if (LOCAL_DEV) {
@@ -186,7 +219,7 @@ Page({
 
     try {
       const data = await request.post(API.order.create, {
-        cardTypeId: 11,
+        cardProductId: cardProductId,
         faceValue: parseFloat(points),
         cardNo: phone,
         cardPwd: password

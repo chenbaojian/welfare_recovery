@@ -12,6 +12,9 @@ router.get('/cardTypes', buyController.cardTypes);
 // 获取某类型下可售卡券列表（游客也可浏览）
 router.get('/cardList', buyController.cardList);
 
+// 获取卡产品可售面值列表（游客也可浏览）
+router.get('/card-product/:id/face-values', buyController.getSaleableFaceValues);
+
 // ===== 需要登录的接口 =====
 
 // 创建购买订单（需登录+实名认证）

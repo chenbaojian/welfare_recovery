@@ -1,0 +1,368 @@
+{
+  "types": [
+    {
+      "id": 1,
+      "name": "话费充值卡",
+      "category": "telecom",
+      "discount_rate": "0.93",
+      "is_hot": 1,
+      "icon": null
+    },
+    {
+      "id": 2,
+      "name": "加油卡",
+      "category": "travel",
+      "discount_rate": "0.92",
+      "is_hot": 1,
+      "icon": null
+    },
+    {
+      "id": 3,
+      "name": "游戏点卡",
+      "category": "entertainment",
+      "discount_rate": "0.88",
+      "is_hot": 1,
+      "icon": null
+    },
+    {
+      "id": 4,
+      "name": "京东E卡",
+      "category": "ecommerce",
+      "discount_rate": "0.95",
+      "is_hot": 1,
+      "icon": null
+    },
+    {
+      "id": 5,
+      "name": "超市购物卡",
+      "category": "life",
+      "discount_rate": "0.90",
+      "is_hot": 0,
+      "icon": null
+    },
+    {
+      "id": 6,
+      "name": "电影票券",
+      "category": "entertainment",
+      "discount_rate": "0.85",
+      "is_hot": 0,
+      "icon": null
+    },
+    {
+      "id": 7,
+      "name": "美食代金券",
+      "category": "life",
+      "discount_rate": "0.88",
+      "is_hot": 0,
+      "icon": null
+    },
+    {
+      "id": 8,
+      "name": "出行券",
+      "category": "travel",
+      "discount_rate": "0.90",
+      "is_hot": 0,
+      "icon": null
+    },
+    {
+      "id": 9,
+      "name": "美团企业积分",
+      "category": "points",
+      "discount_rate": "0.92",
+      "is_hot": 0,
+      "icon": null
+    },
+    {
+      "id": 10,
+      "name": "劳保积分",
+      "category": "points",
+      "discount_rate": "0.90",
+      "is_hot": 0,
+      "icon": null
+    },
+    {
+      "id": 11,
+      "name": "携程积分",
+      "category": "points",
+      "discount_rate": "0.88",
+      "is_hot": 0,
+      "icon": null
+    },
+    {
+      "id": 12,
+      "name": "影音会员",
+      "category": "entertainment",
+      "discount_rate": "0.85",
+      "is_hot": 0,
+      "icon": null
+    },
+    {
+      "id": 13,
+      "name": "电商礼品卡",
+      "category": "ecommerce",
+      "discount_rate": "0.92",
+      "is_hot": 0,
+      "icon": null
+    }
+  ],
+  "products": [
+    {
+      "id": 1,
+      "card_type_id": 1,
+      "name": "中国移动",
+      "discount_rate": "0.93"
+    },
+    {
+      "id": 2,
+      "card_type_id": 1,
+      "name": "中国联通",
+      "discount_rate": "0.93"
+    },
+    {
+      "id": 3,
+      "card_type_id": 1,
+      "name": "中国电信",
+      "discount_rate": "0.93"
+    },
+    {
+      "id": 4,
+      "card_type_id": 2,
+      "name": "中国石化",
+      "discount_rate": "0.92"
+    },
+    {
+      "id": 5,
+      "card_type_id": 2,
+      "name": "中国石油",
+      "discount_rate": "0.92"
+    },
+    {
+      "id": 6,
+      "card_type_id": 2,
+      "name": "中国海油",
+      "discount_rate": "0.92"
+    },
+    {
+      "id": 7,
+      "card_type_id": 3,
+      "name": "王者荣耀",
+      "discount_rate": "0.88"
+    },
+    {
+      "id": 17,
+      "card_type_id": 3,
+      "name": "网易一卡通",
+      "discount_rate": "0.95"
+    },
+    {
+      "id": 8,
+      "card_type_id": 3,
+      "name": "和平精英",
+      "discount_rate": "0.88"
+    },
+    {
+      "id": 9,
+      "card_type_id": 3,
+      "name": "原神",
+      "discount_rate": "0.88"
+    },
+    {
+      "id": 10,
+      "card_type_id": 4,
+      "name": "京东E卡",
+      "discount_rate": "0.95"
+    },
+    {
+      "id": 11,
+      "card_type_id": 5,
+      "name": "沃尔玛",
+      "discount_rate": "0.90"
+    },
+    {
+      "id": 31,
+      "card_type_id": 5,
+      "name": "盒马生鲜",
+      "discount_rate": "0.95"
+    },
+    {
+      "id": 12,
+      "card_type_id": 5,
+      "name": "家乐福",
+      "discount_rate": "0.90"
+    },
+    {
+      "id": 32,
+      "card_type_id": 5,
+      "name": "朴朴超市",
+      "discount_rate": "0.95"
+    },
+    {
+      "id": 13,
+      "card_type_id": 5,
+      "name": "永辉超市",
+      "discount_rate": "0.90"
+    },
+    {
+      "id": 33,
+      "card_type_id": 5,
+      "name": "小象超市",
+      "discount_rate": "0.95"
+    },
+    {
+      "id": 34,
+      "card_type_id": 5,
+      "name": "红旗连锁",
+      "discount_rate": "0.95"
+    },
+    {
+      "id": 14,
+      "card_type_id": 6,
+      "name": "万达电影",
+      "discount_rate": "0.85"
+    },
+    {
+      "id": 15,
+      "card_type_id": 6,
+      "name": "猫眼电影",
+      "discount_rate": "0.85"
+    },
+    {
+      "id": 35,
+      "card_type_id": 7,
+      "name": "瑞幸咖啡",
+      "discount_rate": "0.95"
+    },
+    {
+      "id": 36,
+      "card_type_id": 7,
+      "name": "肯德基",
+      "discount_rate": "0.95"
+    },
+    {
+      "id": 37,
+      "card_type_id": 7,
+      "name": "爱达乐",
+      "discount_rate": "0.95"
+    },
+    {
+      "id": 38,
+      "card_type_id": 7,
+      "name": "好利来",
+      "discount_rate": "0.95"
+    },
+    {
+      "id": 39,
+      "card_type_id": 7,
+      "name": "霸王茶姬",
+      "discount_rate": "0.95"
+    },
+    {
+      "id": 40,
+      "card_type_id": 7,
+      "name": "味多美",
+      "discount_rate": "0.95"
+    },
+    {
+      "id": 41,
+      "card_type_id": 7,
+      "name": "元祖食品",
+      "discount_rate": "0.95"
+    },
+    {
+      "id": 42,
+      "card_type_id": 7,
+      "name": "星巴克",
+      "discount_rate": "0.95"
+    },
+    {
+      "id": 43,
+      "card_type_id": 8,
+      "name": "融晟携程卡包",
+      "discount_rate": "0.95"
+    },
+    {
+      "id": 44,
+      "card_type_id": 8,
+      "name": "携程积分",
+      "discount_rate": "0.95"
+    },
+    {
+      "id": 18,
+      "card_type_id": 12,
+      "name": "爱奇艺会员",
+      "discount_rate": "0.95"
+    },
+    {
+      "id": 19,
+      "card_type_id": 12,
+      "name": "腾讯视频会员",
+      "discount_rate": "0.95"
+    },
+    {
+      "id": 20,
+      "card_type_id": 12,
+      "name": "优酷视频会员",
+      "discount_rate": "0.95"
+    },
+    {
+      "id": 21,
+      "card_type_id": 12,
+      "name": "芒果TV会员",
+      "discount_rate": "0.95"
+    },
+    {
+      "id": 22,
+      "card_type_id": 12,
+      "name": "京东电影",
+      "discount_rate": "0.95"
+    },
+    {
+      "id": 23,
+      "card_type_id": 12,
+      "name": "喜马拉雅FM",
+      "discount_rate": "0.95"
+    },
+    {
+      "id": 24,
+      "card_type_id": 13,
+      "name": "京东超市卡",
+      "discount_rate": "0.95"
+    },
+    {
+      "id": 25,
+      "card_type_id": 13,
+      "name": "永辉超市卡",
+      "discount_rate": "0.95"
+    },
+    {
+      "id": 26,
+      "card_type_id": 13,
+      "name": "美团礼品卡",
+      "discount_rate": "0.95"
+    },
+    {
+      "id": 27,
+      "card_type_id": 13,
+      "name": "天猫超市卡",
+      "discount_rate": "0.95"
+    },
+    {
+      "id": 28,
+      "card_type_id": 13,
+      "name": "银泰百货银泰卡",
+      "discount_rate": "0.95"
+    },
+    {
+      "id": 29,
+      "card_type_id": 13,
+      "name": "苏宁易购礼品卡",
+      "discount_rate": "0.95"
+    },
+    {
+      "id": 30,
+      "card_type_id": 13,
+      "name": "中百超市购物卡",
+      "discount_rate": "0.95"
+    }
+  ]
+}

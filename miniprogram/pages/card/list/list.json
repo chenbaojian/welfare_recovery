@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "卡券列表",
+  "usingComponents": {
+    "van-icon": "@vant/weapp/lib/icon/index",
+    "van-loading": "@vant/weapp/lib/loading/index",
+    "van-empty": "@vant/weapp/lib/empty/index",
+    "van-notice-bar": "@vant/weapp/lib/notice-bar/index"
+  }
+}

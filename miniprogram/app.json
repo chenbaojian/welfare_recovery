@@ -4,6 +4,7 @@
     "pages/login/login",
     "pages/verify/verify",
     "pages/detail/detail",
+    "pages/card/list/list",
     "pages/phone/list/list",
     "pages/phone/detail/detail",
     "pages/gas/list/list",

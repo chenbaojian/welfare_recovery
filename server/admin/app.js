@@ -70,7 +70,7 @@ async function apiRequest(url, method = 'GET', data = null) {
       return null;
     }
 
-    return result.data;
+    return result;
   } catch (err) {
     console.error('请求错误:', err);
     showToast('网络请求失败: ' + err.message, 'error');
@@ -165,13 +165,13 @@ async function doLogin() {
     console.log('登录响应:', result);
 
     if (result) {
-      adminToken = result.token;
-      adminRole = result.adminInfo.role;
+      adminToken = result.data.token;
+      adminRole = result.data.adminInfo.role;
       localStorage.setItem('adminToken', adminToken);
       localStorage.setItem('adminRole', adminRole);
 
       // 更新管理员名称
-      document.getElementById('adminName').textContent = result.adminInfo.realName || result.adminInfo.username;
+      document.getElementById('adminName').textContent = result.data.adminInfo.realName || result.data.adminInfo.username;
 
       // 切换到主页面
       document.getElementById('loginPage').classList.remove('active');
@@ -228,6 +228,7 @@ function switchPage(pageName) {
   if (pageName === 'assets') loadAssets();
   if (pageName === 'soldAssets') loadSoldAssets();
   if (pageName === 'availableAssets') loadAvailableAssets();
+  if (pageName === 'cardTypes') loadCardProducts();
 }
 
 // ========== 数据概览 ==========
@@ -239,12 +240,12 @@ async function loadDashboard() {
   const data = await apiRequest('/dashboard');
 
   if (data) {
-    document.getElementById('statTodayOrders').textContent = data.todayOrders;
-    document.getElementById('statPendingOrders').textContent = data.pendingOrders;
-    document.getElementById('statProcessingOrders').textContent = data.processingOrders;
-    document.getElementById('statTodayRecycle').textContent = formatMoney(data.todayRecycle);
-    document.getElementById('statTotalUsers').textContent = data.totalUsers;
-    document.getElementById('statTotalRecycle').textContent = formatMoney(data.totalRecycle);
+    document.getElementById('statTodayOrders').textContent = data.data.todayOrders;
+    document.getElementById('statPendingOrders').textContent = data.data.pendingOrders;
+    document.getElementById('statProcessingOrders').textContent = data.data.processingOrders;
+    document.getElementById('statTodayRecycle').textContent = formatMoney(data.data.todayRecycle);
+    document.getElementById('statTotalUsers').textContent = data.data.totalUsers;
+    document.getElementById('statTotalRecycle').textContent = formatMoney(data.data.totalRecycle);
   }
 }
 
@@ -268,8 +269,8 @@ async function loadOrders() {
   const data = await apiRequest('/order/list?' + params.toString());
 
   if (data) {
-    currentOrderTotal = data.total;
-    renderOrderTable(data.list);
+    currentOrderTotal = data.data.total;
+    renderOrderTable(data.data.list);
     renderOrderPagination();
   }
 }
@@ -400,8 +401,8 @@ async function loadBuyOrders() {
   const data = await apiRequest('/buy-order/list?' + params.toString());
 
   if (data) {
-    currentBuyOrderTotal = data.total;
-    renderBuyOrderTable(data.list);
+    currentBuyOrderTotal = data.data.total;
+    renderBuyOrderTable(data.data.list);
     renderBuyOrderPagination();
   }
 }
@@ -495,6 +496,7 @@ async function viewBuyOrderDetail(buyOrderId) {
   const data = await apiRequest('/buy-order/detail?id=' + buyOrderId);
 
   if (data) {
+    const d = data.data;
     const body = document.getElementById('orderDetailBody');
     const footer = document.getElementById('orderDetailFooter');
 
@@ -502,35 +504,35 @@ async function viewBuyOrderDetail(buyOrderId) {
       <div class="detail-grid">
         <div class="detail-item">
           <span class="detail-label">订单号</span>
-          <span class="detail-value">${data.orderNo}</span>
+          <span class="detail-value">${d.orderNo}</span>
         </div>
         <div class="detail-item">
           <span class="detail-label">状态</span>
-          <span class="detail-value">${getBuyOrderStatusTag(data.status)}</span>
+          <span class="detail-value">${getBuyOrderStatusTag(d.status)}</span>
         </div>
         <div class="detail-item">
           <span class="detail-label">卡券类型</span>
-          <span class="detail-value">${data.cardTypeName}</span>
+          <span class="detail-value">${d.cardTypeName}</span>
         </div>
         <div class="detail-item">
           <span class="detail-label">面值金额</span>
-          <span class="detail-value">${formatMoney(data.faceValue)}</span>
+          <span class="detail-value">${formatMoney(d.faceValue)}</span>
         </div>
         <div class="detail-item">
           <span class="detail-label">购买价格</span>
-          <span class="detail-value highlight">${formatMoney(data.buyPrice)}</span>
+          <span class="detail-value highlight">${formatMoney(d.buyPrice)}</span>
         </div>
         <div class="detail-item">
           <span class="detail-label">折扣率</span>
-          <span class="detail-value">${data.discountRate ? (data.discountRate * 10).toFixed(1) + '折' : '-'}</span>
+          <span class="detail-value">${d.discountRate ? (d.discountRate * 10).toFixed(1) + '折' : '-'}</span>
         </div>
         <div class="detail-item">
           <span class="detail-label">创建时间</span>
-          <span class="detail-value">${formatTime(data.createTime)}</span>
+          <span class="detail-value">${formatTime(d.createTime)}</span>
         </div>
         <div class="detail-item">
           <span class="detail-label">支付时间</span>
-          <span class="detail-value">${formatTime(data.payTime)}</span>
+          <span class="detail-value">${formatTime(d.payTime)}</span>
         </div>
       </div>
 
@@ -539,11 +541,11 @@ async function viewBuyOrderDetail(buyOrderId) {
         <div class="detail-grid">
           <div class="detail-item">
             <span class="detail-label">卡号</span>
-            <span class="detail-value">${data.cardNoDecrypt || '-'}</span>
+            <span class="detail-value">${d.cardNoDecrypt || '-'}</span>
           </div>
           <div class="detail-item">
             <span class="detail-label">卡密</span>
-            <span class="detail-value">${data.cardPwdDecrypt || '-'}</span>
+            <span class="detail-value">${d.cardPwdDecrypt || '-'}</span>
           </div>
         </div>
       </div>
@@ -553,15 +555,15 @@ async function viewBuyOrderDetail(buyOrderId) {
         <div class="detail-grid">
           <div class="detail-item">
             <span class="detail-label">买家昵称</span>
-            <span class="detail-value">${data.buyerNickname || '-'}</span>
+            <span class="detail-value">${d.buyerNickname || '-'}</span>
           </div>
           <div class="detail-item">
             <span class="detail-label">手机号</span>
-            <span class="detail-value">${data.buyerPhone || '-'}</span>
+            <span class="detail-value">${d.buyerPhone || '-'}</span>
           </div>
           <div class="detail-item">
             <span class="detail-label">真实姓名</span>
-            <span class="detail-value">${data.buyerRealName || '-'}</span>
+            <span class="detail-value">${d.buyerRealName || '-'}</span>
           </div>
         </div>
       </div>
@@ -571,23 +573,23 @@ async function viewBuyOrderDetail(buyOrderId) {
         <div class="detail-grid">
           <div class="detail-item">
             <span class="detail-label">卖家昵称</span>
-            <span class="detail-value">${data.sellerNickname || '-'}</span>
+            <span class="detail-value">${d.sellerNickname || '-'}</span>
           </div>
           <div class="detail-item">
             <span class="detail-label">手机号</span>
-            <span class="detail-value">${data.sellerPhone || '-'}</span>
+            <span class="detail-value">${d.sellerPhone || '-'}</span>
           </div>
           <div class="detail-item">
             <span class="detail-label">真实姓名</span>
-            <span class="detail-value">${data.sellerRealName || '-'}</span>
+            <span class="detail-value">${d.sellerRealName || '-'}</span>
           </div>
           <div class="detail-item">
             <span class="detail-label">回收订单号</span>
-            <span class="detail-value">${data.recycleOrderNo || '-'}</span>
+            <span class="detail-value">${d.recycleOrderNo || '-'}</span>
           </div>
           <div class="detail-item">
             <span class="detail-label">回收金额</span>
-            <span class="detail-value">${formatMoney(data.recycleAmount)}</span>
+            <span class="detail-value">${formatMoney(d.recycleAmount)}</span>
           </div>
         </div>
       </div>
@@ -608,6 +610,7 @@ async function viewOrderDetail(orderId) {
   const data = await apiRequest('/order/detail?id=' + orderId);
 
   if (data) {
+    const d = data.data;
     const body = document.getElementById('orderDetailBody');
     const footer = document.getElementById('orderDetailFooter');
 
@@ -615,27 +618,27 @@ async function viewOrderDetail(orderId) {
       <div class="detail-grid">
         <div class="detail-item">
           <span class="detail-label">订单号</span>
-          <span class="detail-value">${data.orderNo}</span>
+          <span class="detail-value">${d.orderNo}</span>
         </div>
         <div class="detail-item">
           <span class="detail-label">状态</span>
-          <span class="detail-value">${getStatusTag(data.status)}</span>
+          <span class="detail-value">${getStatusTag(d.status)}</span>
         </div>
         <div class="detail-item">
           <span class="detail-label">卡券类型</span>
-          <span class="detail-value">${data.cardTypeName}</span>
+          <span class="detail-value">${d.cardTypeName}</span>
         </div>
         <div class="detail-item">
           <span class="detail-label">面值金额</span>
-          <span class="detail-value">${formatMoney(data.faceValue)}</span>
+          <span class="detail-value">${formatMoney(d.faceValue)}</span>
         </div>
         <div class="detail-item">
           <span class="detail-label">回收金额</span>
-          <span class="detail-value highlight">${formatMoney(data.recycleAmount)}</span>
+          <span class="detail-value highlight">${formatMoney(d.recycleAmount)}</span>
         </div>
         <div class="detail-item">
           <span class="detail-label">创建时间</span>
-          <span class="detail-value">${formatTime(data.createTime)}</span>
+          <span class="detail-value">${formatTime(d.createTime)}</span>
         </div>
       </div>
 
@@ -644,11 +647,11 @@ async function viewOrderDetail(orderId) {
         <div class="detail-grid">
           <div class="detail-item">
             <span class="detail-label">卡号</span>
-            <span class="detail-value">${data.cardNoDecrypt || '-'}</span>
+            <span class="detail-value">${d.cardNoDecrypt || '-'}</span>
           </div>
           <div class="detail-item">
             <span class="detail-label">卡密</span>
-            <span class="detail-value">${data.cardPwdDecrypt || '-'}</span>
+            <span class="detail-value">${d.cardPwdDecrypt || '-'}</span>
           </div>
         </div>
       </div>
@@ -658,35 +661,35 @@ async function viewOrderDetail(orderId) {
         <div class="detail-grid">
           <div class="detail-item">
             <span class="detail-label">用户昵称</span>
-            <span class="detail-value">${data.userNickname || '-'}</span>
+            <span class="detail-value">${d.userNickname || '-'}</span>
           </div>
           <div class="detail-item">
             <span class="detail-label">手机号</span>
-            <span class="detail-value">${data.userPhone || '-'}</span>
+            <span class="detail-value">${d.userPhone || '-'}</span>
           </div>
           <div class="detail-item">
             <span class="detail-label">真实姓名</span>
-            <span class="detail-value">${data.userRealName || '-'}</span>
+            <span class="detail-value">${d.userRealName || '-'}</span>
           </div>
         </div>
       </div>
 
-      ${data.failReason ? `
+      ${d.failReason ? `
         <div class="detail-section">
           <div class="detail-section-title">失败原因</div>
           <div class="detail-item">
-            <span class="detail-value" style="color:#F5222D">${data.failReason}</span>
+            <span class="detail-value" style="color:#F5222D">${d.failReason}</span>
           </div>
         </div>
       ` : ''}
     `;
 
     // 操作按钮（仅待处理/处理中状态显示）
-    if (data.status === 'PENDING' || data.status === 'PROCESSING') {
+    if (d.status === 'PENDING' || d.status === 'PROCESSING') {
       footer.innerHTML = `
         <button class="btn-default" onclick="closeModal('orderDetailModal')">关闭</button>
-        <button class="btn-danger" onclick="closeModal('orderDetailModal'); showRejectModal(${data.id})">拒绝订单</button>
-        <button class="btn-success" onclick="closeModal('orderDetailModal'); completeOrder(${data.id})">确认完结</button>
+        <button class="btn-danger" onclick="closeModal('orderDetailModal'); showRejectModal(${d.id})">拒绝订单</button>
+        <button class="btn-success" onclick="closeModal('orderDetailModal'); completeOrder(${d.id})">确认完结</button>
       `;
     } else {
       footer.innerHTML = `
@@ -709,7 +712,7 @@ async function completeOrder(orderId) {
   const result = await apiRequest('/order/complete', 'POST', { orderId });
 
   if (result) {
-    showToast(`订单已完结，入账 ${formatMoney(result.recycleAmount)}`, 'success');
+    showToast(`订单已完结，入账 ${formatMoney(result.data.recycleAmount)}`, 'success');
     loadOrders();
     loadDashboard();
   }
@@ -742,7 +745,7 @@ async function doRejectOrder() {
 
   if (result) {
     closeModal('rejectModal');
-    showToast('订单已拒绝', 'success');
+    showToast(result.message || '订单已拒绝', 'success');
     loadOrders();
     loadDashboard();
   }
@@ -768,8 +771,8 @@ async function loadUsers() {
   const data = await apiRequest('/user/list?' + params.toString());
 
   if (data) {
-    currentUserTotal = data.total;
-    renderUserTable(data.list);
+    currentUserTotal = data.data.total;
+    renderUserTable(data.data.list);
     renderUserPagination();
   }
 }
@@ -849,7 +852,8 @@ async function viewUserDetail(userId) {
   const data = await apiRequest('/user/detail?id=' + userId);
 
   if (data) {
-    const user = data.userInfo;
+    const d = data.data;
+    const user = d.userInfo;
     const body = document.getElementById('userDetailBody');
 
     body.innerHTML = `
@@ -891,7 +895,7 @@ async function viewUserDetail(userId) {
       <div class="detail-section">
         <div class="detail-section-title">订单统计</div>
         <div class="detail-grid">
-          ${(data.orderStats || []).map(stat => `
+          ${(d.orderStats || []).map(stat => `
             <div class="detail-item">
               <span class="detail-label">${getStatusTag(stat.status)}</span>
               <span class="detail-value">${stat.count} 笔 / ${formatMoney(stat.totalAmount || 0)}</span>
@@ -903,7 +907,7 @@ async function viewUserDetail(userId) {
       <div class="detail-section">
         <div class="detail-section-title">最近余额流水</div>
         <div class="balance-log-list">
-          ${(data.balanceLogs || []).map(log => `
+          ${(d.balanceLogs || []).map(log => `
             <div class="balance-log-item">
               <span class="balance-log-type ${log.type === 'RECYCLE_INCOME' ? 'income' : 'expense'}">
                 ${log.type === 'RECYCLE_INCOME' ? '回收收入' : log.type === 'WITHDRAW' ? '提现支出' : '管理员调整'}
@@ -915,7 +919,7 @@ async function viewUserDetail(userId) {
               <span class="balance-log-time">${formatTime(log.createTime)}</span>
             </div>
           `).join('')}
-          ${(!data.balanceLogs || data.balanceLogs.length === 0) ? '<div style="color:#999;text-align:center;padding:20px;">暂无流水记录</div>' : ''}
+          ${(!d.balanceLogs || d.balanceLogs.length === 0) ? '<div style="color:#999;text-align:center;padding:20px;">暂无流水记录</div>' : ''}
         </div>
       </div>
     `;
@@ -937,15 +941,15 @@ async function loadAssets() {
   const data = await apiRequest('/assets/summary?' + params.toString());
 
   if (data) {
-    assetSummaryData = data;
+    assetSummaryData = data.data;
     // 更新统计卡片
-    document.getElementById('statAssetTotalCount').textContent = data.totalCount;
-    document.getElementById('statAssetTotalFaceValue').textContent = formatMoney(data.totalFaceValue);
-    document.getElementById('statAssetTotalRecycleAmount').textContent = formatMoney(data.totalRecycleAmount);
-    document.getElementById('statAssetCardTypeCount').textContent = data.cardTypeCount;
+    document.getElementById('statAssetTotalCount').textContent = data.data.totalCount;
+    document.getElementById('statAssetTotalFaceValue').textContent = formatMoney(data.data.totalFaceValue);
+    document.getElementById('statAssetTotalRecycleAmount').textContent = formatMoney(data.data.totalRecycleAmount);
+    document.getElementById('statAssetCardTypeCount').textContent = data.data.cardTypeCount;
 
     // 渲染分类汇总表格
-    renderAssetSummaryTable(data.cardTypeSummary);
+    renderAssetSummaryTable(data.data.cardTypeSummary);
   }
 }
 
@@ -980,7 +984,7 @@ async function loadCardTypeOptions() {
     const select = document.getElementById('filterAssetCardType');
     // 保留第一个"全部"选项
     select.innerHTML = '<option value="">全部卡券类型</option>';
-    list.forEach(item => {
+    list.data.forEach(item => {
       select.innerHTML += `<option value="${item.name}">${item.name}</option>`;
     });
   }
@@ -1068,8 +1072,8 @@ async function loadAssetDetail() {
   const data = await apiRequest('/assets/detail?' + params.toString());
 
   if (data) {
-    currentAssetDetailTotal = data.total;
-    renderAssetDetailTable(data.list);
+    currentAssetDetailTotal = data.data.total;
+    renderAssetDetailTable(data.data.list);
     renderAssetDetailPagination();
   }
 }
@@ -1216,13 +1220,13 @@ async function loadSoldAssets() {
   const data = await apiRequest('/sold-assets/summary?' + params.toString());
 
   if (data) {
-    soldAssetSummaryData = data;
-    document.getElementById('statSoldTotalCount').textContent = data.totalCount;
-    document.getElementById('statSoldTotalFaceValue').textContent = formatMoney(data.totalFaceValue);
-    document.getElementById('statSoldTotalBuyAmount').textContent = formatMoney(data.totalBuyAmount);
-    document.getElementById('statSoldCardTypeCount').textContent = data.cardTypeCount;
+    soldAssetSummaryData = data.data;
+    document.getElementById('statSoldTotalCount').textContent = data.data.totalCount;
+    document.getElementById('statSoldTotalFaceValue').textContent = formatMoney(data.data.totalFaceValue);
+    document.getElementById('statSoldTotalBuyAmount').textContent = formatMoney(data.data.totalBuyAmount);
+    document.getElementById('statSoldCardTypeCount').textContent = data.data.cardTypeCount;
 
-    renderSoldAssetSummaryTable(data.cardTypeSummary);
+    renderSoldAssetSummaryTable(data.data.cardTypeSummary);
   }
 }
 
@@ -1234,7 +1238,7 @@ async function loadCardTypeOptionsForSold() {
   if (list) {
     const select = document.getElementById('filterSoldCardType');
     select.innerHTML = '<option value="">全部卡券类型</option>';
-    list.forEach(item => {
+    list.data.forEach(item => {
       select.innerHTML += `<option value="${item.name}">${item.name}</option>`;
     });
   }
@@ -1324,8 +1328,8 @@ async function loadSoldAssetDetail() {
   const data = await apiRequest('/sold-assets/detail?' + params.toString());
 
   if (data) {
-    currentSoldAssetDetailTotal = data.total;
-    renderSoldAssetDetailTable(data.list);
+    currentSoldAssetDetailTotal = data.data.total;
+    renderSoldAssetDetailTable(data.data.list);
     renderSoldAssetDetailPagination();
   }
 }
@@ -1471,13 +1475,13 @@ async function loadAvailableAssets() {
   const data = await apiRequest('/available-assets/summary?' + params.toString());
 
   if (data) {
-    availableAssetSummaryData = data;
-    document.getElementById('statAvailableTotalCount').textContent = data.totalCount;
-    document.getElementById('statAvailableTotalFaceValue').textContent = formatMoney(data.totalFaceValue);
-    document.getElementById('statAvailableEstimatedBuyAmount').textContent = formatMoney(data.estimatedBuyAmount);
-    document.getElementById('statAvailableCardTypeCount').textContent = data.cardTypeCount;
+    availableAssetSummaryData = data.data;
+    document.getElementById('statAvailableTotalCount').textContent = data.data.totalCount;
+    document.getElementById('statAvailableTotalFaceValue').textContent = formatMoney(data.data.totalFaceValue);
+    document.getElementById('statAvailableEstimatedBuyAmount').textContent = formatMoney(data.data.estimatedBuyAmount);
+    document.getElementById('statAvailableCardTypeCount').textContent = data.data.cardTypeCount;
 
-    renderAvailableAssetSummaryTable(data.cardTypeSummary);
+    renderAvailableAssetSummaryTable(data.data.cardTypeSummary);
   }
 }
 
@@ -1489,7 +1493,7 @@ async function loadCardTypeOptionsForAvailable() {
   if (list) {
     const select = document.getElementById('filterAvailableCardType');
     select.innerHTML = '<option value="">全部卡券类型</option>';
-    list.forEach(item => {
+    list.data.forEach(item => {
       select.innerHTML += `<option value="${item.name}">${item.name}</option>`;
     });
   }
@@ -1579,8 +1583,8 @@ async function loadAvailableAssetDetail() {
   const data = await apiRequest('/available-assets/detail?' + params.toString());
 
   if (data) {
-    currentAvailableAssetDetailTotal = data.total;
-    renderAvailableAssetDetailTable(data.list);
+    currentAvailableAssetDetailTotal = data.data.total;
+    renderAvailableAssetDetailTable(data.data.list);
     renderAvailableAssetDetailPagination();
   }
 }
@@ -1696,7 +1700,7 @@ if (adminToken) {
   // 验证token有效性
   apiRequest('/info').then(data => {
     if (data) {
-      document.getElementById('adminName').textContent = data.realName || data.username;
+      document.getElementById('adminName').textContent = data.data.realName || data.data.username;
       document.getElementById('loginPage').classList.remove('active');
       document.getElementById('mainPage').classList.add('active');
       loadDashboard();
@@ -1867,6 +1871,657 @@ function initEventListeners() {
       }
     }
   });
+
+  // 面值管理按钮事件
+  document.getElementById('addFaceValueBtn').addEventListener('click', addFaceValue);
+  document.getElementById('saveFaceValuesBtn').addEventListener('click', saveFaceValues);
+
+  // 卡产品筛选事件（变更时重置到第1页）
+  document.getElementById('filterCardProductName').addEventListener('input', function() {
+    currentCardProductPage = 1;
+    loadCardProducts();
+  });
+  document.getElementById('filterCardProductType').addEventListener('change', function() {
+    currentCardProductPage = 1;
+    loadCardProducts();
+  });
+  document.getElementById('filterCardProductStatus').addEventListener('change', function() {
+    currentCardProductPage = 1;
+    loadCardProducts();
+  });
+  document.getElementById('filterCardProductIsHot').addEventListener('change', function() {
+    currentCardProductPage = 1;
+    loadCardProducts();
+  });
+  document.getElementById('filterCardProductHasSaleableFaceValue').addEventListener('change', function() {
+    currentCardProductPage = 1;
+    loadCardProducts();
+  });
+  document.getElementById('refreshCardProductsBtn').addEventListener('click', function() {
+    allCardProductList = null;
+    currentCardProductPage = 1;
+    document.getElementById('filterCardProductName').value = '';
+    document.getElementById('filterCardProductType').value = '';
+    document.getElementById('filterCardProductStatus').value = '';
+    document.getElementById('filterCardProductIsHot').value = '';
+    document.getElementById('filterCardProductHasSaleableFaceValue').value = '';
+    loadCardProducts();
+  });
+
+  // 新增卡产品按钮
+  document.getElementById('addCardProductBtn').addEventListener('click', showAddCardProductModal);
+  document.getElementById('confirmAddCardProductBtn').addEventListener('click', saveNewCardProduct);
+
+  // 卡类型图标配置
+  document.getElementById('showIconConfigBtn').addEventListener('click', toggleIconConfig);
+  document.getElementById('saveIconConfigBtn').addEventListener('click', saveIconConfig);
+  document.getElementById('cancelIconConfigBtn').addEventListener('click', function() {
+    document.getElementById('iconConfigSection').style.display = 'none';
+  });
+
+  // 卡券类型管理操作按钮事件委托
+  document.getElementById('cardTypeTableBody').addEventListener('click', function(e) {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+
+    const tr = btn.closest('tr[data-card-product-id]');
+    if (!tr) return;
+
+    const id = parseInt(tr.dataset.cardProductId);
+    const name = tr.dataset.cardProductName || '';
+
+    if (btn.classList.contains('action-face-value')) {
+      showFaceValueManage(id, name);
+    } else if (btn.classList.contains('action-toggle-hot')) {
+      toggleCardProductHot(id);
+    } else if (btn.classList.contains('action-toggle')) {
+      toggleCardTypeStatus(id);
+    } else if (btn.classList.contains('action-delete')) {
+      deleteCardType(id, name);
+    }
+  });
+
+  // 事件委托 - 卡产品分页按钮
+  document.getElementById('cardProductPagination').addEventListener('click', function(e) {
+    const target = e.target;
+    if (target.tagName === 'BUTTON' && target.getAttribute('onclick')) {
+      const onclick = target.getAttribute('onclick');
+      const match = onclick.match(/goCardProductPage\((\d+)\)/);
+      if (match) goCardProductPage(parseInt(match[1]));
+    }
+  });
+}
+
+// ========== 卡券类型管理 ==========
+
+let allCardProductList = null; // 缓存全量卡产品数据（用于编辑时回退查找）
+let currentCardProductPage = 1;
+let currentCardProductPageSize = 10;
+let currentCardProductTotal = 0;
+
+/**
+ * 加载卡产品列表（服务端分页）
+ */
+async function loadCardProducts() {
+  const tbody = document.getElementById('cardTypeTableBody');
+  tbody.innerHTML = '<tr><td colspan="6" class="empty-row">加载中...</td>';
+
+  // 构建请求参数
+  const keyword = (document.getElementById('filterCardProductName').value || '').trim();
+  const typeFilter = document.getElementById('filterCardProductType').value;
+  const statusFilter = document.getElementById('filterCardProductStatus').value;
+  const isHotFilter = document.getElementById('filterCardProductIsHot').value;
+  const hasSaleableFaceValueFilter = document.getElementById('filterCardProductHasSaleableFaceValue').value;
+
+  const params = new URLSearchParams();
+  params.append('page', String(currentCardProductPage));
+  params.append('pageSize', String(currentCardProductPageSize));
+
+  if (keyword) params.append('keyword', keyword);
+  if (typeFilter) params.append('cardTypeName', typeFilter);
+  if (statusFilter) params.append('status', statusFilter);
+  if (isHotFilter !== '') params.append('isHot', isHotFilter);
+  if (hasSaleableFaceValueFilter !== '') params.append('hasSaleableFaceValue', hasSaleableFaceValueFilter);
+
+  const data = await apiRequest('/card-products/all?' + params.toString());
+
+  if (!data) {
+    tbody.innerHTML = '<tr><td colspan="6" class="empty-row">加载失败</td></tr>';
+    return;
+  }
+
+  // 从数据库实时获取卡类型列表填充筛选下拉框（保证前后端数据一致）
+  const typeSelect = document.getElementById('filterCardProductType');
+  const currentTypeValue = typeSelect.value;
+  const existingOptions = typeSelect.options.length;
+  if (existingOptions <= 1) {
+    try {
+      const cardTypes = await apiRequest('/card-types/all');
+      if (cardTypes && cardTypes.data && cardTypes.data.length > 0) {
+        cardTypes.data.forEach(t => {
+          const opt = document.createElement('option');
+          opt.value = t.name;
+          opt.textContent = t.name;
+          typeSelect.appendChild(opt);
+        });
+        // 恢复之前选中的值
+        if (currentTypeValue) typeSelect.value = currentTypeValue;
+      }
+    } catch (e) {
+      console.error('获取卡类型列表失败:', e);
+    }
+  }
+
+  const list = data.data.list || [];
+  currentCardProductTotal = data.data.total || 0;
+
+  if (!list || list.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" class="empty-row">暂无数据</td></tr>';
+    renderCardProductPagination();
+    return;
+  }
+
+  tbody.innerHTML = list.map(item => {
+    const faceValueCount = (item.faceValueCount !== undefined && item.faceValueCount !== null) ? item.faceValueCount : 0;
+    return `
+    <tr data-card-product-id="${item.id}" data-card-product-name="${item.name.replace(/'/g, '\\u0027')}">
+      <td><strong>${item.name}</strong></td>
+      <td>${item.cardTypeName || '-'}</td>
+      <td>${faceValueCount}种</td>
+      <td><span class="status-tag ${item.isHot === 1 ? 'status-success' : 'status-cancelled'}">${item.isHot === 1 ? '是' : '否'}</span></td>
+      <td><span class="status-tag ${item.status === 'ACTIVE' ? 'status-success' : 'status-cancelled'}">${item.status === 'ACTIVE' ? '启用' : '已禁用'}</span></td>
+      <td class="card-type-actions">
+        <button class="btn-info btn-sm action-face-value" style="margin-right:4px;">面值管理</button>
+        <button class="btn-${item.isHot === 1 ? 'warning' : 'success'} btn-sm action-toggle-hot" style="margin-right:4px;">${item.isHot === 1 ? '取消热门' : '设为热门'}</button>
+        <button class="btn-${item.status === 'ACTIVE' ? 'warning' : 'success'} btn-sm action-toggle" style="margin-right:4px;">${item.status === 'ACTIVE' ? '禁用' : '启用'}</button>
+        <button class="btn-danger btn-sm action-delete">删除</button>
+      </td>
+    </tr>`;
+  }).join('');
+
+  renderCardProductPagination();
+}
+
+/**
+ * 渲染卡产品分页
+ */
+function renderCardProductPagination() {
+  const totalPages = Math.ceil(currentCardProductTotal / currentCardProductPageSize);
+  const container = document.getElementById('cardProductPagination');
+
+  if (totalPages <= 1) {
+    container.innerHTML = currentCardProductTotal > 0
+      ? `<span style="color:#999;font-size:13px;">共 ${currentCardProductTotal} 条</span>`
+      : '';
+    return;
+  }
+
+  let html = '';
+
+  // 上一页
+  html += `<button ${currentCardProductPage <= 1 ? 'disabled' : ''} onclick="goCardProductPage(${currentCardProductPage - 1})">上一页</button>`;
+
+  // 页码
+  for (let i = 1; i <= totalPages; i++) {
+    if (i === currentCardProductPage) {
+      html += `<button class="active">${i}</button>`;
+    } else if (i <= 5 || i >= totalPages - 2 || Math.abs(i - currentCardProductPage) <= 2) {
+      html += `<button onclick="goCardProductPage(${i})">${i}</button>`;
+    } else if (i === 6 || i === totalPages - 3) {
+      html += `<button disabled>...</button>`;
+    }
+  }
+
+  // 下一页
+  html += `<button ${currentCardProductPage >= totalPages ? 'disabled' : ''} onclick="goCardProductPage(${currentCardProductPage + 1})">下一页</button>`;
+
+  // 总数
+  html += `<span style="color:#999;font-size:13px;margin-left:10px;">共 ${currentCardProductTotal} 条</span>`;
+
+  container.innerHTML = html;
+}
+
+/**
+ * 卡产品分页跳转
+ */
+function goCardProductPage(page) {
+  currentCardProductPage = page;
+  loadCardProducts();
+}
+
+/**
+ * 显示新增卡产品弹窗
+ */
+async function showAddCardProductModal() {
+  // 重置表单
+  document.getElementById('addCardProductTypeName').value = '';
+  document.getElementById('addCardProductName').value = '';
+  document.getElementById('addCardProductStatus').value = 'ACTIVE';
+
+  // 加载类型名称建议列表（datalist）
+  const datalist = document.getElementById('cardTypeNameList');
+  datalist.innerHTML = '';
+
+  try {
+    const cardTypes = await apiRequest('/card-types/all');
+    if (cardTypes && cardTypes.data && cardTypes.data.length > 0) {
+      cardTypes.data.forEach(t => {
+        const opt = document.createElement('option');
+        opt.value = t.name;
+        datalist.appendChild(opt);
+      });
+    }
+  } catch (err) {
+    // 获取失败不影响使用，用户仍可手动输入
+  }
+
+  openModal('addCardProductModal');
+}
+
+/**
+ * 保存新增卡产品
+ */
+async function saveNewCardProduct() {
+  const typeName = (document.getElementById('addCardProductTypeName').value || '').trim();
+  const name = (document.getElementById('addCardProductName').value || '').trim();
+  const status = document.getElementById('addCardProductStatus').value;
+  const isHot = parseInt(document.getElementById('addCardProductIsHot').value) || 0;
+
+  // 前端校验
+  if (!typeName) {
+    showToast('请输入类型名称', 'error');
+    return;
+  }
+  if (!name) {
+    showToast('请输入名称', 'error');
+    return;
+  }
+
+  try {
+    const result = await apiRequest('/card-product/create', 'POST', {
+      typeName,
+      name,
+      status,
+      isHot
+    });
+
+    if (result) {
+      showToast(result.message || '新增成功', 'success');
+      closeModal('addCardProductModal');
+      allCardProductList = null; // 清除缓存，确保下次加载获取最新数据
+      currentCardProductPage = 1;
+      loadCardProducts();
+    }
+  } catch (err) {
+    showToast('新增失败: ' + (err.message || '未知错误'), 'error');
+  }
+}
+
+// 当前正在管理面值的卡产品ID
+let currentFaceValueProductId = null;
+// 面值明细数据（编辑中的临时数据）
+let editingFaceValues = [];
+
+/**
+ * 打开面值管理弹窗
+ */
+async function showFaceValueManage(productId, productName) {
+  currentFaceValueProductId = productId;
+  document.getElementById('faceValueManageTitle').textContent = '面值管理 - ' + productName;
+
+  // 加载面值数据
+  const result = await apiRequest(`/card-product/${productId}/face-values`);
+  if (result && result.code === 200) {
+    editingFaceValues = result.data.faceValues.map(fv => ({...fv}));
+  } else {
+    editingFaceValues = [];
+  }
+
+  renderFaceValueTable();
+  openModal('faceValueManageModal');
+}
+
+/**
+ * 渲染面值表格
+ */
+function renderFaceValueTable() {
+  const tbody = document.getElementById('faceValueTableBody');
+
+  // 过滤掉已删除的项目进行显示，但保留原始索引
+  const visibleItems = editingFaceValues
+    .map((fv, index) => ({ fv, originalIndex: index }))
+    .filter(item => !item.fv.deleted);
+
+  if (visibleItems.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" class="empty-row">暂无面值数据，请点击"添加面值"</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = visibleItems.map((item) => {
+    const fv = item.fv;
+    const index = item.originalIndex;
+    return `
+    <tr>
+      <td><input type="number" value="${fv.faceValue}" min="1" step="1" data-field="faceValue" data-index="${index}" style="width:80px;height:30px;border:1px solid #d9d9d9;border-radius:4px;padding:0 8px;font-size:13px;"></td>
+      <td><input type="number" value="${fv.discountRate}" step="0.01" min="0" max="1" data-field="discountRate" data-index="${index}" style="width:80px;height:30px;border:1px solid #d9d9d9;border-radius:4px;padding:0 8px;font-size:13px;"></td>
+      <td><input type="number" value="${fv.buyDiscountRate}" step="0.01" min="0" max="1" data-field="buyDiscountRate" data-index="${index}" style="width:80px;height:30px;border:1px solid #d9d9d9;border-radius:4px;padding:0 8px;font-size:13px;"></td>
+      <td><select data-field="isSaleable" data-index="${index}" style="height:30px;border:1px solid #d9d9d9;border-radius:4px;padding:0 6px;font-size:13px;"><option value="0" ${fv.isSaleable==0?'selected':''}>否</option><option value="1" ${fv.isSaleable==1?'selected':''}>是</option></select></td>
+      <td><select data-field="status" data-index="${index}" style="height:30px;border:1px solid #d9d9d9;border-radius:4px;padding:0 6px;font-size:13px;"><option value="ACTIVE" ${fv.status==='ACTIVE'?'selected':''}>启用</option><option value="DISABLED" ${fv.status==='DISABLED'?'selected':''}>禁用</option></select></td>
+      <td><button class="btn-danger btn-sm btn-remove-face-value" data-index="${index}">删除</button></td>
+    </tr>
+  `}).join('');
+
+  // 绑定输入事件，同步到 editingFaceValues
+  tbody.querySelectorAll('input, select').forEach(el => {
+    el.addEventListener('change', function() {
+      const idx = parseInt(this.dataset.index);
+      const field = this.dataset.field;
+      let val = this.value;
+      if (field === 'faceValue' || field === 'discountRate' || field === 'buyDiscountRate') {
+        val = parseFloat(val);
+      } else if (field === 'isSaleable') {
+        val = parseInt(val);
+      }
+      editingFaceValues[idx][field] = val;
+    });
+  });
+
+  // 绑定删除按钮事件（事件委托）
+  tbody.querySelectorAll('.btn-remove-face-value').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const idx = parseInt(this.dataset.index);
+      removeFaceValue(idx);
+    });
+  });
+}
+
+/**
+ * 添加面值行
+ */
+function addFaceValue() {
+  editingFaceValues.push({
+    faceValue: '',
+    discountRate: 0.95,
+    buyDiscountRate: 0.95,
+    isSaleable: 1,
+    sort: editingFaceValues.length,
+    status: 'ACTIVE'
+  });
+  renderFaceValueTable();
+}
+
+/**
+ * 删除面值行
+ */
+function removeFaceValue(index) {
+  const fv = editingFaceValues[index];
+  if (fv.id) {
+    // 已有记录标记删除，保留在数组中等待后端处理
+    fv.deleted = true;
+  } else {
+    // 新记录直接删除
+    editingFaceValues.splice(index, 1);
+  }
+  renderFaceValueTable();
+}
+
+/**
+ * 保存面值明细
+ */
+async function saveFaceValues() {
+  if (!currentFaceValueProductId) return;
+
+  // 校验
+  for (let i = 0; i < editingFaceValues.length; i++) {
+    const fv = editingFaceValues[i];
+    if (!fv.faceValue || fv.faceValue <= 0) {
+      showToast('第' + (i+1) + '行面值必须为正数', 'error');
+      return;
+    }
+    if (fv.discountRate < 0 || fv.discountRate > 1) {
+      showToast('第' + (i+1) + '行收卡折扣率必须在0-1之间', 'error');
+      return;
+    }
+    if (fv.buyDiscountRate < 0 || fv.buyDiscountRate > 1) {
+      showToast('第' + (i+1) + '行卖卡折扣率必须在0-1之间', 'error');
+      return;
+    }
+  }
+
+  const result = await apiRequest(`/card-product/${currentFaceValueProductId}/face-values/batch-save`, 'POST', {
+    faceValues: editingFaceValues
+  });
+
+  if (result && result.code === 200) {
+    showToast(result.message || '保存成功', 'success');
+    closeModal('faceValueManageModal');
+    loadCardProducts();
+  } else {
+    showToast(result.message || '保存失败', 'error');
+  }
+}
+
+/**
+ * 切换卡产品状态
+ */
+async function toggleCardTypeStatus(id) {
+  if (!confirm('确定要切换该卡产品的状态吗？')) return;
+
+  try {
+    const result = await apiRequest(`/card-product/${id}/toggle-status`, 'POST');
+    if (result) {
+      showToast(result.message || '状态切换成功', 'success');
+      allCardProductList = null; // 清除缓存，确保下次加载获取最新数据
+      loadCardProducts();
+    }
+  } catch (err) {
+    showToast('操作失败: ' + (err.message || '未知错误'), 'error');
+  }
+}
+
+/**
+ * 切换卡产品热门状态
+ */
+async function toggleCardProductHot(id) {
+  if (!confirm('确定要切换该卡产品的热门状态吗？')) return;
+
+  try {
+    const result = await apiRequest(`/card-product/${id}/toggle-hot`, 'POST');
+    if (result) {
+      showToast(result.message || '热门状态切换成功', 'success');
+      allCardProductList = null; // 清除缓存，确保下次加载获取最新数据
+      loadCardProducts();
+    }
+  } catch (err) {
+    showToast('操作失败: ' + (err.message || '未知错误'), 'error');
+  }
+}
+
+/**
+ * 删除卡产品
+ */
+async function deleteCardType(id, name) {
+  const displayName = name.replace(/\\u0027/g, "'");
+  if (!confirm(`确定要删除卡产品「${displayName}」吗？此操作不可恢复！`)) return;
+
+  try {
+    const result = await apiRequest(`/card-product/${id}`, 'DELETE');
+    if (result) {
+      showToast(result.message || '删除成功', 'success');
+      allCardProductList = null; // 清除缓存，确保下次加载获取最新数据
+      loadCardProducts();
+    }
+  } catch (err) {
+    showToast('删除失败: ' + (err.message || '未知错误'), 'error');
+  }
+}
+
+// ========== 卡类型图标配置 ==========
+
+/**
+ * 切换图标配置区域显示
+ */
+async function toggleIconConfig() {
+  const section = document.getElementById('iconConfigSection');
+  if (section.style.display === 'none') {
+    section.style.display = 'block';
+    await loadIconConfig();
+  } else {
+    section.style.display = 'none';
+  }
+}
+
+/**
+ * 加载卡类型图标配置列表
+ */
+async function loadIconConfig() {
+  const container = document.getElementById('iconConfigList');
+  container.innerHTML = '<div style="color:#999;">加载中...</div>';
+
+  try {
+    const data = await apiRequest('/card-types/all');
+    if (!data || !data.data) {
+      container.innerHTML = '<div style="color:#999;">加载失败</div>';
+      return;
+    }
+
+    // 分类颜色方案（与前端constants.js一致）
+    const categoryColors = {
+      'telecom':       { color: '#1890FF', bgColor: '#E6F7FF' },
+      'travel':        { color: '#FA8C16', bgColor: '#FFF7E6' },
+      'entertainment': { color: '#722ED1', bgColor: '#F9F0FF' },
+      'ecommerce':     { color: '#F5222D', bgColor: '#FFF1F0' },
+      'life':          { color: '#13C2C2', bgColor: '#E6FFFB' },
+      'points':        { color: '#EB2F96', bgColor: '#FFF0F6' }
+    };
+    const defaultColor = { color: '#1890FF', bgColor: '#E6F7FF' };
+
+    container.innerHTML = data.data.map(item => {
+      const catColor = categoryColors[item.category] || defaultColor;
+      const iconColor = item.iconColor || catColor.color;
+      const iconBgColor = item.iconBgColor || catColor.bgColor;
+      const label = (item.name && item.name.length >= 2) ? item.name.substring(0, 2) : (item.name || '卡');
+
+      return `
+      <div style="display:flex;align-items:center;gap:10px;padding:10px;background:#fafafa;border-radius:6px;border:1px solid #eee;">
+        <div style="width:40px;height:40px;border-radius:8px;background:${iconBgColor};display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;">
+          ${item.iconUrl
+            ? `<img src="${item.iconUrl}" style="width:32px;height:32px;object-fit:contain;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><div style="display:none;width:100%;height:100%;align-items:center;justify-content:center;color:${iconColor};font-size:14px;font-weight:500;">${label}</div>`
+            : `<span style="color:${iconColor};font-size:14px;font-weight:500;">${label}</span>`
+          }
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:13px;font-weight:500;color:#333;margin-bottom:4px;">${item.name} <span style="color:#999;font-weight:normal;font-size:11px;">(${item.category || '未分类'})</span></div>
+          <div style="display:flex;gap:6px;margin-bottom:4px;">
+            <input type="text"
+              id="iconUrl_${item.id}"
+              value="${item.iconUrl || ''}"
+              placeholder="图标图片URL（留空用默认）"
+              style="flex:1;padding:4px 8px;font-size:12px;border:1px solid #d9d9d9;border-radius:4px;box-sizing:border-box;"
+            >
+          </div>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <label style="font-size:11px;color:#666;white-space:nowrap;">文字色</label>
+            <input type="color"
+              id="iconColor_${item.id}"
+              value="${iconColor}"
+              style="width:28px;height:22px;padding:0;border:1px solid #d9d9d9;border-radius:3px;cursor:pointer;"
+            >
+            <label style="font-size:11px;color:#666;white-space:nowrap;">背景色</label>
+            <input type="color"
+              id="iconBgColor_${item.id}"
+              value="${iconBgColor}"
+              style="width:28px;height:22px;padding:0;border:1px solid #d9d9d9;border-radius:3px;cursor:pointer;"
+            >
+            <button onclick="resetIconColors(${item.id}, '${catColor.color}', '${catColor.bgColor}')"
+              style="font-size:11px;color:#1890ff;background:none;border:none;cursor:pointer;padding:0 4px;white-space:nowrap;">重置</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch (err) {
+    container.innerHTML = '<div style="color:#F5222D;">加载失败: ' + (err.message || '') + '</div>';
+  }
+}
+
+/**
+ * 重置图标颜色为分类默认值
+ */
+function resetIconColors(id, color, bgColor) {
+  const colorInput = document.getElementById('iconColor_' + id);
+  const bgColorInput = document.getElementById('iconBgColor_' + id);
+  if (colorInput) colorInput.value = color;
+  if (bgColorInput) bgColorInput.value = bgColor;
+}
+
+/**
+ * 保存图标配置
+ */
+async function saveIconConfig() {
+  const btn = document.getElementById('saveIconConfigBtn');
+  btn.disabled = true;
+  btn.textContent = '保存中...';
+
+  try {
+    const data = await apiRequest('/card-types/all');
+    if (!data || !data.data) {
+      showToast('获取卡类型列表失败', 'error');
+      return;
+    }
+
+    let successCount = 0;
+    let failCount = 0;
+
+    for (const item of data.data) {
+      const urlInput = document.getElementById('iconUrl_' + item.id);
+      const colorInput = document.getElementById('iconColor_' + item.id);
+      const bgColorInput = document.getElementById('iconBgColor_' + item.id);
+      if (!urlInput) continue;
+
+      const newIconUrl = urlInput.value.trim();
+      const newIconColor = colorInput ? colorInput.value : '';
+      const newIconBgColor = bgColorInput ? bgColorInput.value : '';
+      const oldIconUrl = item.iconUrl || '';
+      const oldIconColor = item.iconColor || '';
+      const oldIconBgColor = item.iconBgColor || '';
+
+      // 只更新有变化的
+      if (newIconUrl !== oldIconUrl || newIconColor !== oldIconColor || newIconBgColor !== oldIconBgColor) {
+        try {
+          const result = await apiRequest('/card-type/update-icon', 'POST', {
+            id: item.id,
+            iconUrl: newIconUrl,
+            iconColor: newIconColor,
+            iconBgColor: newIconBgColor
+          });
+          if (result && result.code === 200) {
+            successCount++;
+          } else {
+            failCount++;
+          }
+        } catch (err) {
+          failCount++;
+          console.error(`更新卡类型${item.id}图标失败:`, err);
+        }
+      }
+    }
+
+    if (successCount > 0 || failCount === 0) {
+      showToast(`保存成功${successCount > 0 ? '（更新' + successCount + '项）' : ''}`, 'success');
+      // 刷新预览
+      await loadIconConfig();
+      // 同时刷新卡产品列表（图标可能影响显示）
+      loadCardProducts();
+    }
+    if (failCount > 0) {
+      showToast(`${failCount}项保存失败`, 'error');
+    }
+  } catch (err) {
+    showToast('保存失败: ' + (err.message || ''), 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '保存全部';
+  }
 }
 
 // 页面加载完成后初始化事件监听器

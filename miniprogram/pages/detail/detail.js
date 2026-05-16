@@ -1,20 +1,25 @@
 // pages/detail/detail.js
-import request from '../../utils/request';
-import { requireVerified, checkLogin, getUserInfo } from '../../utils/auth';
-import { validateCardNo, validateCardPwd } from '../../utils/validate';
-import { formatMoney, formatDiscount } from '../../utils/util';
-import API, { LOCAL_DEV } from '../../config/api';
-import { CARD_ICONS, MESSAGE } from '../../config/constants';
-import { mockApi, mockCardTypes } from '../../utils/mock';
+const request = require('../../utils/request');
+const { requireVerified, checkLogin, getUserInfo } = require('../../utils/auth');
+const { validateCardNo, validateCardPwd } = require('../../utils/validate');
+const { formatMoney, formatDiscount } = require('../../utils/util');
+const API = require('../../config/api');
+const { CARD_ICONS, MESSAGE } = require('../../config/constants');
 const { addOrder } = require('../../utils/userData');
 
 Page({
   data: {
-    cardType: null,       // 卡券类型信息
-    faceValues: [],       // 面值选项
-    selectedValue: null,  // 选中的面值
+    // 页面参数
+    cardProductId: null,  // 卡产品ID
+    cardTypeId: null,     // 卡券类型ID
+    cardProductName: '',  // 卡产品名称
+
+    // 卡券信息
+    cardType: null,       // 卡券类型信息（用于展示头部）
+    faceValues: [],       // 面值选项列表（含折扣率）
+    selectedFaceValue: null,  // 选中的面值对象
     recycleAmount: 0,     // 回收金额
-    
+
     form: {
       cardNo: '',
       cardPwd: ''
@@ -23,12 +28,9 @@ Page({
       cardNo: '',
       cardPwd: ''
     },
-    
+
     loading: false,
-    submitting: false,
-    
-    // 计算结果
-    calculation: null
+    submitting: false
   },
 
   onLoad(options) {
@@ -36,115 +38,135 @@ Page({
     if (!requireVerified()) {
       return;
     }
-    
-    // 加载卡券详情
-    if (options.id) {
-      this.loadCardDetail(options.id);
+
+    const { cardProductId, cardTypeId, cardProductName } = options;
+
+    if (!cardProductId) {
+      wx.showToast({ title: '参数错误', icon: 'none' });
+      setTimeout(() => wx.navigateBack(), 1500);
+      return;
     }
+
+    this.setData({
+      cardProductId,
+      cardTypeId: cardTypeId || '',
+      cardProductName: cardProductName ? decodeURIComponent(cardProductName) : ''
+    });
+
+    // 动态设置导航栏标题
+    if (this.data.cardProductName) {
+      wx.setNavigationBarTitle({
+        title: this.data.cardProductName
+      });
+    }
+
+    this.loadFaceValues();
   },
 
   /**
-   * 加载卡券详情
+   * 加载卡产品面值列表
+   * 调用 GET /api/card/card-product/:id/face-values
    */
-  async loadCardDetail(id) {
+  async loadFaceValues() {
     try {
       this.setData({ loading: true });
 
-      // 本地开发模式：使用模拟数据
-      if (LOCAL_DEV) {
-        const data = mockCardTypes.find(item => item.id === id);
-        if (!data) {
-          throw new Error('卡券类型不存在');
-        }
-        const faceValues = data.faceValues || [];
-        this.setData({
-          cardType: data,
-          faceValues,
-          loading: false
-        });
-        return;
+      const url = `${API.card.recycleFaceValues}/${this.data.cardProductId}/face-values`;
+      const data = await request.get(url);
+
+      if (!data) {
+        throw new Error('获取面值信息失败');
       }
 
-      const data = await request.get(API.card.detail, { id });
+      // data 结构（来自 GET /api/card/card-product/:id/face-values）：
+      // {
+      //   isHot: 0/1,
+      //   faceValues: [
+      //     { faceValue, discountRate, recycleAmount, isSaleable },
+      //     ...
+      //   ]
+      // }
 
-      // 处理面值选项
-      const faceValues = data.faceValues || [];
+      const faceValues = (data.faceValues || []).map((item, index) => ({
+        ...item,
+        id: item.id || index,  // 确保有唯一标识
+        // 格式化折扣显示（如 0.95 → 9.5折）
+        discountText: this.formatDiscountText(item.discountRate),
+        // 面值显示文本
+        faceValueText: item.faceValue + '元'
+      }));
 
-      // 添加图标
-      data.icon = CARD_ICONS[data.id] || CARD_ICONS['default'];
+      // 设置页面标题
+      const displayName = this.data.cardProductName || '卡券回收';
+      wx.setNavigationBarTitle({ title: displayName });
 
       this.setData({
-        cardType: data,
+        cardType: {
+          icon: CARD_ICONS['default'],
+          name: displayName
+        },
         faceValues,
         loading: false
       });
     } catch (err) {
+      console.error('加载面值列表失败:', err);
+      this.setData({ loading: false });
       wx.showToast({
         title: err.message || '加载失败',
         icon: 'none'
       });
-
-      setTimeout(() => {
-        wx.navigateBack();
-      }, 1500);
+      setTimeout(() => wx.navigateBack(), 1500);
     }
+  },
+
+  /**
+   * 格式化折扣文本
+   * 0.95 → "9.5折", 0.98 → "9.8折"
+   */
+  formatDiscountText(rate) {
+    if (!rate && rate !== 0) return '';
+    const discount = (rate * 10).toFixed(1);
+    // 去掉末尾的 .0
+    return discount.endsWith('.0') ? discount.slice(0, -2) + '折' : discount + '折';
   },
 
   /**
    * 选择面值
    */
   onSelectValue(e) {
-    const { value } = e.currentTarget.dataset;
-    
+    const { index } = e.currentTarget.dataset;
+    const faceValue = this.data.faceValues[index];
+
+    if (!faceValue) return;
+
     this.setData({
-      selectedValue: value
+      selectedFaceValue: faceValue
     });
-    
+
     // 计算回收金额
-    this.calculateAmount(value);
+    this.calculateAmount(faceValue);
   },
 
   /**
    * 计算回收金额
+   * 面值 × 收卡折扣率
    */
-  async calculateAmount(faceValue) {
+  calculateAmount(faceValue) {
     if (!faceValue) return;
 
-    try {
-      // 本地开发模式：使用模拟数据
-      if (LOCAL_DEV) {
-        const data = mockApi.calculateRecycle(this.data.cardType.id, faceValue);
-        if (data) {
-          this.setData({
-            recycleAmount: data.recycleAmount,
-            calculation: data
-          });
-        }
-        return;
-      }
+    const recycleAmount = (faceValue.faceValue * faceValue.discountRate).toFixed(2);
 
-      const data = await request.post(API.card.calculate, {
-        cardTypeId: this.data.cardType.id,
-        faceValue
-      });
-
-      this.setData({
-        recycleAmount: data.recycleAmount,
-        calculation: data
-      });
-    } catch (err) {
-      wx.showToast({
-        title: err.message || '计算失败',
-        icon: 'none'
-      });
-    }
+    this.setData({
+      recycleAmount
+    });
   },
 
   /**
    * 输入卡号
    */
   onCardNoInput(e) {
-    const { value } = e.detail;
+    // Vant van-field 的 bind:input 事件，e.detail 直接是字符串值
+    const value = typeof e.detail === 'string' ? e.detail : (e.detail.value || '');
     this.setData({
       'form.cardNo': value,
       'errors.cardNo': ''
@@ -155,7 +177,7 @@ Page({
    * 输入卡密
    */
   onCardPwdInput(e) {
-    const { value } = e.detail;
+    const value = typeof e.detail === 'string' ? e.detail : (e.detail.value || '');
     this.setData({
       'form.cardPwd': value,
       'errors.cardPwd': ''
@@ -167,16 +189,13 @@ Page({
    */
   validateForm() {
     const { cardNo, cardPwd } = this.data.form;
-    const { cardType, selectedValue } = this.data;
+    const { selectedFaceValue } = this.data;
     const errors = {};
     let valid = true;
 
     // 校验面值
-    if (!selectedValue) {
-      wx.showToast({
-        title: '请选择面值',
-        icon: 'none'
-      });
+    if (!selectedFaceValue) {
+      wx.showToast({ title: '请选择面值', icon: 'none' });
       return false;
     }
 
@@ -184,8 +203,8 @@ Page({
     if (!cardNo) {
       errors.cardNo = '请输入卡号';
       valid = false;
-    } else if (!validateCardNo(cardNo, cardType.cardNoMinLength, cardType.cardNoMaxLength)) {
-      errors.cardNo = `卡号长度应在${cardType.cardNoMinLength}-${cardType.cardNoMaxLength}位`;
+    } else if (cardNo.length < 8) {
+      errors.cardNo = '卡号长度不能少于8位';
       valid = false;
     }
 
@@ -193,8 +212,8 @@ Page({
     if (!cardPwd) {
       errors.cardPwd = '请输入卡密';
       valid = false;
-    } else if (!validateCardPwd(cardPwd, cardType.cardPwdMinLength, cardType.cardPwdMaxLength)) {
-      errors.cardPwd = `卡密长度应在${cardType.cardPwdMinLength}-${cardType.cardPwdMaxLength}位`;
+    } else if (cardPwd.length < 6) {
+      errors.cardPwd = '卡密长度不能少于6位';
       valid = false;
     }
 
@@ -242,10 +261,12 @@ Page({
       return;
     }
 
+    const { selectedFaceValue, cardProductName, recycleAmount } = this.data;
+
     // 确认提交
     wx.showModal({
       title: '确认提交',
-      content: `确认提交${this.data.selectedValue}元${this.data.cardType.name}回收订单？回收金额：¥${formatMoney(this.data.recycleAmount)}`,
+      content: `确认提交${selectedFaceValue.faceValue}元${cardProductName}回收订单？回收金额：¥${recycleAmount}`,
       success: async (res) => {
         if (res.confirm) {
           await this.submitOrder();
@@ -255,48 +276,23 @@ Page({
   },
 
   /**
-   * 提交订单
+   * 提交订单到后端
    */
   async submitOrder() {
     try {
       this.setData({ submitting: true });
 
-      // 本地开发模式
-      if (LOCAL_DEV) {
-        const orderId = 'ORD' + Date.now();
-        const order = {
-          id: orderId,
-          type: this.data.cardType.id,
-          typeName: this.data.cardType.name,
-          cardNo: this.data.form.cardNo.substring(0, 4) + '****' + this.data.form.cardNo.substring(this.data.form.cardNo.length - 4),
-          faceValue: this.data.selectedValue,
-          recycleAmount: this.data.recycleAmount,
-          status: 'processing',
-          statusText: '处理中',
-          createTime: new Date().toLocaleString()
-        };
+      const { selectedFaceValue, cardProductId, cardTypeId, form } = this.data;
 
-        addOrder(order);
+      const orderData = {
+        cardTypeId: cardTypeId || undefined,
+        cardProductId: cardProductId,
+        faceValue: selectedFaceValue.faceValue,
+        cardNo: form.cardNo,
+        cardPwd: form.cardPwd
+      };
 
-        wx.showToast({
-          title: MESSAGE.orderSuccess,
-          icon: 'success'
-        });
-
-        setTimeout(() => {
-          wx.switchTab({
-            url: '/pages/order/list/list'
-          });
-        }, 1500);
-        return;
-      }
-
-      const data = await request.post(API.order.create, {
-        cardTypeId: this.data.cardType.id,
-        faceValue: this.data.selectedValue,
-        cardNo: this.data.form.cardNo,
-        cardPwd: this.data.form.cardPwd
-      });
+      const data = await request.post(API.order.create, orderData);
 
       wx.showToast({
         title: MESSAGE.orderSuccess,
@@ -334,10 +330,11 @@ Page({
    * 分享
    */
   onShareAppMessage() {
+    const { cardProductName, selectedFaceValue } = this.data;
+    const discountText = selectedFaceValue ? selectedFaceValue.discountText : '';
     return {
-      title: `${this.data.cardType.name}回收 - 最高${formatDiscount(this.data.cardType.discountRate)}`,
-      path: `/pages/detail/detail?id=${this.data.cardType.id}`,
-      imageUrl: this.data.cardType.icon
+      title: `${cardProductName}回收${discountText ? ' - ' + discountText : ''}`,
+      path: `/pages/detail/detail?cardProductId=${this.data.cardProductId}&cardTypeId=${this.data.cardTypeId}`
     };
   }
 });

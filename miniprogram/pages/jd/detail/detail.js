@@ -6,22 +6,54 @@ const { addOrder } = require('../../../utils/userData');
 
 Page({
   data: {
-    faceValues: [10, 20, 30, 40, 50, 70, 100, 150, 200, 300, 400, 500, 600, 800, 888, 1000, 1500, 2000, 3000, 4000, 5000],
+    cardProductId: null,
+    isHot: 0,            // 卡产品级别是否热门
+    faceValueList: [],   // API返回的面值列表 [{faceValue, discountRate, recycleAmount, isSaleable}]
+    faceValues: [],      // 面值金额数组 [10, 20, 50, ...] 供模板渲染
     selectedFaceValue: null,
+    selectedDiscountRate: 0,
     cardNo: '',
     cardPwd: '',
-    discount: 0.97,
     recycleAmount: 0,
     submitting: false,
-    isLoggedIn: false
+    isLoggedIn: false,
+    loading: true
   },
 
   onLoad(options) {
     const isLoggedIn = checkLogin();
-    this.setData({ isLoggedIn });
+    const cardProductId = options.cardProductId || 10; // 默认京东E卡
+
+    this.setData({ isLoggedIn, cardProductId });
     wx.setNavigationBarTitle({
       title: '京东E卡回收'
     });
+    this.loadFaceValues(cardProductId);
+  },
+
+  /**
+   * 从API加载面值列表
+   */
+  async loadFaceValues(cardProductId) {
+    try {
+      const data = await request.get(`${API.card.recycleFaceValues}/${cardProductId}/face-values`);
+      // 新格式：{ isHot: 1, faceValues: [...] }
+      // 兼容旧格式：直接返回数组
+      let faceValueList = [];
+      let isHot = 0;
+      if (data && typeof data === 'object' && data.faceValues) {
+        isHot = data.isHot || 0;
+        faceValueList = data.faceValues || [];
+      } else if (Array.isArray(data)) {
+        faceValueList = data;
+      }
+      const faceValues = faceValueList.map(fv => fv.faceValue);
+      this.setData({ faceValueList, faceValues, loading: false, isHot });
+    } catch (err) {
+      console.error('加载面值失败:', err);
+      this.setData({ loading: false });
+      wx.showToast({ title: '加载面值失败', icon: 'none' });
+    }
   },
 
   /**
@@ -41,16 +73,18 @@ Page({
   },
 
   /**
-   * 选择面值
+   * 选择面值 - 使用API返回的折扣率
    */
   onSelectFaceValue(e) {
     const { value } = e.currentTarget.dataset;
-    const recycleAmount = (value * this.data.discount).toFixed(2);
-
-    this.setData({
-      selectedFaceValue: value,
-      recycleAmount
-    });
+    const fv = this.data.faceValueList.find(f => f.faceValue === value);
+    if (fv) {
+      this.setData({
+        selectedFaceValue: value,
+        selectedDiscountRate: fv.discountRate,
+        recycleAmount: fv.recycleAmount
+      });
+    }
   },
 
   /**
@@ -124,7 +158,7 @@ Page({
       return;
     }
 
-    const { cardNo, cardPwd, selectedFaceValue, recycleAmount } = this.data;
+    const { cardNo, selectedFaceValue, recycleAmount } = this.data;
 
     wx.showModal({
       title: '确认提交',
@@ -144,7 +178,7 @@ Page({
   async doSubmitOrder() {
     this.setData({ submitting: true });
 
-    const { cardNo, cardPwd, selectedFaceValue, recycleAmount } = this.data;
+    const { cardProductId, cardNo, cardPwd, selectedFaceValue, recycleAmount } = this.data;
 
     // 本地开发模式
     if (LOCAL_DEV) {
@@ -165,8 +199,13 @@ Page({
     }
 
     try {
+      // 从面值列表中获取cardTypeId
+      const fv = this.data.faceValueList.find(f => f.faceValue === selectedFaceValue);
+      const cardTypeId = fv ? fv.cardTypeId : undefined;
+
       const data = await request.post(API.order.create, {
-        cardTypeId: 4,
+        cardProductId: cardProductId,
+        cardTypeId: cardTypeId,
         faceValue: selectedFaceValue,
         cardNo: cardNo,
         cardPwd: cardPwd

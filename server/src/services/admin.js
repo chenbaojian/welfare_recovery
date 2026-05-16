@@ -4,6 +4,8 @@ const Admin = require('../models/Admin');
 const Order = require('../models/Order');
 const User = require('../models/User');
 const CardType = require('../models/CardType');
+const CardProduct = require('../models/CardProduct');
+const CardProductFaceValue = require('../models/CardProductFaceValue');
 const BalanceLog = require('../models/BalanceLog');
 const BuyOrder = require('../models/BuyOrder');
 const { decrypt } = require('../utils/crypto');
@@ -748,7 +750,7 @@ exports.exportAssets = async (params) => {
 exports.getCardTypeList = async () => {
   const list = await CardType.findAll({
     where: { status: 'ACTIVE' },
-    attributes: ['id', 'name', 'category', 'discount_rate'],
+    attributes: ['id', 'name', 'category', 'icon', 'icon_url', 'icon_color', 'icon_bg_color', 'discount_rate', 'buy_discount_rate', 'sort', 'status'],
     order: [['sort', 'ASC']],
     raw: true
   });
@@ -757,8 +759,157 @@ exports.getCardTypeList = async () => {
     id: item.id,
     name: item.name,
     category: item.category,
-    discountRate: parseFloat(item.discount_rate)
+    icon: item.icon,
+    iconUrl: item.icon_url,
+    iconColor: item.icon_color,
+    iconBgColor: item.icon_bg_color,
+    discountRate: parseFloat(item.discount_rate),
+    buyDiscountRate: parseFloat(item.buy_discount_rate),
+    sort: item.sort,
+    status: item.status
   }));
+};
+
+/**
+ * 获取所有卡券类型列表（管理页面用，含已禁用）
+ */
+exports.getAllCardTypeList = async () => {
+  const list = await CardType.findAll({
+    attributes: ['id', 'name', 'category', 'icon', 'icon_url', 'icon_color', 'icon_bg_color', 'discount_rate', 'buy_discount_rate', 'face_values', 'sort', 'status'],
+    order: [['sort', 'ASC']],
+    raw: true
+  });
+
+  return list.map(item => ({
+    id: item.id,
+    name: item.name,
+    category: item.category,
+    icon: item.icon,
+    iconUrl: item.icon_url,
+    iconColor: item.icon_color,
+    iconBgColor: item.icon_bg_color,
+    discountRate: parseFloat(item.discount_rate),
+    buyDiscountRate: parseFloat(item.buy_discount_rate),
+    faceValues: item.face_values,
+    sort: item.sort,
+    status: item.status
+  }));
+};
+
+/**
+ * 更新卡券类型折扣率
+ */
+exports.updateCardTypeDiscount = async (id, discountRate, buyDiscountRate) => {
+  const cardType = await CardType.findByPk(id);
+  if (!cardType) {
+    throw new Error('卡券类型不存在');
+  }
+
+  const updateData = {};
+  if (discountRate !== undefined && discountRate !== null) {
+    const rate = parseFloat(discountRate);
+    if (rate < 0 || rate > 1) {
+      throw new Error('收卡折扣率必须在0-1之间');
+    }
+    updateData.discountRate = rate;
+  }
+  if (buyDiscountRate !== undefined && buyDiscountRate !== null) {
+    const rate = parseFloat(buyDiscountRate);
+    if (rate < 0 || rate > 1) {
+      throw new Error('卖卡折扣率必须在0-1之间');
+    }
+    updateData.buyDiscountRate = rate;
+  }
+
+  if (Object.keys(updateData).length === 0) {
+    throw new Error('没有需要更新的折扣率');
+  }
+
+  await CardType.update(updateData, { where: { id } });
+
+  const updated = await CardType.findByPk(id);
+  return {
+    id: updated.id,
+    name: updated.name,
+    discountRate: parseFloat(updated.discountRate),
+    buyDiscountRate: parseFloat(updated.buyDiscountRate)
+  };
+};
+
+/**
+ * 更新卡券类型图标
+ */
+exports.updateCardTypeIcon = async (id, iconUrl, iconColor, iconBgColor) => {
+  const cardType = await CardType.findByPk(id);
+  if (!cardType) {
+    throw new Error('卡券类型不存在');
+  }
+
+  const updateData = {
+    iconUrl: iconUrl || null,
+    iconColor: iconColor || null,
+    iconBgColor: iconBgColor || null
+  };
+
+  await CardType.update(updateData, { where: { id } });
+
+  const updated = await CardType.findByPk(id);
+  return {
+    id: updated.id,
+    name: updated.name,
+    icon: updated.icon,
+    iconUrl: updated.iconUrl,
+    iconColor: updated.iconColor,
+    iconBgColor: updated.iconBgColor
+  };
+};
+
+/**
+ * 切换卡券类型状态（启用/禁用）
+ */
+exports.toggleCardTypeStatus = async (id) => {
+  const cardType = await CardType.findByPk(id);
+  if (!cardType) {
+    throw new Error('卡券类型不存在');
+  }
+
+  const newStatus = cardType.status === 'ACTIVE' ? 'DISABLED' : 'ACTIVE';
+  await CardType.update({ status: newStatus }, { where: { id } });
+
+  return {
+    id: cardType.id,
+    name: cardType.name,
+    status: newStatus
+  };
+};
+
+/**
+ * 删除卡券类型
+ */
+exports.deleteCardType = async (id) => {
+  const cardType = await CardType.findByPk(id);
+  if (!cardType) {
+    throw new Error('卡券类型不存在');
+  }
+
+  // 检查是否有关联的卡券
+  const Card = require('../models/Card');
+  const cardCount = await Card.count({ where: { cardTypeId: id } });
+  if (cardCount > 0) {
+    throw new Error(`该卡券类型下有 ${cardCount} 张卡券，无法删除，请先禁用`);
+  }
+
+  // 级联删除关联的卡产品面值和卡产品
+  const products = await CardProduct.findAll({ where: { cardTypeId: id }, attributes: ['id'], raw: true });
+  if (products.length > 0) {
+    const productIds = products.map(p => p.id);
+    await CardProductFaceValue.destroy({ where: { cardProductId: productIds } });
+    await CardProduct.destroy({ where: { cardTypeId: id } });
+    logger.info(`删除卡类型${id}，级联删除${productIds.length}个卡产品及其面值`);
+  }
+
+  await CardType.destroy({ where: { id } });
+  return { id, name: cardType.name };
 };
 
 // ========== 已销售资产 ==========
@@ -1429,7 +1580,7 @@ exports.getAvailableAssetSummary = async (params) => {
   const totalFaceValue = parseFloat(totalResult[0]?.totalFaceValue) || 0;
   const cardTypeCount = parseInt(totalResult[0]?.cardTypeCount) || 0;
 
-  // 计算预估销售金额：需要关联card_type获取discount_rate
+  // 计算预估销售金额：需要关联card_type获取buy_discount_rate
   const availableOrders = await Order.findAll({
     where,
     attributes: ['id', 'cardTypeId', 'faceValue'],
@@ -1442,10 +1593,10 @@ exports.getAvailableAssetSummary = async (params) => {
     if (cardTypeIds.length > 0) {
       const cardTypes = await CardType.findAll({
         where: { id: { [Op.in]: cardTypeIds } },
-        attributes: ['id', 'discountRate'],
+        attributes: ['id', 'buyDiscountRate'],
         raw: true
       });
-      cardTypes.forEach(ct => { cardTypeMap[ct.id] = parseFloat(ct.discount_rate); });
+      cardTypes.forEach(ct => { cardTypeMap[ct.id] = parseFloat(ct.buy_discount_rate); });
     }
     availableOrders.forEach(order => {
       const discountRate = cardTypeMap[order.card_type_id] || 0;
@@ -1476,12 +1627,12 @@ exports.getAvailableAssetSummary = async (params) => {
       ? Math.round(itemTotalRecycleAmount / itemTotalFaceValue * 10000) / 100
       : 0;
 
-    // 获取卡券类型信息（折扣率）
+    // 获取卡券类型信息（卖卡折扣率）
     const cardType = await CardType.findOne({
       where: { name: item.card_type_name },
       raw: true
     });
-    const discountRate = cardType ? parseFloat(cardType.discount_rate) : 0;
+    const discountRate = cardType ? parseFloat(cardType.buy_discount_rate) : 0;
     const itemEstimatedBuyAmount = Math.round(itemTotalFaceValue * discountRate * 100) / 100;
 
     // 获取该类型的面值分布
@@ -1578,10 +1729,10 @@ exports.getAvailableAssetDetail = async (params) => {
   if (cardTypeIdList.length > 0) {
     const cardTypes = await CardType.findAll({
       where: { id: { [Op.in]: cardTypeIdList } },
-      attributes: ['id', 'discountRate'],
+      attributes: ['id', 'buyDiscountRate'],
       raw: true
     });
-    cardTypes.forEach(ct => { cardTypeMap[ct.id] = parseFloat(ct.discount_rate); });
+    cardTypes.forEach(ct => { cardTypeMap[ct.id] = parseFloat(ct.buy_discount_rate); });
   }
 
   const list = rows.map(order => {
@@ -1662,10 +1813,10 @@ exports.exportAvailableAssets = async (params) => {
   if (cardTypeIdList.length > 0) {
     const cardTypes = await CardType.findAll({
       where: { id: { [Op.in]: cardTypeIdList } },
-      attributes: ['id', 'discountRate'],
+      attributes: ['id', 'buyDiscountRate'],
       raw: true
     });
-    cardTypes.forEach(ct => { cardTypeMap[ct.id] = parseFloat(ct.discount_rate); });
+    cardTypes.forEach(ct => { cardTypeMap[ct.id] = parseFloat(ct.buy_discount_rate); });
   }
 
   // 创建Excel
@@ -1832,4 +1983,393 @@ exports.getBuyOrderDetail = async (buyOrderId) => {
   }
 
   return orderData;
+};
+
+// ========== 卡产品管理 ==========
+
+/**
+ * 更新卡产品折扣
+ */
+exports.updateCardProductDiscount = async (id, discountRate, buyDiscountRate, isHot, isSaleable, faceValues) => {
+  const updateData = {};
+  if (discountRate !== undefined) updateData.discountRate = discountRate;
+  if (buyDiscountRate !== undefined) updateData.buyDiscountRate = buyDiscountRate;
+  if (isHot !== undefined) updateData.isHot = isHot;
+  if (isSaleable !== undefined) updateData.isSaleable = isSaleable;
+  if (faceValues !== undefined) updateData.faceValues = faceValues;
+
+  const [affected] = await CardProduct.update(updateData, { where: { id } });
+  // affected为0时可能是值未变化，只要没抛异常就视为成功
+  return affected > 0 || Object.keys(updateData).length > 0;
+};
+
+/**
+ * 切换卡产品状态
+ */
+exports.toggleCardProductStatus = async (id) => {
+  const product = await CardProduct.findByPk(id);
+  if (!product) return null;
+
+  const newStatus = product.status === 'ACTIVE' ? 'DISABLED' : 'ACTIVE';
+  await CardProduct.update({ status: newStatus }, { where: { id } });
+  return { id, status: newStatus };
+};
+
+/**
+ * 切换卡产品热门状态
+ */
+exports.toggleCardProductHot = async (id) => {
+  const product = await CardProduct.findByPk(id);
+  if (!product) return null;
+
+  const newIsHot = product.isHot === 1 ? 0 : 1;
+  await CardProduct.update({ isHot: newIsHot }, { where: { id } });
+  return { id, isHot: newIsHot };
+};
+
+/**
+ * 新增卡产品
+ */
+exports.createCardProduct = async (data) => {
+  const { cardTypeId, typeName, name, sort, status, isHot } = data;
+
+  let finalCardTypeId = cardTypeId;
+
+  // 如果传了typeName，根据名称查找或创建卡类型
+  if (typeName && !cardTypeId) {
+    let cardType = await CardType.findOne({ where: { name: typeName } });
+    if (!cardType) {
+      // 自动创建新的卡类型
+      const maxSort = await CardType.max('sort') || 0;
+      cardType = await CardType.create({
+        name: typeName,
+        sort: maxSort + 1,
+        status: 'ACTIVE'
+      });
+      logger.info(`自动创建卡类型: ${typeName}, id=${cardType.id}`);
+    }
+    finalCardTypeId = cardType.id;
+  }
+
+  // 校验卡类型是否存在
+  const cardType = await CardType.findByPk(finalCardTypeId);
+  if (!cardType) {
+    throw new Error('卡类型不存在');
+  }
+
+  // 检查同类型下是否已存在同名卡产品
+  const existing = await CardProduct.findOne({ where: { cardTypeId: finalCardTypeId, name } });
+  if (existing) {
+    throw new Error('该卡类型下已存在同名卡产品');
+  }
+
+  const product = await CardProduct.create({
+    cardTypeId: finalCardTypeId,
+    name,
+    sort: sort || 0,
+    status: status || 'ACTIVE',
+    isHot: isHot || 0
+  });
+
+  return {
+    id: product.id,
+    cardTypeId: product.cardTypeId,
+    cardTypeName: cardType.name,
+    name: product.name,
+    faceValueCount: 0,
+    isHot: product.isHot,
+    sort: product.sort,
+    status: product.status
+  };
+};
+
+/**
+ * 删除卡产品
+ */
+exports.deleteCardProduct = async (id) => {
+  const product = await CardProduct.findByPk(id);
+  if (!product) return null;
+  // 先删除面值明细
+  await CardProductFaceValue.destroy({ where: { cardProductId: id } });
+  await CardProduct.destroy({ where: { id } });
+  return product;
+};
+
+/**
+ * 获取卡产品列表（支持筛选和分页）
+ * @param {Object} filters - { keyword, cardTypeName, status, page, pageSize }
+ */
+exports.getAllCardProductList = async (filters = {}) => {
+  const { keyword, cardTypeName, status, isHot, isSaleable } = filters;
+  const page = parseInt(filters.page) || 1;
+  const pageSize = parseInt(filters.pageSize) || 10;
+  const offset = (page - 1) * pageSize;
+
+  // 先获取卡类型名称映射
+  const cardTypes = await CardType.findAll({
+    attributes: ['id', 'name'],
+    raw: true
+  });
+  const typeMap = {};
+  cardTypes.forEach(t => { typeMap[t.id] = t.name; });
+
+  // 如果按类型名称筛选，先找出匹配的 cardTypeId
+  let cardTypeIds = null;
+  if (cardTypeName) {
+    cardTypeIds = Object.entries(typeMap)
+      .filter(([, name]) => name === cardTypeName)
+      .map(([id]) => parseInt(id));
+    if (cardTypeIds.length === 0) {
+      return { list: [], total: 0, page, pageSize };
+    }
+  }
+
+  // 构建查询条件
+  const where = {};
+  if (cardTypeIds) where.cardTypeId = { [Op.in]: cardTypeIds };
+  if (status) where.status = status;
+
+  // isHot 筛选：直接查卡产品表
+  if (isHot !== undefined && isHot !== '' && isHot !== null) {
+    where.isHot = parseInt(isHot);
+  }
+  // isSaleable 筛选：查找有可售面值的卡产品
+  if (isSaleable !== undefined && isSaleable !== '' && isSaleable !== null) {
+    const saleableProductIds = await CardProductFaceValue.findAll({
+      where: { isSaleable: parseInt(isSaleable) },
+      attributes: ['cardProductId'],
+      group: ['cardProductId'],
+      raw: true
+    });
+    if (where.id) {
+      // 与 isHot 筛选取交集
+      const existingIds = where.id[Op.in] || [];
+      where.id = { [Op.in]: existingIds.filter(id => saleableProductIds.map(r => r.cardProductId).includes(id)) };
+    } else {
+      where.id = { [Op.in]: saleableProductIds.map(r => r.cardProductId) };
+    }
+  }
+
+  // 关键字搜索需要用 Op.like
+  if (keyword) {
+    where.name = { [Op.like]: `%${keyword}%` };
+  }
+
+  const { count, rows } = await CardProduct.findAndCountAll({
+    attributes: ['id', 'cardTypeId', 'name', 'sort', 'status', 'isHot'],
+    where,
+    offset,
+    limit: pageSize,
+    order: [['cardTypeId', 'ASC'], ['sort', 'ASC']],
+    raw: true
+  });
+
+  // 批量获取面值数量
+  const productIds = rows.map(r => r.id);
+  const faceValueCounts = await CardProductFaceValue.findAll({
+    where: { cardProductId: { [Op.in]: productIds } },
+    attributes: ['cardProductId', [sequelize.fn('COUNT', sequelize.col('id')), 'faceValueCount']],
+    group: ['cardProductId'],
+    raw: true
+  });
+  const countMap = {};
+  faceValueCounts.forEach(r => { countMap[r.cardProductId] = parseInt(r.faceValueCount); });
+
+  const list = rows.map(item => ({
+    id: item.id,
+    cardTypeId: item.cardTypeId,
+    cardTypeName: typeMap[item.cardTypeId] || '未知类型',
+    name: item.name,
+    faceValueCount: countMap[item.id] || 0,
+    isHot: item.isHot,
+    sort: item.sort,
+    status: item.status
+  }));
+
+  return {
+    list,
+    total: count,
+    page,
+    pageSize
+  };
+};
+
+
+// ========== 卡产品面值明细管理 ==========
+
+/**
+ * 获取卡产品面值明细列表
+ */
+exports.getCardProductFaceValues = async (cardProductId) => {
+  const product = await CardProduct.findByPk(cardProductId);
+  if (!product) return null;
+
+  const faceValues = await CardProductFaceValue.findAll({
+    where: { cardProductId },
+    order: [['sort', 'ASC'], ['faceValue', 'ASC']],
+    raw: true
+  });
+
+  return {
+    cardProduct: {
+      id: product.id,
+      name: product.name,
+      cardTypeId: product.cardTypeId,
+      status: product.status,
+      isHot: product.isHot
+    },
+    faceValues: faceValues.map(fv => ({
+      id: fv.id,
+      cardProductId: fv.cardProductId,
+      faceValue: parseFloat(fv.faceValue),
+      discountRate: parseFloat(fv.discountRate),
+      buyDiscountRate: parseFloat(fv.buyDiscountRate),
+      isSaleable: fv.isSaleable,
+      sort: fv.sort,
+      status: fv.status
+    }))
+  };
+};
+
+/**
+ * 批量保存卡产品面值明细（事务）
+ */
+exports.batchSaveCardProductFaceValues = async (cardProductId, faceValues) => {
+  const product = await CardProduct.findByPk(cardProductId);
+  if (!product) throw new Error('卡产品不存在');
+
+  let saved = 0;
+  let deleted = 0;
+
+  await sequelize.transaction(async (t) => {
+    for (const fv of faceValues) {
+      // 标记删除
+      if (fv.deleted && fv.id) {
+        await CardProductFaceValue.destroy({ where: { id: fv.id, cardProductId }, transaction: t });
+        deleted++;
+        continue;
+      }
+
+      // 校验
+      if (fv.faceValue === undefined || fv.faceValue === null || fv.faceValue === '') {
+        throw new Error('面值金额不能为空');
+      }
+      if (fv.discountRate === undefined || fv.discountRate < 0 || fv.discountRate > 1) {
+        throw new Error('收卡折扣率必须在0-1之间');
+      }
+      if (fv.buyDiscountRate === undefined || fv.buyDiscountRate < 0 || fv.buyDiscountRate > 1) {
+        throw new Error('卖卡折扣率必须在0-1之间');
+      }
+
+      if (fv.id) {
+        // 更新
+        await CardProductFaceValue.update({
+          faceValue: fv.faceValue,
+          discountRate: fv.discountRate,
+          buyDiscountRate: fv.buyDiscountRate,
+          isSaleable: fv.isSaleable !== undefined ? fv.isSaleable : 1,
+          sort: fv.sort || 0,
+          status: fv.status || 'ACTIVE'
+        }, { where: { id: fv.id, cardProductId }, transaction: t });
+        saved++;
+      } else {
+        // 新增 - 检查同面值是否已存在
+        const existing = await CardProductFaceValue.findOne({
+          where: { cardProductId, faceValue: fv.faceValue },
+          transaction: t
+        });
+        if (existing) {
+          throw new Error(`面值${fv.faceValue}已存在，不能重复添加`);
+        }
+
+        await CardProductFaceValue.create({
+          cardProductId,
+          faceValue: fv.faceValue,
+          discountRate: fv.discountRate,
+          buyDiscountRate: fv.buyDiscountRate,
+          isSaleable: fv.isSaleable !== undefined ? fv.isSaleable : 1,
+          sort: fv.sort || 0,
+          status: fv.status || 'ACTIVE'
+        }, { transaction: t });
+        saved++;
+      }
+    }
+  });
+
+  return { saved, deleted };
+};
+
+/**
+ * 获取可售面值列表（小程序购买端）
+ */
+exports.getSaleableFaceValues = async (cardProductId) => {
+  const product = await CardProduct.findByPk(cardProductId);
+  if (!product || product.status !== 'ACTIVE') return { isHot: 0, faceValues: [] };
+
+  const faceValues = await CardProductFaceValue.findAll({
+    where: {
+      cardProductId,
+      isSaleable: 1,
+      status: 'ACTIVE'
+    },
+    order: [['sort', 'ASC'], ['faceValue', 'ASC']],
+    raw: true
+  });
+
+  return {
+    isHot: product.isHot,
+    faceValues: faceValues.map(fv => ({
+      faceValue: parseFloat(fv.faceValue),
+      buyDiscountRate: parseFloat(fv.buyDiscountRate),
+      buyPrice: parseFloat((fv.faceValue * fv.buyDiscountRate).toFixed(2)),
+      isSaleable: fv.isSaleable
+    }))
+  };
+};
+
+/**
+ * 获取回收面值列表（小程序回收端）
+ */
+exports.getRecycleFaceValues = async (cardProductId) => {
+  const product = await CardProduct.findByPk(cardProductId);
+  if (!product || product.status !== 'ACTIVE') return { isHot: 0, faceValues: [] };
+
+  const faceValues = await CardProductFaceValue.findAll({
+    where: {
+      cardProductId,
+      status: 'ACTIVE'
+    },
+    order: [['sort', 'ASC'], ['faceValue', 'ASC']],
+    raw: true
+  });
+
+  return {
+    isHot: product.isHot,
+    faceValues: faceValues.map(fv => ({
+      faceValue: parseFloat(fv.faceValue),
+      discountRate: parseFloat(fv.discountRate),
+      recycleAmount: parseFloat((fv.faceValue * fv.discountRate).toFixed(2)),
+      isSaleable: fv.isSaleable
+    }))
+  };
+};
+
+/**
+ * 根据卡产品ID和面值获取面值明细（交易流程用）
+ */
+exports.getFaceValueDetail = async (cardProductId, faceValue) => {
+  const fv = await CardProductFaceValue.findOne({
+    where: { cardProductId, faceValue, status: 'ACTIVE' },
+    raw: true
+  });
+  if (!fv) return null;
+  return {
+    id: fv.id,
+    faceValue: parseFloat(fv.faceValue),
+    discountRate: parseFloat(fv.discountRate),
+    buyDiscountRate: parseFloat(fv.buyDiscountRate),
+    isHot: fv.isHot,
+    isSaleable: fv.isSaleable,
+    status: fv.status
+  };
 };

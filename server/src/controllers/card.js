@@ -46,20 +46,53 @@ exports.detail = async (req, res, next) => {
 };
 
 /**
+ * 获取某类型下的卡产品列表
+ */
+exports.typeProducts = async (req, res, next) => {
+  try {
+    const { typeId } = req.params;
+    const list = await cardService.getTypeProducts(typeId);
+
+    res.json({
+      code: 200,
+      data: list
+    });
+  } catch (err) {
+    logger.error(`获取卡产品列表失败: ${err.message}`);
+    next(err);
+  }
+};
+
+/**
  * 计算回收金额
  */
 exports.calculate = async (req, res, next) => {
   try {
-    const { cardTypeId, faceValue } = req.body;
-    
-    const result = await cardService.calculateAmount(cardTypeId, faceValue);
-    
+    const { cardTypeId, faceValue, cardProductId } = req.body;
+
+    const result = await cardService.calculateAmount(cardTypeId, faceValue, cardProductId);
+
     res.json({
       code: 200,
       data: result
     });
   } catch (err) {
     logger.error('计算回收金额失败:', err);
+    next(err);
+  }
+};
+
+/**
+ * 获取卡产品回收面值列表
+ */
+exports.getRecycleFaceValues = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const adminService = require('../services/admin');
+    const data = await adminService.getRecycleFaceValues(id);
+    res.json({ code: 200, message: '查询成功', data });
+  } catch (err) {
+    logger.error('获取回收面值列表失败:', err);
     next(err);
   }
 };

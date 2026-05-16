@@ -8,12 +8,13 @@ const logger = require('../utils/logger');
 exports.create = async (req, res, next) => {
   try {
     const userId = req.user.userId;
-    const { cardTypeId, faceValue, cardNo, cardPwd } = req.body;
-    
+    const { cardTypeId, cardProductId, faceValue, cardNo, cardPwd } = req.body;
+
     // 创建订单
     const order = await orderService.create({
       userId,
       cardTypeId,
+      cardProductId,
       faceValue,
       cardNo,
       cardPwd

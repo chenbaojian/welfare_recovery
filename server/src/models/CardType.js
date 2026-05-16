@@ -26,13 +26,37 @@ const CardType = sequelize.define('CardType', {
   icon: {
     type: DataTypes.STRING(255),
     allowNull: true,
-    comment: '图标'
+    comment: '图标（emoji或文字，兼容旧数据）'
+  },
+  iconUrl: {
+    type: DataTypes.STRING(500),
+    allowNull: true,
+    field: 'icon_url',
+    comment: '图标图片URL（后台可配置，优先于icon字段）'
+  },
+  iconColor: {
+    type: DataTypes.STRING(20),
+    allowNull: true,
+    field: 'icon_color',
+    comment: '图标文字颜色（后台可配置）'
+  },
+  iconBgColor: {
+    type: DataTypes.STRING(20),
+    allowNull: true,
+    field: 'icon_bg_color',
+    comment: '图标背景颜色（后台可配置）'
   },
   discountRate: {
     type: DataTypes.DECIMAL(3, 2),
     defaultValue: 0.95,
     field: 'discount_rate',
-    comment: '折扣率'
+    comment: '收卡折扣率'
+  },
+  buyDiscountRate: {
+    type: DataTypes.DECIMAL(3, 2),
+    defaultValue: 0.95,
+    field: 'buy_discount_rate',
+    comment: '卖卡折扣率'
   },
   faceValues: {
     type: DataTypes.JSON,

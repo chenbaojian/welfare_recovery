@@ -1,6 +1,22 @@
 // config/constants.js - 常量定义
 
-// 卡券类型图标映射 - 使用emoji或文字代替图片
+// 卡类型分类颜色方案 - 按category自动分配（当后台未配置iconColor/iconBgColor时使用）
+const CATEGORY_COLORS = {
+  'telecom':       { color: '#1890FF', bgColor: '#E6F7FF' },   // 通信类 - 蓝色
+  'travel':        { color: '#FA8C16', bgColor: '#FFF7E6' },   // 出行类 - 橙色
+  'entertainment': { color: '#722ED1', bgColor: '#F9F0FF' },   // 娱乐类 - 紫色
+  'ecommerce':     { color: '#F5222D', bgColor: '#FFF1F0' },   // 电商类 - 红色
+  'life':          { color: '#13C2C2', bgColor: '#E6FFFB' },   // 生活类 - 青色
+  'points':        { color: '#EB2F96', bgColor: '#FFF0F6' },   // 积分类 - 粉色
+};
+
+// 默认颜色（category未匹配时使用）
+const DEFAULT_CATEGORY_COLOR = { color: '#1890FF', bgColor: '#E6F7FF' };
+
+// 默认图标文字（name为空时使用）
+const DEFAULT_ICON_LABEL = '卡';
+
+// 卡券类型图标映射 - emoji（已废弃，保留兼容）
 const CARD_ICONS = {
   'phone': '📱',
   'gas': '⛽',
@@ -158,6 +174,9 @@ const MESSAGE = {
 };
 
 module.exports = {
+  CATEGORY_COLORS,
+  DEFAULT_CATEGORY_COLOR,
+  DEFAULT_ICON_LABEL,
   CARD_ICONS,
   CARD_CATEGORIES,
   FACE_VALUES,

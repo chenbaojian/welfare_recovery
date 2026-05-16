@@ -249,3 +249,18 @@ exports.orderStats = async (req, res, next) => {
     next(err);
   }
 };
+
+/**
+ * 获取卡产品可售面值列表
+ */
+exports.getSaleableFaceValues = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const adminService = require('../services/admin');
+    const data = await adminService.getSaleableFaceValues(id);
+    res.json({ code: 200, message: '查询成功', data });
+  } catch (err) {
+    logger.error('获取可售面值列表失败:', err);
+    next(err);
+  }
+};

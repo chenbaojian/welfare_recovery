@@ -47,22 +47,6 @@
     </view>
   </view>
 
-  <!-- 买家账户信息 -->
-  <view class="account-section">
-    <view class="account-title">买入统计</view>
-    <view class="account-card">
-      <view class="account-item" bindtap="goToBuyOrders">
-        <text class="account-value">¥{{ totalBuy }}</text>
-        <text class="account-label">累计购买</text>
-      </view>
-      <view class="divider"></view>
-      <view class="account-item" bindtap="goToBuyOrders">
-        <text class="account-value">{{ buyOrderCount }}</text>
-        <text class="account-label">买入订单</text>
-      </view>
-    </view>
-  </view>
-
   <!-- 功能菜单 -->
   <view class="menu-section">
     <van-cell-group inset>
@@ -77,12 +61,6 @@
         icon="orders-o"
         is-link
         bind:click="goToOrders"
-      />
-      <van-cell
-        title="购买订单"
-        icon="shopping-cart-o"
-        is-link
-        bind:click="goToBuyOrders"
       />
       <van-cell
         title="提现"

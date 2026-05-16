@@ -8,25 +8,57 @@ Page({
   data: {
     type: '',
     typeName: '',
+    cardProductId: null,
     cardNo: '',
     cardPwd: '',
     amount: '',
-    discount: 0.80,
+    discountRate: 0,       // 从API获取的折扣率
     recycleAmount: 0,
     submitting: false,
-    isLoggedIn: false
+    isLoggedIn: false,
+    loading: true
   },
 
   onLoad(options) {
     const isLoggedIn = checkLogin();
     const type = options.type || '';
     const typeName = decodeURIComponent(options.name || '影音券');
+    const cardProductId = options.cardProductId || null;
 
-    this.setData({ type, typeName, isLoggedIn });
-    
+    this.setData({ type, typeName, isLoggedIn, cardProductId });
+
     wx.setNavigationBarTitle({
       title: typeName + '回收'
     });
+
+    if (cardProductId) {
+      this.loadFaceValues(cardProductId);
+    } else {
+      this.setData({ loading: false });
+    }
+  },
+
+  /**
+   * 从API加载面值列表（获取折扣率）
+   */
+  async loadFaceValues(cardProductId) {
+    try {
+      const data = await request.get(`${API.card.recycleFaceValues}/${cardProductId}/face-values`);
+      const faceValueList = data || [];
+      // 对于手动输入额度的卡类型，取第一个面值记录的折扣率作为默认折扣率
+      if (faceValueList.length > 0) {
+        this.setData({
+          discountRate: faceValueList[0].discountRate,
+          loading: false
+        });
+      } else {
+        this.setData({ loading: false });
+      }
+    } catch (err) {
+      console.error('加载折扣率失败:', err);
+      this.setData({ loading: false });
+      wx.showToast({ title: '加载折扣率失败', icon: 'none' });
+    }
   },
 
   /**
@@ -46,7 +78,7 @@ Page({
   },
 
   /**
-   * 输入额度
+   * 输入额度 - 使用API返回的折扣率计算回收金额
    */
   onInputAmount(e) {
     let value = e.detail.value || '';
@@ -65,7 +97,7 @@ Page({
       }
     }
 
-    const recycleAmount = value ? (parseFloat(value) * this.data.discount).toFixed(2) : 0;
+    const recycleAmount = value ? (parseFloat(value) * this.data.discountRate).toFixed(2) : 0;
     this.setData({ amount: value, recycleAmount });
   },
 
@@ -160,7 +192,7 @@ Page({
   async doSubmitOrder() {
     this.setData({ submitting: true });
 
-    const { type, typeName, cardNo, cardPwd, amount, recycleAmount } = this.data;
+    const { type, typeName, cardProductId, cardNo, cardPwd, amount, recycleAmount } = this.data;
 
     // 本地开发模式
     if (LOCAL_DEV) {
@@ -182,7 +214,7 @@ Page({
 
     try {
       const data = await request.post(API.order.create, {
-        cardTypeId: 12,
+        cardProductId: cardProductId,
         faceValue: parseFloat(amount),
         cardNo: cardNo,
         cardPwd: cardPwd

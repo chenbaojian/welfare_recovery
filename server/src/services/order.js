@@ -22,7 +22,7 @@ const generateOrderNo = () => {
  * 订单创建后状态为 PENDING（待处理），等待管理后台人工审核完结
  */
 exports.create = async (data) => {
-  const { userId, cardTypeId, faceValue, cardNo, cardPwd } = data;
+  const { userId, cardTypeId, cardProductId, faceValue, cardNo, cardPwd } = data;
 
   // 获取卡券类型信息
   const cardType = await CardType.findByPk(cardTypeId);
@@ -30,8 +30,20 @@ exports.create = async (data) => {
     throw new Error('卡券类型不存在');
   }
 
+  // 优先从面值明细表获取折扣率
+  let discountRate = cardType.discountRate; // 默认使用卡类型折扣率
+  if (cardProductId) {
+    const CardProductFaceValue = require('../models/CardProductFaceValue');
+    const fvDetail = await CardProductFaceValue.findOne({
+      where: { cardProductId, faceValue, status: 'ACTIVE' }
+    });
+    if (fvDetail) {
+      discountRate = parseFloat(fvDetail.discountRate);
+    }
+  }
+
   // 计算回收金额
-  const recycleAmount = (faceValue * cardType.discountRate).toFixed(2);
+  const recycleAmount = (faceValue * discountRate).toFixed(2);
 
   // 加密卡号卡密
   const encryptedCardNo = cardNo ? encrypt(cardNo) : null;

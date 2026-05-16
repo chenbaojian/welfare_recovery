@@ -20,8 +20,10 @@ const API = {
   // 卡券模块
   card: {
     typeList: `${API_BASE}/card/typeList`,         // 卡券类型列表
+    typeProducts: `${API_BASE}/card/type`,          // 某类型下的卡产品列表（需拼接 /:typeId/products）
     detail: `${API_BASE}/card/detail`,             // 卡券详情
-    calculate: `${API_BASE}/card/calculate`        // 计算回收金额
+    calculate: `${API_BASE}/card/calculate`,       // 计算回收金额
+    recycleFaceValues: `${API_BASE}/card/card-product`  // 回收面值列表（需拼接 /:id/face-values）
   },
 
   // 订单模块
@@ -52,6 +54,7 @@ const API = {
   buy: {
     cardTypes: `${API_BASE}/buy/cardTypes`,           // 可售卡券种类列表
     cardList: `${API_BASE}/buy/cardList`,             // 某类型可售卡券列表
+    saleableFaceValues: `${API_BASE}/buy/card-product`, // 可售面值列表（需拼接 /:id/face-values）
     create: `${API_BASE}/buy/create`,                 // 创建购买订单
     pay: `${API_BASE}/buy/pay`,                       // 支付购买订单
     cancel: `${API_BASE}/buy/cancel`,                 // 取消购买订单

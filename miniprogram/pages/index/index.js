@@ -3,70 +3,8 @@ const request = require('../../utils/request');
 const { checkLogin, requireLogin } = require('../../utils/auth');
 const cache = require('../../utils/cache');
 const API = require('../../config/api');
-const { CARD_ICONS, USER_MODE } = require('../../config/constants');
+const { CATEGORY_COLORS, DEFAULT_CATEGORY_COLOR, DEFAULT_ICON_LABEL, CARD_ICONS, USER_MODE } = require('../../config/constants');
 const config = require('../../config/index');
-
-// 卡券类型数据（卖家模式本地数据）
-const CARD_TYPES_DATA = [
-  { id: 'phone', name: '电话卡', isHot: true, discount: 0.98, description: '支持移动/联通/电信', icon: '📱' },
-  { id: 'gas', name: '加油卡', isHot: true, discount: 0.95, description: '中石化/中石油加油卡', icon: '⛽' },
-  { id: 'game', name: '游戏卡', isHot: false, discount: 0.90, description: '网易一卡通等', icon: '🎮',
-    children: [
-      { id: 'netease', name: '网易一卡通', discount: 0.90, description: '网易一卡通', icon: '🎮' }
-    ]
-  },
-  { id: 'music', name: '影音券', isHot: false, discount: 0.80, description: '爱奇艺/腾讯视频等', icon: '🎵',
-    children: [
-      { id: 'iqiyi', name: '爱奇艺会员', discount: 0.80, description: '爱奇艺会员', icon: '📺' },
-      { id: 'tencent', name: '腾讯视频会员', discount: 0.80, description: '腾讯视频会员', icon: '🎬' },
-      { id: 'youku', name: '优酷视频会员', discount: 0.80, description: '优酷视频会员', icon: '🎥' },
-      { id: 'mgtv', name: '芒果TV会员', discount: 0.80, description: '芒果TV会员', icon: '📱' },
-      { id: 'jdmovie', name: '京东电影', discount: 0.80, description: '京东电影', icon: '🎞️' },
-      { id: 'ximalaya', name: '喜马拉雅FM', discount: 0.80, description: '喜马拉雅FM', icon: '📻' }
-    ]
-  },
-  { id: 'ecommerce', name: '电商卡', isHot: true, discount: 0.97, description: '京东超市卡/永辉超市卡等', icon: '🛒',
-    children: [
-      { id: 'jdmarket', name: '京东超市卡', discount: 0.97, description: '京东超市卡', icon: '🛒' },
-      { id: 'yonghui', name: '永辉超市卡', discount: 0.97, description: '永辉超市卡', icon: '🏪' },
-      { id: 'meituan', name: '美团礼品卡', discount: 0.97, description: '美团礼品卡', icon: '🎁' },
-      { id: 'tmall', name: '天猫超市卡', discount: 0.97, description: '天猫超市卡', icon: '🛍️' },
-      { id: 'yintai', name: '银泰百货银泰卡', discount: 0.97, description: '银泰百货银泰卡', icon: '💳' },
-      { id: 'suning', name: '苏宁易购礼品卡', discount: 0.97, description: '苏宁易购礼品卡', icon: '📦' },
-      { id: 'zhongbai', name: '中百超市购物卡', discount: 0.97, description: '中百超市购物卡', icon: '🛃' }
-    ]
-  },
-  { id: 'jd', name: '京东E卡', isHot: false, discount: 0.97, description: '京东E卡', icon: '📦' },
-  { id: 'supermarket', name: '商超卡', isHot: false, discount: 0.92, description: '沃尔玛卡/盒马生鲜等', icon: '🏪',
-    children: [
-      { id: 'walmart', name: '沃尔玛卡', discount: 0.92, description: '沃尔玛卡', icon: '🏪' },
-      { id: 'hema', name: '盒马生鲜', discount: 0.92, description: '盒马生鲜', icon: '🦐' },
-      { id: 'pupu', name: '朴朴超市', discount: 0.92, description: '朴朴超市', icon: '🛒' },
-      { id: 'xiaoxiang', name: '小象超市', discount: 0.92, description: '小象超市', icon: '🐘' },
-      { id: 'hongqi', name: '红旗连锁', discount: 0.92, description: '红旗连锁（邮寄）', icon: '🔴' }
-    ]
-  },
-  { id: 'food', name: '美食券', isHot: false, discount: 0.88, description: '瑞幸咖啡/肯德基等', icon: '🍔',
-    children: [
-      { id: 'luckin', name: '瑞幸咖啡', discount: 0.88, description: '瑞幸咖啡', icon: '☕' },
-      { id: 'kfc', name: '肯德基', discount: 0.88, description: '肯德基', icon: '🍗' },
-      { id: 'aidale', name: '爱达乐', discount: 0.88, description: '爱达乐', icon: '🥐' },
-      { id: 'holiland', name: '好利来', discount: 0.88, description: '好利来', icon: '🎂' },
-      { id: 'chagee', name: '霸王茶姬', discount: 0.88, description: '霸王茶姬', icon: '🧋' },
-      { id: 'weiduomei', name: '味多美', discount: 0.88, description: '味多美', icon: '🥮' },
-      { id: 'ganso', name: '元祖食品', discount: 0.88, description: '元祖食品', icon: '🍰' },
-      { id: 'starbucks', name: '星巴克', discount: 0.88, description: '星巴克', icon: '☕' }
-    ]
-  },
-  { id: 'meituan', name: '美团企业积分', isHot: false, discount: 0.75, description: '美团企业积分', icon: '🎁' },
-  { id: 'laobao', name: '劳保积分', isHot: false, discount: 0.70, description: '劳保福利积分', icon: '💼' },
-  { id: 'travel', name: '出行券', isHot: false, discount: 0.72, description: '融晟携程卡包/携程积分', icon: '🚗',
-    children: [
-      { id: 'rsctrip', name: '融晟携程卡包', discount: 0.72, description: '融晟携程卡包', icon: '🎫' },
-      { id: 'ctrip', name: '携程积分', discount: 0.72, description: '携程旅行积分', icon: '✈️' }
-    ]
-  }
-];
 
 Page({
   data: {
@@ -109,7 +47,6 @@ Page({
 
   onShow() {
     this.checkLoginStatus();
-    this.loadCardTypes();
   },
 
   /**
@@ -186,21 +123,32 @@ Page({
   },
 
   /**
-   * 加载卖家模式卡券类型
+   * 加载卖家模式卡券类型（从数据库获取）
    */
-  loadSellerCardTypes() {
-    const cachedData = cache.get('card_types');
-    if (cachedData) {
-      this.processCardTypes(cachedData);
-      this.setData({ loading: false, skeletonLoading: false });
-      return;
+  async loadSellerCardTypes() {
+    try {
+      const data = await request.get(API.card.typeList);
+      if (data && data.length > 0) {
+        this.processCardTypes(data);
+      } else {
+        this.setData({
+          cardTypes: [],
+          allCardTypes: [],
+          hotCards: [],
+          loading: false,
+          skeletonLoading: false
+        });
+      }
+    } catch (err) {
+      console.error('加载卡券类型失败:', err);
+      this.setData({
+        cardTypes: [],
+        allCardTypes: [],
+        hotCards: [],
+        loading: false,
+        skeletonLoading: false
+      });
     }
-
-    setTimeout(() => {
-      this.processCardTypes(CARD_TYPES_DATA);
-      cache.set('card_types', CARD_TYPES_DATA, 10 * 60 * 1000);
-      this.setData({ loading: false, skeletonLoading: false });
-    }, 300);
   },
 
   /**
@@ -211,10 +159,16 @@ Page({
       const data = await request.get(API.buy.cardTypes);
 
       if (data && data.length > 0) {
-        const buyCardTypes = data.map(item => ({
-          ...item,
-          icon: CARD_ICONS[item.cardTypeId] || item.icon || '🎫'
-        }));
+        const buyCardTypes = data.map(item => {
+          const categoryColor = CATEGORY_COLORS[item.category] || DEFAULT_CATEGORY_COLOR;
+          return {
+            ...item,
+            iconUrl: item.iconUrl || null,
+            iconLabel: (item.name && item.name.length >= 2) ? item.name.substring(0, 2) : (item.name || DEFAULT_ICON_LABEL),
+            iconColor: item.iconColor || categoryColor.color,
+            iconBgColor: item.iconBgColor || categoryColor.bgColor
+          };
+        });
 
         // 热门卡券（有库存的取前3个）
         const buyHotCards = buyCardTypes
@@ -250,10 +204,17 @@ Page({
    * 处理卖家卡券类型数据
    */
   processCardTypes(data) {
-    const cardTypes = data.map(item => ({
-      ...item,
-      icon: item.icon || CARD_ICONS[item.id] || '🎫'
-    }));
+    const cardTypes = data.map(item => {
+      const categoryColor = CATEGORY_COLORS[item.category] || DEFAULT_CATEGORY_COLOR;
+      return {
+        ...item,
+        iconUrl: item.iconUrl || null,
+        iconLabel: (item.name && item.name.length >= 2) ? item.name.substring(0, 2) : (item.name || DEFAULT_ICON_LABEL),
+        iconColor: item.iconColor || categoryColor.color,
+        iconBgColor: item.iconBgColor || categoryColor.bgColor,
+        isHot: item.isHot || false
+      };
+    });
 
     const hotCards = cardTypes
       .filter(item => item.isHot)
@@ -262,8 +223,19 @@ Page({
     this.setData({
       cardTypes,
       allCardTypes: cardTypes,
-      hotCards
+      hotCards,
+      loading: false,
+      skeletonLoading: false
     });
+  },
+
+  /**
+   * 图标加载失败，降级为默认图标
+   */
+  onIconError(e) {
+    const id = e.currentTarget.dataset.id;
+    const key = `cardTypes[${this.data.cardTypes.findIndex(item => item.id === id)}].iconUrl`;
+    this.setData({ [key]: '' });
   },
 
   /**
@@ -340,25 +312,12 @@ Page({
       return;
     }
 
-    // 跳转到对应卡券详情页
-    const routeMap = {
-      'phone': '/pages/phone/list/list',
-      'gas': '/pages/gas/list/list',
-      'laobao': '/pages/laobao/detail/detail',
-      'ctrip': '/pages/ctrip/detail/detail',
-      'rsctrip': '/pages/rsctrip/detail/detail',
-      'travel': '/pages/travel/list/list',
-      'game': '/pages/game/list/list',
-      'music': '/pages/music/list/list',
-      'jd': '/pages/jd/detail/detail',
-      'ecommerce': '/pages/ecommerce/list/list',
-      'supermarket': '/pages/supermarket/list/list',
-      'food': '/pages/food/list/list',
-      'meituan': '/pages/meituan/detail/detail'
-    };
-
-    const url = routeMap[id] || `/pages/detail/detail?id=${id}`;
-    wx.navigateTo({ url });
+    // 跳转到卡券列表页（展示该类型下的所有卡产品）
+    const cardType = this.data.allCardTypes.find(item => item.id === id);
+    const typeName = cardType ? cardType.name : '';
+    wx.navigateTo({
+      url: `/pages/card/list/list?typeId=${id}&typeName=${encodeURIComponent(typeName)}`
+    });
   },
 
   /**

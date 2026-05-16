@@ -20,8 +20,10 @@ Component({
      * 点击卡券
      */
     onTap() {
-      const { id } = this.data.card;
-      this.triggerEvent('click', { id, card: this.data.card });
+      // const { id } = this.data.card;
+      // this.triggerEvent('click', { id, card: this.data.card });
+      const { id } = this.properties.card;
+      this.triggerEvent('click', { id, card: this.properties.card });
     }
   }
 });

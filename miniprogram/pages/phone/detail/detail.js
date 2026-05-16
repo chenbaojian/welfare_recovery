@@ -4,7 +4,7 @@ import request from '../../../utils/request';
 import API, { LOCAL_DEV } from '../../../config/api';
 const { addOrder } = require('../../../utils/userData');
 
-// 运营商配置
+// 运营商配置（保留名称、颜色等，面值和折扣从API获取）
 const PROVIDER_CONFIG = {
   mobile: {
     name: '中国移动',
@@ -12,8 +12,7 @@ const PROVIDER_CONFIG = {
     cardNoMinLength: 10,
     cardNoMaxLength: 30,
     cardPwdMinLength: 6,
-    cardPwdMaxLength: 30,
-    faceValues: [20, 30, 50, 100]
+    cardPwdMaxLength: 30
   },
   unicom: {
     name: '中国联通',
@@ -21,8 +20,7 @@ const PROVIDER_CONFIG = {
     cardNoMinLength: 10,
     cardNoMaxLength: 30,
     cardPwdMinLength: 6,
-    cardPwdMaxLength: 30,
-    faceValues: [20, 30, 50, 100]
+    cardPwdMaxLength: 30
   },
   telecom: {
     name: '中国电信',
@@ -30,8 +28,7 @@ const PROVIDER_CONFIG = {
     cardNoMinLength: 10,
     cardNoMaxLength: 30,
     cardPwdMinLength: 6,
-    cardPwdMaxLength: 30,
-    faceValues: [20, 30, 50, 100]
+    cardPwdMaxLength: 30
   }
 };
 
@@ -40,9 +37,12 @@ Page({
     providerId: '',
     providerName: '',
     providerColor: '#0066CC',
-    discount: 0.98,
-    faceValues: [20, 30, 50, 100],
+    cardProductId: null,
+    isHot: 0,            // 卡产品级别是否热门
+    faceValueList: [],   // API返回的面值列表 [{faceValue, discountRate, recycleAmount, isSaleable}]
+    faceValues: [],      // 面值金额数组 供模板渲染
     selectedFaceValue: null,
+    selectedDiscountRate: 0,
     cardNo: '',
     cardPwd: '',
     cardNoMinLength: 10,
@@ -51,11 +51,12 @@ Page({
     cardPwdMaxLength: 30,
     recycleAmount: 0,
     submitting: false,
-    isLoggedIn: false
+    isLoggedIn: false,
+    loading: true
   },
 
   onLoad(options) {
-    const { providerId, name, discount } = options;
+    const { providerId, name, cardProductId } = options;
     const config = PROVIDER_CONFIG[providerId] || PROVIDER_CONFIG.mobile;
 
     // 检查登录状态
@@ -65,8 +66,7 @@ Page({
       providerId,
       providerName: decodeURIComponent(name || config.name),
       providerColor: config.color,
-      discount: parseFloat(discount) || 0.98,
-      faceValues: config.faceValues,
+      cardProductId: cardProductId || null,
       cardNoMinLength: config.cardNoMinLength || 10,
       cardNoMaxLength: config.cardNoMaxLength || 30,
       cardPwdMinLength: config.cardPwdMinLength || 6,
@@ -78,19 +78,52 @@ Page({
     wx.setNavigationBarTitle({
       title: this.data.providerName + '充值卡'
     });
+
+    if (cardProductId) {
+      this.loadFaceValues(cardProductId);
+    } else {
+      this.setData({ loading: false });
+    }
   },
 
   /**
-   * 选择面值
+   * 从API加载面值列表
+   */
+  async loadFaceValues(cardProductId) {
+    try {
+      const data = await request.get(`${API.card.recycleFaceValues}/${cardProductId}/face-values`);
+      // 新格式：{ isHot: 1, faceValues: [...] }
+      // 兼容旧格式：直接返回数组
+      let faceValueList = [];
+      let isHot = 0;
+      if (data && typeof data === 'object' && data.faceValues) {
+        isHot = data.isHot || 0;
+        faceValueList = data.faceValues || [];
+      } else if (Array.isArray(data)) {
+        faceValueList = data;
+      }
+      const faceValues = faceValueList.map(fv => fv.faceValue);
+      this.setData({ faceValueList, faceValues, loading: false, isHot });
+    } catch (err) {
+      console.error('加载面值失败:', err);
+      this.setData({ loading: false });
+      wx.showToast({ title: '加载面值失败', icon: 'none' });
+    }
+  },
+
+  /**
+   * 选择面值 - 使用API返回的折扣率
    */
   onSelectFaceValue(e) {
     const { value } = e.currentTarget.dataset;
-    const recycleAmount = (value * this.data.discount).toFixed(2);
-
-    this.setData({
-      selectedFaceValue: value,
-      recycleAmount
-    });
+    const fv = this.data.faceValueList.find(f => f.faceValue === value);
+    if (fv) {
+      this.setData({
+        selectedFaceValue: value,
+        selectedDiscountRate: fv.discountRate,
+        recycleAmount: fv.recycleAmount
+      });
+    }
   },
 
   /**
@@ -200,7 +233,7 @@ Page({
   async doSubmitOrder() {
     this.setData({ submitting: true });
 
-    const { providerId, providerName, selectedFaceValue, cardNo, cardPwd, recycleAmount } = this.data;
+    const { providerId, providerName, cardProductId, selectedFaceValue, cardNo, cardPwd, recycleAmount } = this.data;
 
     // 本地开发模式
     if (LOCAL_DEV) {
@@ -221,8 +254,13 @@ Page({
     }
 
     try {
+      // 从面值列表中获取cardTypeId
+      const fv = this.data.faceValueList.find(f => f.faceValue === selectedFaceValue);
+      const cardTypeId = fv ? fv.cardTypeId : undefined;
+
       const data = await request.post(API.order.create, {
-        cardTypeId: 1,
+        cardProductId: cardProductId,
+        cardTypeId: cardTypeId,
         faceValue: selectedFaceValue,
         cardNo: cardNo,
         cardPwd: cardPwd

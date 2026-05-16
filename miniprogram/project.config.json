@@ -5,7 +5,6 @@
     "minified": true,
     "uglifyFileName": false,
     "enhance": true,
-    "packNpmRelationList": [],
     "babelSetting": {
       "ignore": [],
       "disablePlugins": [],
@@ -33,7 +32,10 @@
   "compileType": "miniprogram",
   "simulatorPluginLibVersion": {},
   "packOptions": {
-    "ignore": [],
+    "ignore": [
+      { "type": "file", "value": "generate_icons.js" },
+      { "type": "file", "value": "package-lock.json" }
+    ],
     "include": []
   },
   "appid": "wx8e0a92186bf86b07",

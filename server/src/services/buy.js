@@ -4,6 +4,8 @@ const sequelize = require('../config/database');
 const BuyOrder = require('../models/BuyOrder');
 const Order = require('../models/Order');
 const CardType = require('../models/CardType');
+const CardProduct = require('../models/CardProduct');
+const CardProductFaceValue = require('../models/CardProductFaceValue');
 const User = require('../models/User');
 const { encrypt, decrypt } = require('../utils/crypto');
 const logger = require('../utils/logger');
@@ -32,7 +34,7 @@ exports.getAvailableCardTypes = async () => {
       ct.category,
       ct.icon,
       ct.description,
-      ct.discount_rate AS discountRate,
+      ct.buy_discount_rate AS discountRate,
       ct.sort AS sortOrder,
       COUNT(o.id) AS availableCount,
       MIN(o.face_value) AS minFaceValue,
@@ -40,7 +42,7 @@ exports.getAvailableCardTypes = async () => {
     FROM card_type ct
     LEFT JOIN \`order\` o ON ct.id = o.card_type_id AND o.status = 'SUCCESS' AND o.is_sold = 0
     WHERE ct.status = 'ACTIVE'
-    GROUP BY ct.id, ct.name, ct.category, ct.icon, ct.description, ct.discount_rate, ct.sort
+    GROUP BY ct.id, ct.name, ct.category, ct.icon, ct.description, ct.buy_discount_rate, ct.sort
     ORDER BY ct.sort ASC
   `;
 
@@ -63,7 +65,7 @@ exports.getAvailableCardList = async (params) => {
   const orderMap = {
     faceValueAsc: 'o.face_value ASC',
     faceValueDesc: 'o.face_value DESC',
-    discountAsc: 'ct.discount_rate ASC'
+    discountAsc: 'ct.buy_discount_rate ASC'
   };
   const orderClause = orderMap[sortBy] || 'o.face_value ASC';
 
@@ -88,8 +90,8 @@ exports.getAvailableCardList = async (params) => {
       o.card_type_id AS cardTypeId,
       o.card_type_name AS cardTypeName,
       o.face_value AS faceValue,
-      ct.discount_rate AS discountRate,
-      ROUND(o.face_value * ct.discount_rate, 2) AS buyPrice,
+      ct.buy_discount_rate AS discountRate,
+      ROUND(o.face_value * ct.buy_discount_rate, 2) AS buyPrice,
       ct.description
     FROM \`order\` o
     INNER JOIN card_type ct ON o.card_type_id = ct.id
@@ -146,8 +148,31 @@ exports.createBuyOrder = async (buyerId, recycleOrderId) => {
     throw error;
   }
 
-  // 3. 计算购买价格
-  const buyPrice = parseFloat((recycleOrder.faceValue * cardType.discountRate).toFixed(2));
+  // 3. 计算购买价格 - 优先从面值明细表获取卖卡折扣率
+  let buyDiscountRate = cardType.buyDiscountRate; // 默认使用卡类型折扣率
+  // 查找该卡类型下所有卡产品ID
+  const cardProducts = await CardProduct.findAll({
+    where: { cardTypeId: recycleOrder.cardTypeId, status: 'ACTIVE' },
+    attributes: ['id'],
+    raw: true
+  });
+  if (cardProducts.length > 0) {
+    const productIds = cardProducts.map(p => p.id);
+    const fvDetail = await CardProductFaceValue.findOne({
+      where: {
+        cardProductId: { [Sequelize.Op.in]: productIds },
+        faceValue: recycleOrder.faceValue,
+        status: 'ACTIVE',
+        isSaleable: 1
+      },
+      raw: true
+    });
+    if (fvDetail) {
+      buyDiscountRate = parseFloat(fvDetail.buyDiscountRate);
+    }
+  }
+
+  const buyPrice = parseFloat((recycleOrder.faceValue * buyDiscountRate).toFixed(2));
 
   // 4. 在事务中执行购买操作
   const result = await sequelize.transaction(async (t) => {
@@ -159,7 +184,7 @@ exports.createBuyOrder = async (buyerId, recycleOrderId) => {
       cardTypeId: recycleOrder.cardTypeId,
       cardTypeName: recycleOrder.cardTypeName,
       faceValue: recycleOrder.faceValue,
-      discountRate: cardType.discountRate,
+      discountRate: buyDiscountRate,
       buyPrice,
       cardNo: recycleOrder.cardNo,    // 已加密，直接复制
       cardPwd: recycleOrder.cardPwd,   // 已加密，直接复制

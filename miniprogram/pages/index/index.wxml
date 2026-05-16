@@ -52,7 +52,7 @@
   <view class="main-content" wx:if="{{ !skeletonLoading && currentMode === 'SELLER' }}">
     <!-- 卡券分类 -->
     <view class="card-section">
-      <view class="section-title">卡券类型</view>
+      <view class="section-title">类型</view>
       <view class="card-grid">
         <view
           class="card-item"
@@ -61,11 +61,11 @@
           data-id="{{ item.id }}"
           bindtap="onSelectCard"
         >
-          <view class="card-icon-emoji">{{ item.icon }}</view>
-          <text class="card-name">{{ item.name }}</text>
-          <view class="card-discount" wx:if="{{ item.discount }}">
-            <text class="discount-text">{{ utils.formatDiscount(item.discount) }}折</text>
+          <view class="card-icon-wrap">
+            <image wx:if="{{ item.iconUrl }}" class="card-icon-img" src="{{ item.iconUrl }}" mode="aspectFit" binderror="onIconError" data-id="{{ item.id }}" />
+            <view wx:else class="card-icon-default" style="background-color: {{ item.iconBgColor }}; color: {{ item.iconColor }};">{{ item.iconLabel }}</view>
           </view>
+          <text class="card-name">{{ item.name }}</text>
         </view>
       </view>
     </view>
@@ -82,14 +82,16 @@
           bindtap="onHotCardTap"
         >
           <view class="hot-left">
-            <view class="hot-icon-emoji">{{ item.icon }}</view>
+            <view class="hot-icon-wrap">
+              <image wx:if="{{ item.iconUrl }}" class="hot-icon-img" src="{{ item.iconUrl }}" mode="aspectFit" />
+              <view wx:else class="hot-icon-default" style="background-color: {{ item.iconBgColor }}; color: {{ item.iconColor }};">{{ item.iconLabel }}</view>
+            </view>
             <view class="hot-info">
               <text class="hot-name">{{ item.name }}</text>
               <text class="hot-desc">{{ item.description || '支持多种面值' }}</text>
             </view>
           </view>
           <view class="hot-right">
-            <text class="hot-discount">最高{{ utils.formatDiscount(item.discount) }}折</text>
             <van-icon name="arrow" color="#999" />
           </view>
         </view>
@@ -116,7 +118,10 @@
           data-id="{{ item.cardTypeId }}"
           bindtap="onSelectBuyCard"
         >
-          <view class="card-icon-emoji">{{ item.icon }}</view>
+          <view class="card-icon-wrap">
+            <image wx:if="{{ item.iconUrl }}" class="card-icon-img" src="{{ item.iconUrl }}" mode="aspectFit" />
+            <view wx:else class="card-icon-default" style="background-color: {{ item.iconBgColor }}; color: {{ item.iconColor }};">{{ item.iconLabel }}</view>
+          </view>
           <text class="card-name">{{ item.name }}</text>
           <view class="card-stock" wx:if="{{ item.availableCount > 0 }}">
             <text class="stock-text">{{ item.availableCount }}张可购</text>
@@ -147,7 +152,10 @@
           bindtap="onHotCardTap"
         >
           <view class="hot-left">
-            <view class="hot-icon-emoji">{{ item.icon }}</view>
+            <view class="hot-icon-wrap">
+              <image wx:if="{{ item.iconUrl }}" class="hot-icon-img" src="{{ item.iconUrl }}" mode="aspectFit" />
+              <view wx:else class="hot-icon-default" style="background-color: {{ item.iconBgColor }}; color: {{ item.iconColor }};">{{ item.iconLabel }}</view>
+            </view>
             <view class="hot-info">
               <text class="hot-name">{{ item.name }}</text>
               <text class="hot-desc">{{ item.availableCount }}张可购 · 最低¥{{ item.minFaceValue }}</text>

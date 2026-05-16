@@ -68,3 +68,52 @@
 2026-05-09 21:14:35 [ERROR] 未捕获异常: listen EADDRINUSE: address already in use :::3000
 2026-05-10 12:56:51 [ERROR] 创建订单失败: Column 'card_no' cannot be null
 2026-05-10 12:56:59 [ERROR] 创建订单失败: Column 'card_no' cannot be null
+2026-05-11 20:21:20 [ERROR] 获取所有卡券类型列表失败: Unknown column 'buy_discount_rate' in 'field list'
+2026-05-11 20:21:25 [ERROR] 获取所有卡券类型列表失败: Unknown column 'buy_discount_rate' in 'field list'
+2026-05-11 20:27:00 [ERROR] 获取所有卡券类型列表失败: Unknown column 'buy_discount_rate' in 'field list'
+2026-05-12 17:51:55 [ERROR] 未捕获异常: listen EADDRINUSE: address already in use :::3000
+2026-05-12 18:12:55 [ERROR] 未捕获异常: listen EADDRINUSE: address already in use :::3000
+2026-05-12 18:13:10 [ERROR] 未捕获异常: listen EADDRINUSE: address already in use :::3000
+2026-05-12 18:13:25 [ERROR] 未捕获异常: listen EADDRINUSE: address already in use :::3000
+2026-05-12 19:11:01 [ERROR] 未捕获异常: listen EADDRINUSE: address already in use :::3000
+2026-05-12 19:28:49 [ERROR] 未捕获异常: listen EADDRINUSE: address already in use :::3000
+2026-05-12 19:29:07 [ERROR] 未捕获异常: listen EADDRINUSE: address already in use :::3000
+2026-05-12 19:33:30 [ERROR] 未捕获异常: listen EADDRINUSE: address already in use :::3000
+2026-05-12 19:37:57 [ERROR] 未捕获异常: listen EADDRINUSE: address already in use :::3000
+2026-05-12 19:38:38 [ERROR] 未捕获异常: listen EADDRINUSE: address already in use :::3000
+2026-05-12 19:39:25 [ERROR] 未捕获异常: listen EADDRINUSE: address already in use :::3000
+2026-05-12 19:40:19 [ERROR] 未捕获异常: listen EADDRINUSE: address already in use :::3000
+2026-05-12 19:45:53 [ERROR] 未捕获异常: listen EADDRINUSE: address already in use :::3000
+2026-05-12 19:46:42 [ERROR] 未捕获异常: listen EADDRINUSE: address already in use :::3000
+2026-05-12 19:47:04 [ERROR] 未捕获异常: listen EADDRINUSE: address already in use :::3000
+2026-05-12 19:47:34 [ERROR] 未捕获异常: listen EADDRINUSE: address already in use :::3000
+2026-05-12 19:48:08 [ERROR] 未捕获异常: listen EADDRINUSE: address already in use :::3000
+2026-05-12 19:48:21 [ERROR] 未捕获异常: listen EADDRINUSE: address already in use :::3000
+2026-05-12 19:48:34 [ERROR] 未捕获异常: listen EADDRINUSE: address already in use :::3000
+2026-05-12 19:50:53 [ERROR] 未捕获异常: listen EADDRINUSE: address already in use :::3000
+2026-05-12 19:51:32 [ERROR] 管理员登录失败: 用户名或密码错误
+2026-05-12 19:52:35 [ERROR] 管理员登录失败: 用户名或密码错误
+2026-05-12 19:59:53 [ERROR] 未捕获异常: listen EADDRINUSE: address already in use :::3000
+2026-05-12 20:08:27 [ERROR] 未捕获异常: listen EADDRINUSE: address already in use :::3000
+2026-05-12 20:11:40 [ERROR] 未捕获异常: listen EADDRINUSE: address already in use :::3000
+2026-05-12 20:12:13 [ERROR] 未捕获异常: listen EADDRINUSE: address already in use :::3000
+2026-05-12 20:12:49 [ERROR] 未捕获异常: listen EADDRINUSE: address already in use :::3000
+2026-05-12 20:13:00 [ERROR] 未捕获异常: listen EADDRINUSE: address already in use :::3000
+2026-05-12 20:13:26 [ERROR] 未捕获异常: listen EADDRINUSE: address already in use :::3000
+2026-05-13 19:17:26 [ERROR] 获取卡产品列表失败: Unknown column 'is_hot' in 'field list'
+2026-05-13 19:17:37 [ERROR] 获取卡产品列表失败: Unknown column 'is_hot' in 'field list'
+2026-05-14 19:45:40 [ERROR] 未捕获异常: listen EADDRINUSE: address already in use :::3000
+2026-05-14 20:27:24 [ERROR] 批量保存面值明细失败: 面值20已存在，不能重复添加
+2026-05-15 20:17:12 [ERROR] 获取卡产品列表失败: Unknown column 'icon' in 'field list'
+2026-05-15 21:56:26 [ERROR] 获取卡券类型列表失败: Unknown column 'icon_url' in 'field list'
+2026-05-15 21:56:43 [ERROR] 获取卡券类型列表失败: Unknown column 'icon_url' in 'field list'
+2026-05-15 21:56:58 [ERROR] 获取卡券类型列表失败: Unknown column 'icon_url' in 'field list'
+2026-05-15 21:57:18 [ERROR] 获取卡券类型列表失败: Unknown column 'icon_url' in 'field list'
+2026-05-15 21:57:32 [ERROR] 获取卡券类型列表失败: Unknown column 'icon_url' in 'field list'
+2026-05-15 21:58:49 [ERROR] 获取卡券类型列表失败: Unknown column 'icon_url' in 'field list'
+2026-05-15 21:59:56 [ERROR] 获取卡券类型列表失败: Unknown column 'icon_url' in 'field list'
+2026-05-15 22:01:33 [ERROR] 获取卡券类型列表失败: Unknown column 'icon_url' in 'field list'
+2026-05-15 22:02:05 [ERROR] 获取卡券类型列表失败: Unknown column 'icon_url' in 'field list'
+2026-05-15 22:02:24 [ERROR] 获取卡券类型列表失败: Unknown column 'icon_url' in 'field list'
+2026-05-15 22:43:34 [ERROR] 未捕获异常: listen EADDRINUSE: address already in use :::3000
+2026-05-15 22:51:01 [ERROR] 未捕获异常: listen EADDRINUSE: address already in use :::3000

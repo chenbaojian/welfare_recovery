@@ -1,0 +1,52 @@
+<!-- pages/card/list/list.wxml -->
+<view class="card-list-container">
+  <!-- 加载中 -->
+  <view class="loading-section" wx:if="{{ loading }}">
+    <van-loading size="24px" vertical>加载中...</van-loading>
+  </view>
+
+  <!-- 主内容 -->
+  <view class="main-content" wx:elif="{{ !isEmpty }}">
+    <!-- 提示信息 -->
+    <view class="tip-section">
+      <van-notice-bar
+        left-icon="info-o"
+        text="请选择卡产品，进入后输入卡号卡密提交回收"
+      />
+    </view>
+
+    <!-- 卡产品列表 -->
+    <view class="product-list">
+      <view
+        class="product-item"
+        wx:for="{{ products }}"
+        wx:key="id"
+        data-id="{{ item.id }}"
+        data-name="{{ item.name }}"
+        bindtap="onSelectProduct"
+      >
+        <view class="product-icon-wrap">
+          <image wx:if="{{ typeIconUrl }}" class="product-icon-img" src="{{ typeIconUrl }}" mode="aspectFit" />
+          <view wx:else class="product-icon-default" style="background-color: {{ typeIconBgColor }}; color: {{ typeIconColor }};">{{ typeIconLabel }}</view>
+        </view>
+        <view class="product-info">
+          <text class="product-name">{{ item.name }}</text>
+          <view class="product-tags" wx:if="{{ item.isHot }}">
+            <text class="hot-tag">热门</text>
+          </view>
+        </view>
+        <view class="product-arrow">
+          <van-icon name="arrow" color="#999" />
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-section" wx:elif="{{ isEmpty }}">
+    <van-empty description="暂无卡产品" />
+    <view class="empty-tip">
+      <text>当前类型下暂无可用卡产品，请浏览其他类型</text>
+    </view>
+  </view>
+</view>

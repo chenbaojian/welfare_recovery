@@ -1,0 +1,421 @@
+{
+  "types": [
+    {
+      "id": 1,
+      "name": "话费充值卡",
+      "category": "telecom",
+      "discount_rate": "0.93",
+      "buy_discount_rate": "0.95",
+      "face_values": [
+        10,
+        20,
+        30,
+        50,
+        100,
+        200,
+        300,
+        500
+      ],
+      "is_hot": 1,
+      "icon": null,
+      "description": "移动/联通/电信话费充值卡"
+    },
+    {
+      "id": 2,
+      "name": "加油卡",
+      "category": "travel",
+      "discount_rate": "0.92",
+      "buy_discount_rate": "0.92",
+      "face_values": [
+        100,
+        200,
+        300,
+        500,
+        1000
+      ],
+      "is_hot": 1,
+      "icon": null,
+      "description": "中石化/中石油加油卡"
+    },
+    {
+      "id": 3,
+      "name": "游戏点卡",
+      "category": "entertainment",
+      "discount_rate": "0.88",
+      "buy_discount_rate": "0.88",
+      "face_values": [
+        10,
+        20,
+        30,
+        50,
+        100,
+        200
+      ],
+      "is_hot": 1,
+      "icon": null,
+      "description": "各类游戏点卡/充值卡"
+    },
+    {
+      "id": 4,
+      "name": "京东E卡",
+      "category": "ecommerce",
+      "discount_rate": "0.95",
+      "buy_discount_rate": "0.95",
+      "face_values": [
+        50,
+        100,
+        200,
+        500,
+        1000
+      ],
+      "is_hot": 1,
+      "icon": null,
+      "description": "京东商城电子卡"
+    },
+    {
+      "id": 5,
+      "name": "超市购物卡",
+      "category": "life",
+      "discount_rate": "0.90",
+      "buy_discount_rate": "0.90",
+      "face_values": [
+        50,
+        100,
+        200,
+        500
+      ],
+      "is_hot": 0,
+      "icon": null,
+      "description": "各大超市购物卡"
+    },
+    {
+      "id": 6,
+      "name": "电影票券",
+      "category": "entertainment",
+      "discount_rate": "0.85",
+      "buy_discount_rate": "0.85",
+      "face_values": [
+        30,
+        50,
+        100
+      ],
+      "is_hot": 0,
+      "icon": null,
+      "description": "各大影院电影票券"
+    },
+    {
+      "id": 7,
+      "name": "美食代金券",
+      "category": "life",
+      "discount_rate": "0.88",
+      "buy_discount_rate": "0.88",
+      "face_values": [
+        20,
+        50,
+        100,
+        200
+      ],
+      "is_hot": 0,
+      "icon": null,
+      "description": "各类美食代金券"
+    },
+    {
+      "id": 8,
+      "name": "出行券",
+      "category": "travel",
+      "discount_rate": "0.90",
+      "buy_discount_rate": "0.90",
+      "face_values": [
+        10,
+        20,
+        50,
+        100
+      ],
+      "is_hot": 0,
+      "icon": null,
+      "description": "滴滴/高德出行券"
+    },
+    {
+      "id": 9,
+      "name": "美团企业积分",
+      "category": "points",
+      "discount_rate": "0.92",
+      "buy_discount_rate": "0.92",
+      "face_values": [
+        100,
+        200,
+        500,
+        1000
+      ],
+      "is_hot": 0,
+      "icon": null,
+      "description": "美团企业积分兑换"
+    },
+    {
+      "id": 10,
+      "name": "劳保积分",
+      "category": "points",
+      "discount_rate": "0.90",
+      "buy_discount_rate": "0.90",
+      "face_values": [
+        50,
+        100,
+        200,
+        500
+      ],
+      "is_hot": 0,
+      "icon": null,
+      "description": "企业劳保积分"
+    },
+    {
+      "id": 11,
+      "name": "携程积分",
+      "category": "points",
+      "discount_rate": "0.88",
+      "buy_discount_rate": "0.88",
+      "face_values": [
+        100,
+        200,
+        500,
+        1000
+      ],
+      "is_hot": 0,
+      "icon": null,
+      "description": "携程旅行积分"
+    },
+    {
+      "id": 12,
+      "name": "影音会员",
+      "category": "entertainment",
+      "discount_rate": "0.85",
+      "buy_discount_rate": "0.85",
+      "face_values": [
+        15,
+        30,
+        50,
+        100
+      ],
+      "is_hot": 0,
+      "icon": null,
+      "description": "爱奇艺/腾讯/优酷会员"
+    },
+    {
+      "id": 13,
+      "name": "电商礼品卡",
+      "category": "ecommerce",
+      "discount_rate": "0.92",
+      "buy_discount_rate": "0.92",
+      "face_values": [
+        50,
+        100,
+        200,
+        500
+      ],
+      "is_hot": 0,
+      "icon": null,
+      "description": "淘宝/拼多多礼品卡"
+    }
+  ],
+  "products": [
+    {
+      "id": 1,
+      "card_type_id": 1,
+      "name": "中国移动",
+      "discount_rate": "0.93",
+      "buy_discount_rate": "0.95",
+      "face_values": [
+        20,
+        30,
+        50,
+        100
+      ]
+    },
+    {
+      "id": 2,
+      "card_type_id": 1,
+      "name": "中国联通",
+      "discount_rate": "0.93",
+      "buy_discount_rate": "0.95",
+      "face_values": [
+        20,
+        30,
+        50,
+        100
+      ]
+    },
+    {
+      "id": 3,
+      "card_type_id": 1,
+      "name": "中国电信",
+      "discount_rate": "0.93",
+      "buy_discount_rate": "0.95",
+      "face_values": [
+        20,
+        30,
+        50,
+        100
+      ]
+    },
+    {
+      "id": 4,
+      "card_type_id": 2,
+      "name": "中国石化",
+      "discount_rate": "0.92",
+      "buy_discount_rate": "0.92",
+      "face_values": [
+        50,
+        100,
+        200,
+        500,
+        1000
+      ]
+    },
+    {
+      "id": 5,
+      "card_type_id": 2,
+      "name": "中国石油",
+      "discount_rate": "0.92",
+      "buy_discount_rate": "0.92",
+      "face_values": [
+        50,
+        100,
+        200,
+        500,
+        1000
+      ]
+    },
+    {
+      "id": 6,
+      "card_type_id": 2,
+      "name": "中国海油",
+      "discount_rate": "0.92",
+      "buy_discount_rate": "0.92",
+      "face_values": [
+        50,
+        100,
+        200,
+        500,
+        1000
+      ]
+    },
+    {
+      "id": 7,
+      "card_type_id": 3,
+      "name": "王者荣耀",
+      "discount_rate": "0.88",
+      "buy_discount_rate": "0.88",
+      "face_values": [
+        10,
+        20,
+        50,
+        100,
+        200
+      ]
+    },
+    {
+      "id": 8,
+      "card_type_id": 3,
+      "name": "和平精英",
+      "discount_rate": "0.88",
+      "buy_discount_rate": "0.88",
+      "face_values": [
+        10,
+        20,
+        50,
+        100,
+        200
+      ]
+    },
+    {
+      "id": 9,
+      "card_type_id": 3,
+      "name": "原神",
+      "discount_rate": "0.88",
+      "buy_discount_rate": "0.88",
+      "face_values": [
+        10,
+        20,
+        50,
+        100,
+        200
+      ]
+    },
+    {
+      "id": 10,
+      "card_type_id": 4,
+      "name": "京东E卡",
+      "discount_rate": "0.95",
+      "buy_discount_rate": "0.95",
+      "face_values": [
+        50,
+        100,
+        200,
+        500,
+        1000
+      ]
+    },
+    {
+      "id": 11,
+      "card_type_id": 5,
+      "name": "沃尔玛",
+      "discount_rate": "0.90",
+      "buy_discount_rate": "0.90",
+      "face_values": [
+        50,
+        100,
+        200,
+        500
+      ]
+    },
+    {
+      "id": 12,
+      "card_type_id": 5,
+      "name": "家乐福",
+      "discount_rate": "0.90",
+      "buy_discount_rate": "0.90",
+      "face_values": [
+        50,
+        100,
+        200,
+        500
+      ]
+    },
+    {
+      "id": 13,
+      "card_type_id": 5,
+      "name": "永辉超市",
+      "discount_rate": "0.90",
+      "buy_discount_rate": "0.90",
+      "face_values": [
+        50,
+        100,
+        200,
+        500
+      ]
+    },
+    {
+      "id": 14,
+      "card_type_id": 6,
+      "name": "万达电影",
+      "discount_rate": "0.85",
+      "buy_discount_rate": "0.85",
+      "face_values": [
+        30,
+        50,
+        100
+      ]
+    },
+    {
+      "id": 15,
+      "card_type_id": 6,
+      "name": "猫眼电影",
+      "discount_rate": "0.85",
+      "buy_discount_rate": "0.85",
+      "face_values": [
+        30,
+        50,
+        100
+      ]
+    }
+  ]
+}

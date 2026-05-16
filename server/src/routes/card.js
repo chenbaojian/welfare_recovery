@@ -14,6 +14,12 @@ const validate = require('../middleware/validate');
 router.get('/typeList', cardController.typeList);
 
 /**
+ * 获取某类型下的卡产品列表
+ * GET /api/card/type/:typeId/products
+ */
+router.get('/type/:typeId/products', cardController.typeProducts);
+
+/**
  * 卡券详情
  * GET /api/card/detail
  */
@@ -24,6 +30,12 @@ router.get('/detail',
   validate,
   cardController.detail
 );
+
+/**
+ * 获取卡产品回收面值列表
+ * GET /api/card/card-product/:id/face-values
+ */
+router.get('/card-product/:id/face-values', cardController.getRecycleFaceValues);
 
 /**
  * 计算回收金额
